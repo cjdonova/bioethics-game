@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BioEthics Challenge</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <style>
+        .gradient-bg {
+            background: linear-gradient(135deg, #dbeafe 0%, #f3e8ff 100%);
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+        }
+        .btn-gradient:hover {
+            background: linear-gradient(135deg, #1d4ed8 0%, #6d28d9 100%);
+        }
+        .score-excellent { color: #059669; }
+        .score-good { color: #2563eb; }
+        .score-developing { color: #d97706; }
+        .score-novice { color: #dc2626; }
+    </style>
+</head>
+<body class="gradient-bg min-h-screen">
+    <div id="app" class="max-w-4xl mx-auto p-6">
+        <!-- Start Screen -->
+        <div id="startScreen" class="text-center">
+            <h1 class="text-4xl font-bold text-gray-800 mb-4">BioEthics Challenge</h1>
+            <p class="text-lg text-gray-600 mb-8">Navigate complex ethical dilemmas in biotechnology and healthcare</p>
+            
+            <div class="bg-white rounded-lg shadow-lg p-8 max-w-2xl mx-auto">
+                <div class="grid grid-cols-2 gap-4 mb-6">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-purple-600">🧬</span>
+                        <span class="text-sm">Gene Therapy</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-blue-600">🧠</span>
+                        <span class="text-sm">AI in Medicine</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-red-600">❤️</span>
+                        <span class="text-sm">Organ Allocation</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="text-green-600">👥</span>
+                        <span class="text-sm">Privacy & Family</span>
+                    </div>
+                </div>
+                
+                <div class="mb-6">
+                    <h3 class="text-lg font-semibold mb-3">How it works:</h3>
+                    <ul class="text-left space-y-2 text-gray-700">
+                        <li>• Face 5 realistic bioethical scenarios</li>
+                        <li>• Choose your response to each dilemma</li>
+                        <li>• Learn about ethical principles behind each decision</li>
+                        <li>• Get feedback on your ethical reasoning</li>
+                    </ul>
+                </div>
+                
+                <button onclick="startGame()" class="btn-gradient text-white px-8 py-3 rounded-lg font-semibold hover:transform hover:scale-105 transition-all">
+                    Start Challenge
+                </button>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div id="gameScreen" style="display: none;">
+            <div class="mb-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h1 class="text-2xl font-bold text-gray-800">BioEthics Challenge</h1>
+                    <div class="text-sm text-gray-600" id="progressText">
+                        Scenario 1 of 5
+                    </div>
+                </div>
+                <div class="bg-gray-200 rounded-full h-2 mb-4">
+                    <div id="progressBar" class="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all duration-300" style="width: 20%"></div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <div class="flex items-center mb-6">
+                    <div class="bg-blue-100 p-3 rounded-full mr-4">
+                        <span id="scenarioIcon" class="text-2xl">🧬</span>
+                    </div>
+                    <div>
+                        <h2 id="scenarioTitle" class="text-2xl font-bold text-gray-800">Gene Therapy Access</h2>
+                        <p id="scenarioCategory" class="text-blue-600 font-medium">Healthcare Equity</p>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 rounded-lg p-6 mb-8">
+                    <h3 class="font-semibold text-gray-800 mb-3">Scenario:</h3>
+                    <p id="scenarioSituation" class="text-gray-700 leading-relaxed"></p>
+                </div>
+
+                <div class="space-y-4">
+                    <h3 class="font-semibold text-gray-800 mb-4">What would you do?</h3>
+                    <div id="optionsContainer"></div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <p class="text-sm text-gray-600">
+                        Think carefully about the ethical principles at stake: autonomy, beneficence, non-maleficence, justice, and dignity.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="resultsScreen" style="display: none;">
+            <div class="bg-white rounded-lg shadow-lg p-8">
+                <div class="text-center mb-8">
+                    <div class="text-6xl mb-4">🏆</div>
+                    <h2 class="text-3xl font-bold text-gray-800 mb-2">Challenge Complete!</h2>
+                    <div id="scoreLevel" class="text-2xl font-bold mb-2">Ethics Expert</div>
+                    <p id="scoreDescription" class="text-gray-600 mb-4">Excellent ethical reasoning!</p>
+                    <div class="text-xl">
+                        Your Score: <span id="finalScore" class="font-bold text-blue-600">20/20</span>
+                    </div>
+                </div>
+
+                <div class="space-y-6">
+                    <h3 class="text-xl font-semibold mb-4">Your Decisions & Feedback:</h3>
+                    <div id="decisionsContainer"></div>
+                </div>
+
+                <div class="mt-8 text-center">
+                    <button onclick="resetGame()" class="bg-gradient-to-r from-green-600 to-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:transform hover:scale-105 transition-all">
+                        🔄 Try Again
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const scenarios = [
+            {
+                id: 1,
+                title: "Gene Therapy Access",
+                category: "Healthcare Equity",
+                icon: "🧬",
+                situation: "A new gene therapy can cure a rare genetic disease affecting 1 in 100,000 people. The treatment costs $2 million per patient. Your hospital has funding for only 5 treatments this year, but 20 patients need it urgently.",
+                options: [
+                    {
+                        text: "Treat the 5 youngest patients first",
+                        points: 2,
+                        reasoning: "Age-based priority considers life-years saved but may discriminate against older patients.",
+                        ethical_principles: "Maximizing benefit, but raises age discrimination concerns"
+                    },
+                    {
+                        text: "Use a lottery system for fair selection",
+                        points: 3,
+                        reasoning: "Ensures fairness and removes bias, though some patients may have more urgent needs.",
+                        ethical_principles: "Justice and equality, procedural fairness"
+                    },
+                    {
+                        text: "Prioritize based on disease severity",
+                        points: 4,
+                        reasoning: "Medical triage principles - treat the sickest first. Most ethically defensible approach.",
+                        ethical_principles: "Beneficence, medical utility, triage ethics"
+                    },
+                    {
+                        text: "Give treatments to whoever can pay",
+                        points: 1,
+                        reasoning: "Creates healthcare inequality and violates principles of equal access to care.",
+                        ethical_principles: "Conflicts with justice and equal access principles"
+                    }
+                ]
+            },
+            {
+                id: 2,
+                title: "AI Diagnostic Tool",
+                category: "Technology & Privacy",
+                icon: "🧠",
+                situation: "Your hospital wants to implement an AI system that can predict patient health risks by analyzing their social media posts, shopping habits, and location data. It's 85% accurate at predicting heart attacks 6 months early.",
+                options: [
+                    {
+                        text: "Implement with explicit patient consent only",
+                        points: 4,
+                        reasoning: "Respects patient autonomy and privacy while allowing beneficial use of technology.",
+                        ethical_principles: "Autonomy, informed consent, beneficence"
+                    },
+                    {
+                        text: "Implement for all patients (opt-out system)",
+                        points: 2,
+                        reasoning: "Maximizes health benefits but may violate privacy expectations.",
+                        ethical_principles: "Beneficence vs. autonomy tension"
+                    },
+                    {
+                        text: "Don't implement due to privacy concerns",
+                        points: 2,
+                        reasoning: "Protects privacy but may prevent saving lives through early intervention.",
+                        ethical_principles: "Privacy protection, but may conflict with beneficence"
+                    },
+                    {
+                        text: "Implement only for high-risk patients",
+                        points: 3,
+                        reasoning: "Balances benefits and privacy, but creates different standards of care.",
+                        ethical_principles: "Proportionality, but raises equity concerns"
+                    }
+                ]
+            },
+            {
+                id: 3,
+                title: "Organ Allocation Dilemma",
+                category: "Resource Allocation",
+                icon: "❤️",
+                situation: "A healthy liver becomes available. Three patients need it: a 25-year-old with genetic disease, a 45-year-old alcoholic who's been sober for 2 years, and a 60-year-old with medication-induced liver failure. All have similar survival chances.",
+                options: [
+                    {
+                        text: "Give to the youngest patient (25-year-old)",
+                        points: 2,
+                        reasoning: "Maximizes life-years saved but may discriminate based on age alone.",
+                        ethical_principles: "Utility maximization, but age-based discrimination"
+                    },
+                    {
+                        text: "Give to the patient with genetic disease",
+                        points: 3,
+                        reasoning: "Prioritizes those with conditions beyond their control, but may penalize lifestyle choices.",
+                        ethical_principles: "Desert-based allocation, personal responsibility"
+                    },
+                    {
+                        text: "Use medical factors only (first registered)",
+                        points: 4,
+                        reasoning: "Most objective approach, avoids moral judgments about patient behavior.",
+                        ethical_principles: "Procedural justice, equal treatment"
+                    },
+                    {
+                        text: "Exclude the former alcoholic patient",
+                        points: 1,
+                        reasoning: "Punishes past behavior despite current sobriety and rehabilitation.",
+                        ethical_principles: "Conflicts with redemption and equal access principles"
+                    }
+                ]
+            },
+            {
+                id: 4,
+                title: "Genetic Testing Disclosure",
+                category: "Privacy & Family",
+                icon: "👥",
+                situation: "A patient's genetic test reveals they carry a gene for Huntington's disease. They refuse to tell their adult children, who have a 50% chance of carrying the same gene. The children could benefit from early testing and life planning.",
+                options: [
+                    {
+                        text: "Respect patient confidentiality completely",
+                        points: 3,
+                        reasoning: "Upholds doctor-patient confidentiality but may prevent family members from making informed decisions.",
+                        ethical_principles: "Confidentiality, patient autonomy"
+                    },
+                    {
+                        text: "Encourage patient to disclose, offer genetic counseling",
+                        points: 4,
+                        reasoning: "Balances confidentiality with family welfare, provides support for difficult conversations.",
+                        ethical_principles: "Beneficence, family welfare, supported autonomy"
+                    },
+                    {
+                        text: "Inform the children directly",
+                        points: 1,
+                        reasoning: "Violates patient confidentiality and trust, could destroy doctor-patient relationship.",
+                        ethical_principles: "Violates confidentiality and trust"
+                    },
+                    {
+                        text: "Inform children without revealing parent's status",
+                        points: 2,
+                        reasoning: "Attempts to protect family while maintaining some confidentiality, but may be seen as deceptive.",
+                        ethical_principles: "Partial confidentiality, but raises honesty concerns"
+                    }
+                ]
+            },
+            {
+                id: 5,
+                title: "Clinical Trial Ethics",
+                category: "Research Ethics",
+                icon: "🏆",
+                situation: "Your pharmaceutical company is testing a promising cancer drug. Preliminary results show it's highly effective, but the trial isn't complete. Patients in the control group (getting placebo) are deteriorating rapidly.",
+                options: [
+                    {
+                        text: "Stop the trial and give everyone the drug",
+                        points: 2,
+                        reasoning: "Prioritizes current patients but may prevent learning about long-term effects and optimal dosing.",
+                        ethical_principles: "Beneficence for current patients, but may harm future patients"
+                    },
+                    {
+                        text: "Continue trial as planned for scientific validity",
+                        points: 2,
+                        reasoning: "Maintains scientific rigor but may harm control group patients unnecessarily.",
+                        ethical_principles: "Scientific integrity vs. immediate harm prevention"
+                    },
+                    {
+                        text: "Allow control group to switch to treatment",
+                        points: 4,
+                        reasoning: "Ethical compromise that helps current patients while preserving some trial data.",
+                        ethical_principles: "Beneficence, minimizing harm while preserving research value"
+                    },
+                    {
+                        text: "Redesign study to compare with standard treatment",
+                        points: 3,
+                        reasoning: "Eliminates placebo but may complicate results interpretation and delay approval.",
+                        ethical_principles: "Reduces harm but may delay benefits to future patients"
+                    }
+                ]
+            }
+        ];
+
+        let currentScenario = 0;
+        let score = 0;
+        let decisions = [];
+
+        function startGame() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('gameScreen').style.display = 'block';
+            loadScenario();
+        }
+
+        function loadScenario() {
+            const scenario = scenarios[currentScenario];
+            
+            document.getElementById('progressText').textContent = `Scenario ${currentScenario + 1} of ${scenarios.length}`;
+            document.getElementById('progressBar').style.width = `${((currentScenario + 1) / scenarios.length) * 100}%`;
+            
+            document.getElementById('scenarioIcon').textContent = scenario.icon;
+            document.getElementById('scenarioTitle').textContent = scenario.title;
+            document.getElementById('scenarioCategory').textContent = scenario.category;
+            document.getElementById('scenarioSituation').textContent = scenario.situation;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            
+            scenario.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'w-full text-left p-4 bg-gray-50 hover:bg-blue-50 rounded-lg border-2 border-transparent hover:border-blue-200 transition-all duration-200';
+                button.innerHTML = `
+                    <div class="flex items-center justify-between">
+                        <span class="text-gray-800 font-medium">${option.text}</span>
+                        <span class="text-gray-400">→</span>
+                    </div>
+                `;
+                button.onclick = () => makeDecision(index);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function makeDecision(optionIndex) {
+            const scenario = scenarios[currentScenario];
+            const selectedOption = scenario.options[optionIndex];
+            
+            decisions.push({
+                scenario: scenario.title,
+                choice: selectedOption.text,
+                points: selectedOption.points,
+                reasoning: selectedOption.reasoning,
+                principles: selectedOption.ethical_principles
+            });
+            
+            score += selectedOption.points;
+            
+            if (currentScenario < scenarios.length - 1) {
+                currentScenario++;
+                loadScenario();
+            } else {
+                showResults();
+            }
+        }
+
+        function showResults() {
+            document.getElementById('gameScreen').style.display = 'none';
+            document.getElementById('resultsScreen').style.display = 'block';
+            
+            const maxScore = scenarios.length * 4;
+            const percentage = (score / maxScore) * 100;
+            
+            let scoreLevel, scoreClass, description;
+            
+            if (percentage >= 85) {
+                scoreLevel = "Ethics Expert";
+                scoreClass = "score-excellent";
+                description = "Excellent ethical reasoning!";
+            } else if (percentage >= 70) {
+                scoreLevel = "Strong Ethical Thinker";
+                scoreClass = "score-good";
+                description = "Good grasp of bioethical principles.";
+            } else if (percentage >= 55) {
+                scoreLevel = "Developing Ethics Skills";
+                scoreClass = "score-developing";
+                description = "Room for improvement in ethical analysis.";
+            } else {
+                scoreLevel = "Ethics Novice";
+                scoreClass = "score-novice";
+                description = "Consider studying bioethics principles more deeply.";
+            }
+            
+            document.getElementById('scoreLevel').textContent = scoreLevel;
+            document.getElementById('scoreLevel').className = `text-2xl font-bold mb-2 ${scoreClass}`;
+            document.getElementById('scoreDescription').textContent = description;
+            document.getElementById('finalScore').textContent = `${score}/${maxScore}`;
+            
+            const decisionsContainer = document.getElementById('decisionsContainer');
+            decisionsContainer.innerHTML = '';
+            
+            decisions.forEach((decision, index) => {
+                const decisionElement = document.createElement('div');
+                decisionElement.className = 'bg-gray-50 rounded-lg p-4 border-l-4 border-blue-500';
+                decisionElement.innerHTML = `
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="font-semibold text-gray-800">${decision.scenario}</h4>
+                        <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-sm">
+                            ${decision.points}/4 points
+                        </span>
+                    </div>
+                    <p class="text-gray-700 mb-2"><strong>Your choice:</strong> ${decision.choice}</p>
+                    <p class="text-gray-600 mb-2"><strong>Reasoning:</strong> ${decision.reasoning}</p>
+                    <p class="text-gray-600"><strong>Ethical principles:</strong> ${decision.principles}</p>
+                `;
+                decisionsContainer.appendChild(decisionElement);
+            });
+        }
+
+        function resetGame() {
+            currentScenario = 0;
+            score = 0;
+            decisions = [];
+            document.getElementById('resultsScreen').style.display = 'none';
+            document.getElementById('startScreen').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
