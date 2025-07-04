@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>BioEthics Game - Simple Version</title>
+    <title>BioEthics 4-Step Deep Scenarios</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -40,6 +40,10 @@
         button:hover {
             background: #2980b9;
         }
+        button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+        }
         .scenario-box {
             background: #ecf0f1;
             padding: 20px;
@@ -54,12 +58,27 @@
             margin: 15px 0;
             border-left: 4px solid #27ae60;
         }
+        .consequence.negative {
+            background: #ffe8e8;
+            border-left: 4px solid #e74c3c;
+        }
+        .consequence.mixed {
+            background: #fff8e8;
+            border-left: 4px solid #f39c12;
+        }
         .score {
             text-align: center;
             font-size: 18px;
             font-weight: bold;
             color: #2c3e50;
             margin: 20px 0;
+        }
+        .path-info {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #3498db;
         }
         textarea {
             width: 100%;
@@ -76,40 +95,56 @@
     <div class="container">
         <!-- Start Screen -->
         <div id="start" class="screen active">
-            <h1>🧬 BioEthics Decision Game</h1>
-            <p>Navigate ethical challenges in biotechnology with real consequences.</p>
+            <h1>🧬 BioEthics 4-Step Deep Adventure</h1>
+            <p>Choose a scenario and navigate 4 interconnected steps with escalating complexity.</p>
             
             <div class="scenario-box">
-                <h3>What You'll Experience:</h3>
+                <h3>How It Works:</h3>
                 <ul>
-                    <li>Make tough ethical decisions</li>
-                    <li>See real consequences of your choices</li>
-                    <li>Navigate complex stakeholder reactions</li>
-                    <li>Build your ethics expertise</li>
+                    <li><strong>Choose Your Scenario:</strong> Gene Therapy, AI Diagnostics, or Vaccine Pricing</li>
+                    <li><strong>4 Steps Deep:</strong> Each choice creates new complications requiring additional decisions</li>
+                    <li><strong>Escalating Stakes:</strong> Decisions become more complex as stakeholders react</li>
+                    <li><strong>Real Consequences:</strong> See how your choices ripple through the healthcare system</li>
                 </ul>
             </div>
             
-            <button onclick="startGame()">🚀 Start Your Journey</button>
+            <button onclick="chooseScenario()">🚀 Choose Your Scenario</button>
+        </div>
+
+        <!-- Scenario Selection -->
+        <div id="choose" class="screen">
+            <h1>Choose Your 4-Step Journey</h1>
+            <div class="scenario-box">
+                <p>Each scenario will take you through 4 interconnected steps with increasing complexity:</p>
+            </div>
+            
+            <button onclick="startScenario('gene_therapy')">🧬 Gene Therapy Allocation Crisis</button>
+            <button onclick="startScenario('ai_diagnostics')">🤖 AI Diagnostic Privacy Dilemma</button>
+            <button onclick="startScenario('vaccine_pricing')">💉 Global Vaccine Pricing Challenge</button>
         </div>
 
         <!-- Game Screen -->
         <div id="game" class="screen">
             <div class="score">Ethics Score: <span id="score">100</span>/100</div>
-            <div class="score">Step <span id="step">1</span> of 3</div>
+            <div class="score">Step <span id="step">1</span> of 4</div>
+            
+            <div class="path-info" id="path-info" style="display: none;">
+                <strong>Your Scenario:</strong> <span id="scenario-name"></span>
+            </div>
             
             <div class="scenario-box">
-                <h2 id="title">Gene Therapy Crisis</h2>
+                <h2 id="title">Loading...</h2>
                 <p id="story">You're loading...</p>
             </div>
 
             <div id="consequence" class="consequence" style="display: none;">
                 <strong>Consequence:</strong> <span id="cons-text"></span>
-                <br><small><em>Next scenario loads in 2 seconds...</em></small>
+                <br><small><em>Next step loads in 2 seconds...</em></small>
             </div>
 
             <div>
-                <label><strong>Your Reasoning:</strong></label>
-                <textarea id="thinking" placeholder="What are you thinking about this decision?"></textarea>
+                <label><strong>Your Strategic Thinking:</strong></label>
+                <textarea id="thinking" placeholder="What factors are you considering? What are your concerns?"></textarea>
             </div>
 
             <div id="choices">
@@ -119,80 +154,194 @@
 
         <!-- Results Screen -->
         <div id="results" class="screen">
-            <h1>🎯 Journey Complete!</h1>
+            <h1>🎯 4-Step Journey Complete!</h1>
             <div class="score">Final Score: <span id="final-score">100</span>/100</div>
             <div id="assessment" class="scenario-box"></div>
             
-            <h3>Your Decisions:</h3>
+            <h3>Your 4-Step Decision Path:</h3>
             <div id="decisions-list"></div>
             
-            <h3>Your Thoughts:</h3>
+            <h3>Your Strategic Thinking:</h3>
             <div id="thoughts-list"></div>
             
-            <button onclick="restart()">🔄 Try Again</button>
+            <button onclick="restart()">🔄 Try Different Scenario</button>
         </div>
     </div>
 
     <script>
-        // Game data
+        // Game state
         let currentStep = 1;
         let score = 100;
         let decisions = [];
         let thoughts = [];
+        let chosenScenario = '';
+        let scenarioName = '';
 
-        // Game scenarios
-        const scenarios = [
-            {
-                title: "Gene Therapy Access Crisis",
-                story: "You're a hospital director. A new gene therapy costs $2 million per treatment and can save children's lives. You can only afford 4 treatments, but 18 children need it. How do you decide who gets treatment?",
-                choices: [
-                    { text: "Create medical committee to rank by severity", points: 10, outcome: "The committee creates fair medical criteria, but some families feel the process is cold." },
-                    { text: "Use lottery system for complete fairness", points: 5, outcome: "The lottery is fair but the sickest child might not get treatment, causing public outrage." },
-                    { text: "Launch fundraising campaign", points: 15, outcome: "Fundraising succeeds but creates pressure to treat donors' children first." },
-                    { text: "Negotiate with drug company for better pricing", points: 8, outcome: "Company offers discount but wants exclusive research rights and patient data." }
+        // 4-step scenarios with escalating complexity
+        const scenarios = {
+            gene_therapy: {
+                name: "Gene Therapy Allocation Crisis",
+                steps: [
+                    {
+                        title: "Step 1: Initial Allocation Decision",
+                        story: "You're Chief Medical Officer at Regional Medical Center. A breakthrough gene therapy costs $2.1 million per treatment and can cure a fatal genetic disease affecting children. You have 18 children who desperately need it, but your annual budget only covers 4 treatments. Families are pleading, media is investigating, and the board wants your decision in 48 hours.",
+                        choices: [
+                            { text: "Establish medical committee to rank patients by clinical severity", points: 10, outcome: "You create a 5-person ethics committee that develops objective criteria. The ranking is medically sound but some families feel the process is cold and impersonal.", type: "mixed" },
+                            { text: "Launch emergency fundraising while treating 4 most critical patients", points: 15, outcome: "You begin treating the 4 sickest children while launching 'Hope for 18' campaign. Local media embraces your approach and donations start flowing within hours.", type: "positive" },
+                            { text: "Implement fair lottery system for all 18 children", points: 5, outcome: "You announce a lottery system. The family of Emma (3-year-old, sickest patient) is outraged: 'You're gambling with our daughter's life!' The story goes viral.", type: "negative" },
+                            { text: "Negotiate with pharmaceutical company for compassionate pricing", points: 8, outcome: "You contact GeneTech Industries. They offer a 25% discount but want exclusive research rights and patient data. This raises independence concerns.", type: "mixed" }
+                        ]
+                    },
+                    {
+                        title: "Step 2: Stakeholder Complications",
+                        story: "Your initial decision has created new complications. If you chose the committee approach, a major donor is threatening to withdraw $8M unless their grandchild is treated. If you chose fundraising, the pharmaceutical company raised prices 15% due to 'demand.' If you chose lottery, you're facing a lawsuit from Emma's family. If you chose negotiation, the contract terms are more restrictive than expected.",
+                        choices: [
+                            { text: "Stand firm on your principles despite external pressure", points: 18, outcome: "You maintain your ethical stance despite intense pressure. Some stakeholders are angry, but medical ethicists praise your consistency. Your decision becomes a case study in principled leadership.", type: "positive" },
+                            { text: "Find creative compromise solution that addresses multiple concerns", points: 10, outcome: "You develop a hybrid approach that accommodates different viewpoints. It's more fair but complicated to implement and explain to stakeholders.", type: "mixed" },
+                            { text: "Modify your approach under pressure to maintain relationships", points: -5, outcome: "You change your decision due to external pressure. While this resolves immediate conflicts, it raises questions about your consistency and leadership.", type: "negative" }
+                        ]
+                    },
+                    {
+                        title: "Step 3: Media and Legal Escalation",
+                        story: "Your case has attracted national attention. CNN wants to interview you about healthcare ethics vs. donor influence. Three board members are calling for your resignation. The State Attorney General is investigating whether your program violates interstate commerce rules. Patient advocacy groups are either praising or protesting your approach. How do you handle this crisis?",
+                        choices: [
+                            { text: "Embrace media spotlight to advocate for healthcare ethics reform nationwide", points: 20, outcome: "You become a national spokesperson for healthcare ethics. Medical schools invite you to speak, but the ongoing attention means every decision is scrutinized.", type: "positive" },
+                            { text: "Work quietly behind scenes while focusing on patient care", points: 12, outcome: "You avoid controversy and focus on treating patients. This provides stability but misses the opportunity for broader healthcare system impact.", type: "mixed" },
+                            { text: "Resign to protect the hospital from further controversy", points: 5, outcome: "Your resignation ends the immediate crisis but sends a message that ethical leadership can be pressured into retreat. Medical community is divided on your decision.", type: "negative" }
+                        ]
+                    },
+                    {
+                        title: "Step 4: Long-term Legacy and Policy Impact",
+                        story: "Six months later, your decisions have shaped national healthcare policy. Congressional hearings are being held about resource allocation based on your case. Medical schools are teaching your decisions as case studies. The families of treated children are doing well, but questions remain about the 14 children who didn't receive treatment. How do you complete your ethical journey?",
+                        choices: [
+                            { text: "Testify before Congress to establish national healthcare allocation guidelines", points: 25, outcome: "Your testimony leads to new federal guidelines for healthcare resource allocation. Your ethical framework becomes the national standard, helping thousands of future patients.", type: "positive" },
+                            { text: "Establish healthcare ethics institute to train future medical leaders", points: 20, outcome: "You create a permanent institute that trains healthcare leaders in ethical decision-making. Your legacy lives on through better-trained professionals.", type: "positive" },
+                            { text: "Return to clinical practice with lessons learned", points: 10, outcome: "You focus on direct patient care, applying lessons learned. Your impact remains local but meaningful to the patients you directly serve.", type: "mixed" },
+                            { text: "Take pharmaceutical company job with higher salary", points: -10, outcome: "Your move to industry raises questions about whether your previous ethical stances were genuine. Medical community loses trust in your integrity.", type: "negative" }
+                        ]
+                    }
                 ]
             },
-            {
-                title: "AI Diagnostic Privacy Dilemma",
-                story: "Your hospital wants to use AI that analyzes social media and shopping data to predict heart attacks 6 months early. It's 85% accurate and could save 200+ lives per year, but privacy advocates are concerned about surveillance.",
-                choices: [
-                    { text: "Implement with full patient consent", points: 12, outcome: "40% of patients opt-in, preventing 80 heart attacks but leaving many unprotected." },
-                    { text: "Reject due to privacy concerns", points: 8, outcome: "Privacy is protected but 35 preventable heart attacks occur in the first year." },
-                    { text: "Use only for high-risk patients", points: 10, outcome: "System helps some patients but creates two-tier healthcare access." },
-                    { text: "Implement secretly for 'patient benefit'", points: -10, outcome: "Effective prevention but massive privacy violation scandal when discovered." }
+            ai_diagnostics: {
+                name: "AI Diagnostic Privacy Dilemma",
+                steps: [
+                    {
+                        title: "Step 1: AI Implementation Decision",
+                        story: "Your hospital wants to implement an AI system that analyzes patients' social media posts, shopping habits, and location data to predict heart attacks 6 months early. It's 87% accurate and could save 200+ lives annually, but privacy advocates are concerned about surveillance. The board wants your recommendation in 72 hours.",
+                        choices: [
+                            { text: "Implement with robust consent process and privacy protections", points: 15, outcome: "You design an opt-in system with full transparency. 40% of patients participate, and you prevent 80 heart attacks in the first year while respecting privacy rights.", type: "positive" },
+                            { text: "Reject system due to privacy concerns and surveillance risks", points: 8, outcome: "You block the AI system citing privacy rights. However, 35 preventable heart attacks occur in the first year. Families question whether privacy was worth the cost.", type: "mixed" },
+                            { text: "Implement for high-risk patients only with special consent", points: 12, outcome: "You use the system for diabetes and cardiac patients only. This prevents 28 heart attacks but creates questions about equal access to AI-powered healthcare.", type: "mixed" },
+                            { text: "Implement broadly with opt-out system for maximum coverage", points: 5, outcome: "You implement for all patients with an opt-out option. This maximizes health benefits but creates privacy concerns when only 10% opt out due to complex procedures.", type: "negative" }
+                        ]
+                    },
+                    {
+                        title: "Step 2: Insurance Company Interest",
+                        story: "EliteInsure, the nation's largest health insurer, offers $100 million to license your AI technology. However, they plan to use it primarily for premium clients and may deny coverage to high-risk individuals identified by the AI. Meanwhile, the CDC offers $15 million over 3 years for public health implementation. Your decision will affect millions of Americans' access to this technology.",
+                        choices: [
+                            { text: "License exclusively to EliteInsure for maximum financial return", points: -8, outcome: "You accept the lucrative deal, but the AI becomes a tool for insurance discrimination. Congressional hearings follow, and you're accused of enabling algorithmic bias in healthcare.", type: "negative" },
+                            { text: "Partner with CDC for equitable public health implementation", points: 18, outcome: "You choose public health over profit. The AI becomes part of national preventive care guidelines, saving thousands of lives across all demographics.", type: "positive" },
+                            { text: "Create dual licensing: commercial rights to EliteInsure, public rights to CDC", points: 10, outcome: "You negotiate both deals. This generates revenue while ensuring broad access, but creates complexity in data management and potential conflicts between objectives.", type: "mixed" }
+                        ]
+                    },
+                    {
+                        title: "Step 3: Algorithmic Bias Discovery",
+                        story: "Independent researchers discover your AI has racial and socioeconomic biases - it's 15% less accurate for Black patients and 20% less accurate for low-income patients due to different social media patterns. This could lead to health disparities. The story breaks in major medical journals, and civil rights groups are demanding action.",
+                        choices: [
+                            { text: "Immediately suspend system and invest in bias correction research", points: 15, outcome: "You halt the system and spend $5 million on bias research. This delays implementation by 18 months but ultimately creates a more equitable AI system.", type: "positive" },
+                            { text: "Continue system while developing bias corrections in parallel", points: 5, outcome: "You keep the system running while working on fixes. This saves some lives but perpetuates health disparities for vulnerable populations during the correction period.", type: "mixed" },
+                            { text: "Defend the system's overall accuracy and downplay bias concerns", points: -12, outcome: "You minimize the bias issues, focusing on overall lives saved. This leads to lawsuits, loss of medical community trust, and eventual forced shutdown by regulators.", type: "negative" }
+                        ]
+                    },
+                    {
+                        title: "Step 4: National AI Healthcare Policy",
+                        story: "Your AI case has prompted Congress to draft the first national AI healthcare legislation. You're invited to testify about algorithmic bias, privacy protection, and equitable access. Your recommendations could shape how AI is used in American healthcare for decades. The medical AI industry is watching closely.",
+                        choices: [
+                            { text: "Advocate for strict federal oversight and bias testing requirements", points: 20, outcome: "Your testimony leads to comprehensive AI healthcare regulations. Development slows but bias is minimized, creating more equitable healthcare AI for all Americans.", type: "positive" },
+                            { text: "Recommend industry self-regulation with voluntary bias testing", points: 8, outcome: "Congress adopts lighter regulations based on your recommendations. Innovation continues rapidly but bias problems persist in some AI systems.", type: "mixed" },
+                            { text: "Focus testimony on innovation benefits rather than bias risks", points: -5, outcome: "Your industry-friendly testimony leads to minimal regulation. AI innovation flourishes but exacerbates healthcare disparities, damaging your reputation as an ethical leader.", type: "negative" }
+                        ]
+                    }
                 ]
             },
-            {
-                title: "Global Vaccine Pricing",
-                story: "Your company developed a life-saving vaccine that costs $8 to make. Your board wants to price it at $180 in wealthy countries. This leaves 500 million people in poor countries without access. How do you balance profit with global health?",
-                choices: [
-                    { text: "Use tiered pricing - rich countries subsidize poor ones", points: 18, outcome: "2 billion people vaccinated globally, preventing 800,000 deaths and creating sustainable model." },
-                    { text: "Price at cost globally through public funding", points: 12, outcome: "Universal access achieved but future R&D depends on uncertain government funding." },
-                    { text: "Maintain high pricing to fund future research", points: -8, outcome: "Strong profits enable new drug development but 500 million remain vulnerable." },
-                    { text: "Create nonprofit foundation model", points: 15, outcome: "Cross-subsidization works but creates complex international negotiations." }
+            vaccine_pricing: {
+                name: "Global Vaccine Pricing Challenge",
+                steps: [
+                    {
+                        title: "Step 1: Initial Pricing Strategy",
+                        story: "Your biotech company has developed a universal flu vaccine that prevents 95% of flu cases and costs $8 per dose to manufacture. Your board wants to price it at $180 in wealthy countries and $90 in middle-income countries. Low-income countries would get it free through a foundation. However, this still leaves 500 million people without access. The WHO is pressuring for global affordable pricing.",
+                        choices: [
+                            { text: "Implement tiered pricing with wealthy countries subsidizing global access", points: 18, outcome: "You create a system where high-income countries pay premium prices that fund free distribution globally. 2.1 billion people get vaccinated, preventing 890,000 deaths.", type: "positive" },
+                            { text: "Price at cost globally, seek government funding for R&D", points: 12, outcome: "You price the vaccine at $12 worldwide. Universal access is achieved but future R&D depends on uncertain government funding, potentially delaying other breakthrough treatments.", type: "mixed" },
+                            { text: "Maintain market-based pricing to fund future innovation", points: -8, outcome: "You keep high prices to fund research. Wealthy populations are protected, but 500 million people remain vulnerable. Public health advocates condemn the decision.", type: "negative" },
+                            { text: "License manufacturing rights to generic producers in developing countries", points: 15, outcome: "You allow local production in 40 countries. This increases access but creates quality control challenges and reduces your revenue by 60%.", type: "mixed" }
+                        ]
+                    },
+                    {
+                        title: "Step 2: Production Capacity Crisis",
+                        story: "Global demand far exceeds your production capacity. Wealthy nations are offering to pay 5x the normal price for priority access, while poor countries desperately need the vaccine as flu seasons approach. Your manufacturing facilities can only produce 500 million doses in the first year, but global need is 2 billion doses. International tensions are rising over vaccine nationalism.",
+                        choices: [
+                            { text: "Allocate based on global disease burden and vulnerability", points: 20, outcome: "You prioritize countries with highest flu mortality rates and weakest healthcare systems. This saves the most lives globally but wealthy nations threaten trade retaliation.", type: "positive" },
+                            { text: "Accept highest bidders to fund rapid production expansion", points: -10, outcome: "You sell to the highest bidders first. This funds new factories but means wealthy countries are protected while poor countries face deadly flu seasons.", type: "negative" },
+                            { text: "Create proportional allocation system based on population", points: 12, outcome: "You allocate doses proportionally by population. This feels fair but means some high-burden countries get less than needed while low-burden countries get more.", type: "mixed" }
+                        ]
+                    },
+                    {
+                        title: "Step 3: Intellectual Property Challenge",
+                        story: "Several developing countries threaten to ignore your patents and produce generic versions without permission, citing public health emergency provisions in international law. The pharmaceutical industry warns this could destroy innovation incentives. Meanwhile, activists are calling for you to waive patents voluntarily. The Biden administration is pressuring you to find a compromise.",
+                        choices: [
+                            { text: "Voluntarily waive patents for pandemic response", points: 25, outcome: "You waive patents for public health emergency. Global production increases rapidly, saving millions of lives, but shareholders sue and future investment in your company plummets.", type: "positive" },
+                            { text: "Negotiate limited patent sharing with quality control requirements", points: 15, outcome: "You create licensing agreements with strict quality standards. This increases production while maintaining some control, but legal negotiations delay implementation by 6 months.", type: "mixed" },
+                            { text: "Defend patents and threaten legal action against violators", points: -15, outcome: "You fight to protect intellectual property. Several countries produce unauthorized versions anyway, leading to quality issues and international legal battles that distract from health goals.", type: "negative" }
+                        ]
+                    },
+                    {
+                        title: "Step 4: Global Health Governance Legacy",
+                        story: "Your vaccine decisions have reshaped global health policy. The WHO is creating new pandemic preparedness guidelines based on your case. Your approach to pricing, production, and intellectual property will influence how the world responds to future health crises. You're invited to lead a new Global Health Equity Initiative.",
+                        choices: [
+                            { text: "Lead initiative to establish new global health equity standards", points: 25, outcome: "You become director of the Global Health Equity Initiative, creating binding international standards for pandemic response. Your framework saves millions in future health crises.", type: "positive" },
+                            { text: "Advise initiative while maintaining focus on vaccine business", points: 15, outcome: "You provide expertise while running your company. This creates sustainable innovation funding but limits your ability to drive systematic change in global health equity.", type: "mixed" },
+                            { text: "Decline public role and focus on maximizing shareholder returns", points: -10, outcome: "You prioritize business interests over global health leadership. This generates short-term profits but damages your reputation and misses opportunity to improve global health systems.", type: "negative" }
+                        ]
+                    }
                 ]
             }
-        ];
+        };
 
-        function startGame() {
+        function chooseScenario() {
             document.getElementById('start').classList.remove('active');
-            document.getElementById('game').classList.add('active');
-            loadScenario();
+            document.getElementById('choose').classList.add('active');
         }
 
-        function loadScenario() {
-            if (currentStep > scenarios.length) {
+        function startScenario(scenario) {
+            chosenScenario = scenario;
+            scenarioName = scenarios[scenario].name;
+            
+            document.getElementById('choose').classList.remove('active');
+            document.getElementById('game').classList.add('active');
+            
+            loadStep();
+        }
+
+        function loadStep() {
+            if (currentStep > 4) {
                 showResults();
                 return;
             }
 
-            const scenario = scenarios[currentStep - 1];
+            const step = scenarios[chosenScenario].steps[currentStep - 1];
             
             document.getElementById('step').textContent = currentStep;
-            document.getElementById('title').textContent = scenario.title;
-            document.getElementById('story').textContent = scenario.story;
+            document.getElementById('title').textContent = step.title;
+            document.getElementById('story').textContent = step.story;
             
-            // Hide previous consequence initially
+            // Show scenario name after first step
+            if (currentStep > 1) {
+                document.getElementById('path-info').style.display = 'block';
+                document.getElementById('scenario-name').textContent = scenarioName;
+            }
+            
+            // Hide consequence initially
             if (currentStep === 1) {
                 document.getElementById('consequence').style.display = 'none';
             }
@@ -201,7 +350,7 @@
             const choicesDiv = document.getElementById('choices');
             choicesDiv.innerHTML = '';
             
-            scenario.choices.forEach((choice, index) => {
+            step.choices.forEach((choice, index) => {
                 const button = document.createElement('button');
                 button.textContent = choice.text;
                 button.onclick = () => makeChoice(index);
@@ -213,8 +362,8 @@
         }
 
         function makeChoice(choiceIndex) {
-            const scenario = scenarios[currentStep - 1];
-            const choice = scenario.choices[choiceIndex];
+            const step = scenarios[chosenScenario].steps[currentStep - 1];
+            const choice = step.choices[choiceIndex];
             
             // Record thinking
             const thinking = document.getElementById('thinking').value.trim();
@@ -231,7 +380,9 @@
             document.getElementById('score').textContent = score;
             
             // Show consequence
-            document.getElementById('consequence').style.display = 'block';
+            const conseqDiv = document.getElementById('consequence');
+            conseqDiv.style.display = 'block';
+            conseqDiv.className = `consequence ${choice.type}`;
             document.getElementById('cons-text').textContent = choice.outcome;
             
             // Disable all buttons
@@ -241,8 +392,8 @@
             // Move to next step after delay
             setTimeout(() => {
                 currentStep++;
-                loadScenario();
-            }, 2000); // Reduced from 3000 to 2000 (2 seconds)
+                loadStep();
+            }, 2500);
         }
 
         function showResults() {
@@ -251,16 +402,16 @@
             
             document.getElementById('final-score').textContent = score;
             
-            // Assessment
+            // Assessment based on score
             let assessment = '';
-            if (score >= 80) {
-                assessment = '🌟 Excellent! You demonstrated strong ethical leadership, balancing competing interests while prioritizing patient welfare and social justice.';
-            } else if (score >= 60) {
-                assessment = '👍 Good work! You handled most ethical challenges well, though some decisions could have better balanced stakeholder interests.';
-            } else if (score >= 40) {
-                assessment = '📚 Learning experience! Your journey shows the complexity of healthcare ethics. Consider how different approaches might better serve all stakeholders.';
+            if (score >= 85) {
+                assessment = '🌟 <strong>Ethical Pioneer:</strong> You navigated all 4 steps with exceptional ethical reasoning, balancing competing interests while prioritizing patient welfare and social justice. Your decisions could serve as a model for healthcare leadership.';
+            } else if (score >= 65) {
+                assessment = '⚖️ <strong>Thoughtful Leader:</strong> You successfully handled most challenges across the 4 steps, showing good ethical reasoning while managing practical constraints. Your approach demonstrates solid healthcare ethics understanding.';
+            } else if (score >= 45) {
+                assessment = '📚 <strong>Learning Journey:</strong> Your 4-step experience revealed both strengths and growth areas. Healthcare ethics is complex, and your decisions show the importance of considering all stakeholder perspectives.';
             } else {
-                assessment = '🤔 Challenging journey! Healthcare ethics requires balancing many competing interests. Reflect on how to better integrate ethical principles into decision-making.';
+                assessment = '🤔 <strong>Reflection Opportunity:</strong> The 4-step journey was challenging, highlighting the difficulty of ethical healthcare leadership. Consider how different approaches might better balance competing ethical principles.';
             }
             
             document.getElementById('assessment').innerHTML = assessment;
@@ -274,7 +425,7 @@
             if (thoughts.length > 0) {
                 thoughtsList.innerHTML = thoughts.map(t => `<div class="consequence">${t}</div>`).join('');
             } else {
-                thoughtsList.innerHTML = '<div class="consequence"><em>No thoughts recorded during your journey.</em></div>';
+                thoughtsList.innerHTML = '<div class="consequence"><em>No strategic thinking recorded during your journey.</em></div>';
             }
         }
 
@@ -283,10 +434,13 @@
             score = 100;
             decisions = [];
             thoughts = [];
+            chosenScenario = '';
+            scenarioName = '';
             
             document.getElementById('results').classList.remove('active');
             document.getElementById('start').classList.add('active');
             document.getElementById('score').textContent = '100';
+            document.getElementById('path-info').style.display = 'none';
         }
     </script>
 </body>
