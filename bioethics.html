@@ -3,64 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BioEthics Adventure</title>
+    <title>BioEthics Adventure - Complex Scenarios</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
     <style>
         .gradient-bg { background: linear-gradient(135deg, #dbeafe 0%, #f3e8ff 100%); }
-        .btn-gradient { background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%); }
-        .btn-gradient:hover { background: linear-gradient(135deg, #1d4ed8 0%, #6d28d9 100%); }
         .consequence-positive { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-left: 4px solid #10b981; }
         .consequence-negative { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border-left: 4px solid #ef4444; }
         .consequence-mixed { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid #f59e0b; }
-        .choice-btn { transition: all 0.3s ease; transform: translateY(0); }
-        .choice-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
-        .typewriter { overflow: hidden; border-right: .15em solid orange; white-space: nowrap; animation: typing 3s steps(60, end), blink-caret .75s step-end infinite; }
-        @keyframes typing { from { width: 0 } to { width: 100% } }
-        @keyframes blink-caret { from, to { border-color: transparent } 50% { border-color: orange; } }
-        .stakeholder-card { transform: scale(1); transition: all 0.3s ease; }
+        .stakeholder-card { transition: all 0.3s ease; }
         .stakeholder-card:hover { transform: scale(1.02); }
+        .choice-btn { transition: all 0.3s ease; }
+        .choice-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
     </style>
 </head>
 <body class="gradient-bg min-h-screen">
     <div id="app" class="max-w-6xl mx-auto p-6">
+        
         <!-- Start Screen -->
         <div id="startScreen" class="text-center">
             <h1 class="text-5xl font-bold text-gray-800 mb-4">BioEthics Adventure</h1>
-            <p class="text-xl text-gray-600 mb-8">Navigate complex healthcare decisions with real-world consequences</p>
+            <p class="text-xl text-gray-600 mb-8">Navigate multi-layered ethical dilemmas with cascading consequences</p>
             
             <div class="bg-white rounded-lg shadow-xl p-8 max-w-4xl mx-auto">
                 <div class="mb-8">
-                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">🎭 Deep Decision Trees</h3>
+                    <h3 class="text-2xl font-semibold mb-4 text-gray-800">🌊 Complex Decision Trees</h3>
                     <p class="text-gray-700 leading-relaxed mb-6">
-                        Each scenario now contains 3-5 decision points. Your choices create cascading effects, stakeholder reactions, and new complications that require additional decisions. Experience the full complexity of bioethical decision-making.
+                        Each scenario now contains 4-6 interconnected decision points. Your choices create stakeholder reactions, 
+                        new complications, and emergent ethical dilemmas that require additional decisions.
                     </p>
                 </div>
                 
                 <div class="grid grid-cols-2 gap-6 mb-8">
                     <div class="text-center">
-                        <div class="text-4xl mb-3">🌊</div>
-                        <h4 class="font-semibold text-gray-800">Cascading Decisions</h4>
-                        <p class="text-sm text-gray-600">Each choice creates new challenges requiring further decisions</p>
+                        <div class="text-4xl mb-3">🎭</div>
+                        <h4 class="font-semibold text-gray-800">Multiple Stakeholders</h4>
+                        <p class="text-sm text-gray-600">Patients, families, staff, media, regulators all react differently</p>
                     </div>
                     <div class="text-center">
-                        <div class="text-4xl mb-3">👥</div>
-                        <h4 class="font-semibold text-gray-800">Stakeholder Reactions</h4>
-                        <p class="text-sm text-gray-600">Patients, families, staff, media, and regulators all respond to your choices</p>
-                    </div>
-                    <div class="text-center">
-                        <div class="text-4xl mb-3">⏰</div>
-                        <h4 class="font-semibold text-gray-800">Time Pressure</h4>
-                        <p class="text-sm text-gray-600">Some decisions have urgent deadlines that affect available options</p>
+                        <div class="text-4xl mb-3">⚡</div>
+                        <h4 class="font-semibold text-gray-800">Cascading Effects</h4>
+                        <p class="text-sm text-gray-600">Each decision creates new situations requiring further choices</p>
                     </div>
                     <div class="text-center">
                         <div class="text-4xl mb-3">🔄</div>
-                        <h4 class="font-semibold text-gray-800">Emergent Complications</h4>
-                        <p class="text-sm text-gray-600">New ethical dilemmas emerge from your previous choices</p>
+                        <h4 class="font-semibold text-gray-800">Emergent Dilemmas</h4>
+                        <p class="text-sm text-gray-600">New ethical challenges emerge from your previous decisions</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-4xl mb-3">📊</div>
+                        <h4 class="font-semibold text-gray-800">Impact Tracking</h4>
+                        <p class="text-sm text-gray-600">See real-time effects on all stakeholder groups</p>
                     </div>
                 </div>
                 
-                <button onclick="startAdventure()" class="btn-gradient text-white px-12 py-4 rounded-lg font-semibold text-lg hover:transform hover:scale-105 transition-all shadow-lg">
+                <button onclick="startAdventure()" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-12 py-4 rounded-lg font-semibold text-lg hover:transform hover:scale-105 transition-all shadow-lg">
                     🚀 Begin Complex Journey
                 </button>
             </div>
@@ -69,7 +66,7 @@
         <!-- Story Screen -->
         <div id="storyScreen" style="display: none;">
             <div class="bg-white rounded-lg shadow-xl p-8 mb-6">
-                <!-- Story Header -->
+                <!-- Header -->
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h1 class="text-3xl font-bold text-gray-800" id="storyTitle">The Gene Therapy Crisis</h1>
@@ -79,9 +76,8 @@
                         </div>
                     </div>
                     <div class="text-right">
-                        <div class="text-sm text-gray-600">Step <span id="stepNumber">1</span> of <span id="totalSteps">4</span></div>
-                        <div class="text-lg font-semibold text-purple-600" id="impactScore">Ethics Score: 100</div>
-                        <div class="text-sm text-gray-600" id="timeIndicator"></div>
+                        <div class="text-sm text-gray-600">Step <span id="stepNumber">1</span> of <span id="totalSteps">5</span></div>
+                        <div class="text-lg font-semibold text-purple-600" id="ethicsScore">Ethics Score: 100</div>
                     </div>
                 </div>
 
@@ -93,48 +89,42 @@
 
                 <!-- Stakeholder Reactions -->
                 <div id="stakeholderSection" style="display: none;" class="mb-6">
-                    <h3 class="font-semibold text-gray-800 mb-3 text-lg">👥 Stakeholder Reactions</h3>
-                    <div id="stakeholderGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+                    <h3 class="font-semibold text-gray-800 mb-3 text-lg">👥 Stakeholder Status</h3>
+                    <div id="stakeholderGrid" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
                 </div>
 
                 <!-- Previous Consequences -->
                 <div id="consequencesContainer" style="display: none;" class="mb-6">
-                    <h3 class="font-semibold text-gray-800 mb-3 text-lg">⚡ Recent Developments</h3>
+                    <h3 class="font-semibold text-gray-800 mb-3 text-lg">⚡ Consequences of Your Last Decision</h3>
                     <div id="consequencesList"></div>
                 </div>
 
-                <!-- Character Input Section -->
-                <div id="inputSection" style="display: none;" class="bg-gray-50 rounded-lg p-6 mb-6">
-                    <h3 class="font-semibold text-gray-800 mb-3">💭 Your Analysis</h3>
-                    <textarea id="playerInput" placeholder="What factors are you considering? What are your concerns? How do you weigh the competing interests?" class="w-full p-3 border border-gray-300 rounded-lg resize-none" rows="3"></textarea>
-                    <div class="text-sm text-gray-600 mt-2">Your reasoning will be tracked throughout the scenario.</div>
-                </div>
-
-                <!-- Pressure Indicators -->
-                <div id="pressureSection" style="display: none;" class="mb-6">
-                    <h3 class="font-semibold text-gray-800 mb-3 text-lg">📊 Current Pressures</h3>
-                    <div id="pressureIndicators" class="grid grid-cols-2 md:grid-cols-4 gap-4"></div>
+                <!-- Character Input -->
+                <div id="inputSection" class="bg-gray-50 rounded-lg p-6 mb-6">
+                    <h3 class="font-semibold text-gray-800 mb-3">💭 Your Strategic Thinking</h3>
+                    <textarea id="playerInput" placeholder="What factors are you weighing? What are your primary concerns? How do you balance competing interests?" class="w-full p-3 border border-gray-300 rounded-lg resize-none" rows="3"></textarea>
+                    <div class="text-sm text-gray-600 mt-2">Your reasoning will influence the story and be tracked throughout.</div>
                 </div>
 
                 <!-- Choices -->
                 <div class="space-y-4">
-                    <h3 class="font-semibold text-gray-800 mb-4 text-lg">🤔 What is your next move?</h3>
+                    <h3 class="font-semibold text-gray-800 mb-4 text-lg">🤔 What is your decision?</h3>
                     <div id="choicesContainer"></div>
                 </div>
             </div>
 
-            <!-- Advisory Panel -->
+            <!-- Context Panel -->
             <div class="bg-white rounded-lg shadow-lg p-6">
-                <h3 class="font-semibold text-gray-800 mb-3">🎯 Ethics Framework & Context</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 text-sm">
+                <h3 class="font-semibold text-gray-800 mb-3">🎯 Ethical Framework</h3>
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div class="bg-blue-50 p-3 rounded">
-                        <strong>Autonomy:</strong> Respect for individual choice and self-determination
+                        <strong>Autonomy:</strong> Respecting individual choice and self-determination
                     </div>
                     <div class="bg-green-50 p-3 rounded">
-                        <strong>Beneficence:</strong> Acting in the patient's best interest
+                        <strong>Beneficence:</strong> Acting to benefit patients and promote welfare
                     </div>
                     <div class="bg-purple-50 p-3 rounded">
-                        <strong>Justice:</strong> Fair distribution of benefits and burdens
+                        <strong>Justice:</strong> Fair distribution of benefits, risks, and costs
                     </div>
                     <div class="bg-yellow-50 p-3 rounded">
                         <strong>Non-maleficence:</strong> "Do no harm" - avoiding negative consequences
@@ -143,35 +133,30 @@
             </div>
         </div>
 
-        <!-- Final Outcome Screen -->
+        <!-- Final Outcome -->
         <div id="outcomeScreen" style="display: none;">
             <div class="bg-white rounded-lg shadow-xl p-8">
                 <div class="text-center mb-8">
-                    <div id="finalIcon" class="text-6xl mb-4">🎭</div>
-                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Your Complex Journey Ends</h2>
-                    <div id="finalTitle" class="text-2xl font-semibold text-blue-600 mb-2">The Ethical Navigator</div>
+                    <div id="finalIcon" class="text-6xl mb-4">🎯</div>
+                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Your Complex Journey Concludes</h2>
+                    <div id="finalTitle" class="text-2xl font-semibold text-blue-600 mb-2">Ethical Navigator</div>
                     <div class="text-lg">Final Ethics Score: <span id="finalScore" class="font-bold text-purple-600">85/100</span></div>
                 </div>
 
-                <div id="storyOutcome" class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 mb-8">
-                    <h3 class="font-semibold text-gray-800 mb-3 text-lg">📚 Your Legacy</h3>
+                <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 mb-8">
+                    <h3 class="font-semibold text-gray-800 mb-3 text-lg">📚 Your Leadership Legacy</h3>
                     <div id="outcomeText" class="text-gray-700 leading-relaxed"></div>
                 </div>
 
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                     <div>
-                        <h3 class="font-semibold text-gray-800 mb-4 text-lg">🛤️ Your Decision Tree</h3>
+                        <h3 class="font-semibold text-gray-800 mb-4 text-lg">🛤️ Your Decision Path</h3>
                         <div id="decisionSummary" class="space-y-3 max-h-96 overflow-y-auto"></div>
                     </div>
                     <div>
-                        <h3 class="font-semibold text-gray-800 mb-4 text-lg">🧠 Your Reasoning Process</h3>
+                        <h3 class="font-semibold text-gray-800 mb-4 text-lg">🧠 Your Strategic Reasoning</h3>
                         <div id="reflectionSummary" class="bg-gray-50 rounded-lg p-4 max-h-96 overflow-y-auto"></div>
                     </div>
-                </div>
-
-                <div class="bg-gray-50 rounded-lg p-6 mb-8">
-                    <h3 class="font-semibold text-gray-800 mb-3 text-lg">📈 Impact Analysis</h3>
-                    <div id="impactAnalysis" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
                 </div>
 
                 <div class="text-center">
@@ -189,276 +174,334 @@
     <script>
         const gameState = {
             currentStep: 1,
-            totalSteps: 4,
+            totalSteps: 5,
             ethicsScore: 100,
             decisions: [],
             reflections: [],
             consequences: [],
-            stakeholderMood: {
-                patients: 50,
-                families: 50,
-                staff: 50,
-                media: 50,
-                board: 50,
-                regulators: 50
+            stakeholders: {
+                patients: { mood: 50, name: "Patients" },
+                families: { mood: 50, name: "Families" },
+                staff: { mood: 50, name: "Medical Staff" },
+                media: { mood: 50, name: "Media" },
+                board: { mood: 50, name: "Hospital Board" },
+                regulators: { mood: 50, name: "Regulators" }
             },
-            pressures: {
-                time: 0,
-                legal: 0,
-                financial: 0,
-                ethical: 0
-            }
+            scenarioPath: []
         };
 
-        const scenarios = [
-            {
-                id: 'gene_therapy',
-                title: 'The Gene Therapy Crisis',
-                icon: '🧬',
-                role: 'Chief Medical Officer',
-                totalSteps: 4,
-                steps: {
-                    1: {
-                        text: "BREAKING: You're the Chief Medical Officer at Regional Medical Center. A new gene therapy that costs $2.1 million per treatment can cure Spinal Muscular Atrophy, a fatal genetic disease. You have 22 children who desperately need it, but your annual budget only covers 4 treatments. The waiting list is growing, families are desperate, and the media has started covering the story. Your first decision will set the tone for everything that follows.",
-                        timeLimit: "Decision needed within 48 hours",
-                        stakeholders: [
-                            { name: "Patient Families", mood: "desperate", concern: "Want immediate treatment for their children" },
-                            { name: "Medical Staff", mood: "conflicted", concern: "Want to help but understand budget constraints" },
-                            { name: "Hospital Board", mood: "pressured", concern: "Balancing compassion with financial responsibility" }
-                        ],
-                        pressures: { time: 3, legal: 1, financial: 4, ethical: 5 },
-                        needsInput: true,
+        const scenario = {
+            title: "The Gene Therapy Crisis",
+            icon: "🧬",
+            role: "Chief Medical Officer",
+            steps: [
+                {
+                    // Step 1 - Initial Crisis
+                    text: "URGENT: You're the Chief Medical Officer at Regional Medical Center. A breakthrough gene therapy costing $2.1 million per treatment can cure Spinal Muscular Atrophy, a fatal genetic disease. You have 22 children who desperately need it, but your annual budget only covers 4 treatments. Families are pleading, media is investigating, and the hospital board wants a decision within 48 hours. Your choice will set the precedent for all future allocation decisions.",
+                    stakeholderReactions: {
+                        patients: { concern: "Want immediate access to life-saving treatment" },
+                        families: { concern: "Desperate to save their children's lives" },
+                        staff: { concern: "Want to help but understand budget constraints" },
+                        media: { concern: "Investigating fairness and transparency" },
+                        board: { concern: "Balancing compassion with financial responsibility" },
+                        regulators: { concern: "Ensuring compliance with medical ethics" }
+                    },
+                    choices: [
+                        {
+                            text: "Create transparent medical committee to rank by severity and prognosis",
+                            nextStep: 1,
+                            path: "medical_triage",
+                            consequence: {
+                                type: "mixed",
+                                immediate: "You establish a 5-person ethics committee that spends 36 hours reviewing all cases. They create objective medical criteria ranking patients by disease progression, age, and likelihood of success.",
+                                stakeholderEffects: { patients: +5, families: -5, staff: +15, media: +10, board: +10, regulators: +15 },
+                                ethicsChange: 8
+                            }
+                        },
+                        {
+                            text: "Launch emergency fundraising while treating 4 most critical patients immediately",
+                            nextStep: 1,
+                            path: "fundraising",
+                            consequence: {
+                                type: "positive",
+                                immediate: "You begin treating the 4 sickest children immediately while launching '22 Children, One Hope' campaign. Local media embraces the story, and donations start flowing within hours.",
+                                stakeholderEffects: { patients: +15, families: +20, staff: +10, media: +20, board: +5, regulators: +5 },
+                                ethicsChange: 10
+                            }
+                        },
+                        {
+                            text: "Implement fair lottery system for all 22 children",
+                            nextStep: 1,
+                            path: "lottery",
+                            consequence: {
+                                type: "negative",
+                                immediate: "You announce a lottery. The family of Emma (age 3, most critical case) is outraged: 'You're gambling with lives!' The story goes viral with #SaveEmma trending. Medical ethicists debate your approach.",
+                                stakeholderEffects: { patients: -15, families: -25, staff: -5, media: -10, board: 0, regulators: +10 },
+                                ethicsChange: -5
+                            }
+                        }
+                    ]
+                },
+                {
+                    // Step 2 - Complications arise
+                    medical_triage: {
+                        text: "The ethics committee ranked all patients by medical criteria. The top 4 are clear, but complications emerge: #5 is Marcus, whose grandmother is threatening to withdraw her $5 million hospital donation if he's not treated. #6 is the child of Dr. Sarah Chen, your head of pediatrics, who has remained professionally silent but is clearly devastated. A whistleblower leaked the donor pressure to investigative reporters. How do you handle this ethical minefield?",
+                        stakeholderReactions: {
+                            patients: { concern: "Worried about fair treatment vs. donor influence" },
+                            families: { concern: "Fear that money talks louder than medical need" },
+                            staff: { concern: "Dr. Chen's situation creating workplace tension" },
+                            media: { concern: "Major story about healthcare corruption brewing" },
+                            board: { concern: "Torn between ethics and losing major funding" },
+                            regulators: { concern: "Investigating potential conflicts of interest" }
+                        },
                         choices: [
                             {
-                                text: "Establish a transparent medical committee to rank patients by severity",
+                                text: "Maintain strict medical ranking publicly, lose the $5M donation",
                                 nextStep: 2,
-                                path: 'medical_committee',
-                                consequence: {
-                                    type: "mixed",
-                                    immediate: "You form a 5-person medical ethics committee. They spend 24 hours reviewing cases and rank patients by disease progression, age, and likelihood of treatment success.",
-                                    stakeholderReactions: {
-                                        patients: -10, families: -15, staff: +15, media: +10, board: +10, regulators: +5
-                                    },
-                                    ethicsChange: 5,
-                                    newPressures: { time: 2, legal: 2, financial: 4, ethical: 3 }
-                                }
-                            },
-                            {
-                                text: "Launch an emergency public fundraising campaign while treating the sickest 4",
-                                nextStep: 2,
-                                path: 'fundraising',
                                 consequence: {
                                     type: "positive",
-                                    immediate: "You begin treating the 4 most critical patients immediately while launching a '22 Children, One Chance' campaign. Local media picks up the story.",
-                                    stakeholderReactions: {
-                                        patients: +15, families: +20, staff: +10, media: +20, board: 0, regulators: +5
-                                    },
-                                    ethicsChange: 8,
-                                    newPressures: { time: 4, legal: 1, financial: 2, ethical: 2 }
+                                    immediate: "You hold a televised press conference explaining your medical criteria. The donor withdraws funding angrily, but 18 other families publicly praise your integrity. Dr. Chen quietly thanks you.",
+                                    stakeholderEffects: { patients: +20, families: +25, staff: +20, media: +25, board: -15, regulators: +20 },
+                                    ethicsChange: 15
                                 }
                             },
                             {
-                                text: "Propose a lottery system to ensure fairness across all patients",
+                                text: "Find $2.1M elsewhere to create a 5th slot for Marcus",
                                 nextStep: 2,
-                                path: 'lottery',
-                                consequence: {
-                                    type: "negative",
-                                    immediate: "You announce a lottery system. The family of the sickest child, 3-year-old Emma, is outraged: 'You're gambling with our daughter's life!' The story goes viral.",
-                                    stakeholderReactions: {
-                                        patients: -25, families: -30, staff: -5, media: -15, board: +5, regulators: +10
-                                    },
-                                    ethicsChange: -5,
-                                    newPressures: { time: 3, legal: 3, financial: 4, ethical: 5 }
-                                }
-                            },
-                            {
-                                text: "Negotiate with the pharmaceutical company for compassionate pricing",
-                                nextStep: 2,
-                                path: 'negotiate',
                                 consequence: {
                                     type: "mixed",
-                                    immediate: "You contact GeneTech Industries. They offer a 30% discount if you become a 'flagship center' for their therapy, but want exclusive research data rights.",
-                                    stakeholderReactions: {
-                                        patients: +5, families: +10, staff: 0, media: +5, board: +15, regulators: -5
-                                    },
-                                    ethicsChange: 2,
-                                    newPressures: { time: 3, legal: 4, financial: 2, ethical: 4 }
+                                    immediate: "You reallocate funds from the cardiac wing renovation, delaying it 2 years. Marcus gets treated, donation is saved, but cardiac patients will suffer delayed care. Staff question the precedent.",
+                                    stakeholderEffects: { patients: +5, families: +10, staff: -5, media: +5, board: +15, regulators: 0 },
+                                    ethicsChange: 3
+                                }
+                            },
+                            {
+                                text: "Quietly adjust ranking citing 'additional medical factors'",
+                                nextStep: 2,
+                                consequence: {
+                                    type: "negative",
+                                    immediate: "You subtly move Marcus to #4. The $5M is secured, but Dr. Chen resigns in protest. The ethics committee members feel betrayed. Media discovers the manipulation within days.",
+                                    stakeholderEffects: { patients: -20, families: -25, staff: -30, media: -35, board: +20, regulators: -30 },
+                                    ethicsChange: -20
                                 }
                             }
                         ]
                     },
-                    2: {
-                        medical_committee: {
-                            text: "The medical committee has ranked all 22 patients. The top 4 are clear medical priorities, but position #5 is 7-year-old Marcus, whose grandmother is a major hospital donor. She's threatening to withdraw a $5 million pledge if Marcus isn't treated. Position #6 is the child of your head of pediatrics, Dr. Sarah Chen, who has said nothing but you know she's devastated. The local news wants your ranking methodology. How do you handle these complications?",
-                            stakeholders: [
-                                { name: "Major Donor", mood: "threatening", concern: "Wants grandson treated immediately" },
-                                { name: "Dr. Chen", mood: "professional but heartbroken", concern: "Her own child is #6 on the list" },
-                                { name: "News Media", mood: "investigative", concern: "Transparency in the ranking process" },
-                                { name: "Other Families", mood: "watching closely", concern: "Fair treatment regardless of connections" }
-                            ],
-                            pressures: { time: 4, legal: 3, financial: 5, ethical: 5 },
-                            choices: [
-                                {
-                                    text: "Stick strictly to the medical ranking, release criteria publicly",
-                                    nextStep: 3,
-                                    consequence: {
-                                        type: "positive",
-                                        immediate: "You hold a press conference explaining the medical criteria. The donor withdraws funding, but 20 other families publicly support your transparency. Dr. Chen nods approvingly.",
-                                        stakeholderReactions: { patients: +20, families: +25, staff: +20, media: +25, board: -15, regulators: +15 },
-                                        ethicsChange: 12,
-                                        newPressures: { time: 2, legal: 1, financial: 5, ethical: 1 }
-                                    }
-                                },
-                                {
-                                    text: "Quietly move Marcus to position #4, citing 'additional medical factors'",
-                                    nextStep: 3,
-                                    consequence: {
-                                        type: "negative",
-                                        immediate: "You adjust the ranking. The $5 million is saved, but Dr. Chen resigns in protest. A whistleblower leaks the donor pressure to the media.",
-                                        stakeholderReactions: { patients: -20, families: -25, staff: -30, media: -35, board: +20, regulators: -25 },
-                                        ethicsChange: -15,
-                                        newPressures: { time: 5, legal: 5, financial: 1, ethical: 5 }
-                                    }
-                                },
-                                {
-                                    text: "Create a 5th treatment slot by deferring hospital maintenance budget",
-                                    nextStep: 3,
-                                    consequence: {
-                                        type: "mixed",
-                                        immediate: "You find $2.1M by postponing facility upgrades. Marcus gets treated, but this means the cardiac wing renovation is delayed 2 years, affecting other patients.",
-                                        stakeholderReactions: { patients: +10, families: +15, staff: +5, media: +10, board: -10, regulators: 0 },
-                                        ethicsChange: 5,
-                                        newPressures: { time: 3, legal: 2, financial: 3, ethical: 3 }
-                                    }
-                                }
-                            ]
+                    fundraising: {
+                        text: "Your campaign has raised $6.3 million in 10 days! You can now treat 7 additional children (11 total). However, success brings new problems: GeneTech Industries raises prices 20% citing 'market demand.' 40 new families from nationwide have applied. The State Attorney General is investigating whether your program creates unfair interstate healthcare access. Other hospitals are pressuring you to share your fundraising methods. What's your strategic response?",
+                        stakeholderReactions: {
+                            patients: { concern: "Hope for expanded access but worried about new barriers" },
+                            families: { concern: "New families want in, original families fear diluted resources" },
+                            staff: { concern: "Overwhelmed by success and new administrative burden" },
+                            media: { concern: "Investigating pricing manipulation and interstate equity" },
+                            board: { concern: "Excited by success but worried about legal challenges" },
+                            regulators: { concern: "Ensuring program doesn't violate interstate commerce rules" }
                         },
-                        fundraising: {
-                            text: "Your fundraising campaign has raised $4.2 million in just one week! You can now treat 6 additional children (10 total). However, the success has created new problems: 30 more families from across the country have contacted you, and GeneTech has raised the price by 15% citing 'increased demand.' The state health department is investigating whether you're creating unfair access. What's your next move?",
-                            stakeholders: [
-                                { name: "New Patient Families", mood: "hopeful but demanding", concern: "Want access to your successful program" },
-                                { name: "GeneTech Industries", mood: "opportunistic", concern: "Maximizing profits from high demand" },
-                                { name: "State Regulators", mood: "concerned", concern: "Ensuring equitable healthcare access statewide" },
-                                { name: "Other Hospitals", mood: "jealous and critical", concern: "You're creating unfair competition" }
-                            ],
-                            pressures: { time: 5, legal: 4, financial: 2, ethical: 4 },
-                            choices: [
-                                {
-                                    text: "Share fundraising model with other hospitals, create statewide consortium",
-                                    nextStep: 3,
-                                    consequence: {
-                                        type: "positive",
-                                        immediate: "You organize 8 hospitals into a consortium. Combined fundraising power reduces per-treatment costs and helps 50+ children statewide.",
-                                        stakeholderReactions: { patients: +25, families: +30, staff: +15, media: +20, board: +10, regulators: +20 },
-                                        ethicsChange: 15,
-                                        newPressures: { time: 3, legal: 1, financial: 1, ethical: 1 }
-                                    }
-                                },
-                                {
-                                    text: "Keep the program local and fight GeneTech's price increase legally",
-                                    nextStep: 3,
-                                    consequence: {
-                                        type: "mixed",
-                                        immediate: "You file an antitrust lawsuit against GeneTech. The legal battle delays treatment for 6 months but could set precedent for fair pricing.",
-                                        stakeholderReactions: { patients: -10, families: -15, staff: +5, media: +15, board: 0, regulators: +10 },
-                                        ethicsChange: 5,
-                                        newPressures: { time: 2, legal: 5, financial: 3, ethical: 3 }
-                                    }
-                                },
-                                {
-                                    text: "Accept the price increase and limit program to original 22 patients",
-                                    nextStep: 3,
-                                    consequence: {
-                                        type: "negative",
-                                        immediate: "You pay the higher prices but can only treat 16 of your original 22 patients. Families of the 6 excluded children file discrimination complaints.",
-                                        stakeholderReactions: { patients: -15, families: -20, staff: -10, media: -10, board: 0, regulators: -15 },
-                                        ethicsChange: -8,
-                                        newPressures: { time: 4, legal: 4, financial: 4, ethical: 4 }
-                                    }
+                        choices: [
+                            {
+                                text: "Create consortium with other hospitals to share model and reduce costs",
+                                nextStep: 2,
+                                consequence: {
+                                    type: "positive",
+                                    immediate: "You organize 8 regional hospitals into a purchasing consortium. Combined power negotiates GeneTech down to original prices and creates sustainable model for 50+ children annually.",
+                                    stakeholderEffects: { patients: +25, families: +20, staff: +15, media: +20, board: +15, regulators: +25 },
+                                    ethicsChange: 18
                                 }
-                            ]
-                        },
-                        lottery: {
-                            text: "The lottery system has backfired spectacularly. Emma's family hired a lawyer and filed an injunction claiming the lottery violates medical triage principles. #SaveEmma hashtag has 2 million shares. Three board members are calling for your resignation. However, medical ethicists from Johns Hopkins have published an op-ed supporting lottery systems as the fairest approach. You're caught between public emotion and medical ethics. Your next decision is critical.",
-                            stakeholders: [
-                                { name: "Emma's Family", mood: "combative", concern: "Saving their child at any cost" },
-                                { name: "Medical Ethicists", mood: "supportive", concern: "Defending ethical decision-making principles" },
-                                { name: "Hospital Board", mood: "panicked", concern: "Protecting hospital reputation and funding" },
-                                { name: "Legal Team", mood: "defensive", concern: "Avoiding discrimination lawsuits" }
-                            ],
-                            pressures: { time: 5, legal: 5, financial: 4, ethical: 3 },
-                            choices: [
-                                {
-                                    text: "Abandon lottery, switch to medical triage to treat Emma first",
-                                    nextStep: 3,
-                                    consequence: {
-                                        type: "negative",
-                                        immediate: "You reverse course and treat Emma first. The other 3 lottery winners feel betrayed. Media calls you 'spineless.' But Emma's family drops the lawsuit.",
-                                        stakeholderReactions: { patients: -20, families: -25, staff: -15, media: -20, board: +10, regulators: -10 },
-                                        ethicsChange: -12,
-                                        newPressures: { time: 3, legal: 2, financial: 4, ethical: 5 }
-                                    }
-                                },
-                                {
-                                    text: "Stand firm on lottery results, launch public education on ethical decision-making",
-                                    nextStep: 3,
-                                    consequence: {
-                                        type: "positive",
-                                        immediate: "You hold firm and launch a campaign explaining ethical healthcare decisions. Medical schools request to study your case. Emma gets treated in slot 2.",
-                                        stakeholderReactions: { patients: +10, families: +5, staff: +20, media: +15, board: -5, regulators: +15 },
-                                        ethicsChange: 10,
-                                        newPressures: { time: 4, legal: 3, financial: 4, ethical: 2 }
-                                    }
-                                },
-                                {
-                                    text: "Propose hybrid system: lottery for equal medical cases, triage for clearly different ones",
-                                    nextStep: 3,
-                                    consequence: {
-                                        type: "mixed",
-                                        immediate: "You create a complex hybrid system. It's more fair but confusing. Takes 3 weeks to implement while children wait. Some improvement in public perception.",
-                                        stakeholderReactions: { patients: 0, families: +5, staff: -5, media: +5, board: +5, regulators: +10 },
-                                        ethicsChange: 3,
-                                        newPressures: { time: 5, legal: 3, financial: 4, ethical: 3 }
-                                    }
+                            },
+                            {
+                                text: "Keep program local, fight price increase through legal channels",
+                                nextStep: 2,
+                                consequence: {
+                                    type: "mixed",
+                                    immediate: "You file antitrust lawsuit against GeneTech while limiting program to original 22 children. Legal battle delays treatments 6 months but could set national precedent for fair pricing.",
+                                    stakeholderEffects: { patients: -10, families: -5, staff: +5, media: +15, board: +5, regulators: +15 },
+                                    ethicsChange: 8
                                 }
-                            ]
+                            },
+                            {
+                                text: "Accept higher prices, limit to best-funded families",
+                                nextStep: 2,
+                                consequence: {
+                                    type: "negative",
+                                    immediate: "You pay GeneTech's inflated prices but can only afford 9 of your original 22 children. Families of excluded children file discrimination lawsuits. Program becomes elitist.",
+                                    stakeholderEffects: { patients: -15, families: -20, staff: -10, media: -20, board: -5, regulators: -15 },
+                                    ethicsChange: -12
+                                }
+                            }
+                        ]
+                    },
+                    lottery: {
+                        text: "The lottery controversy has exploded. Emma's family hired a prominent medical malpractice attorney and filed an emergency injunction. #SaveEmma has 3.2 million social media shares. Three board members are calling for your resignation. However, bioethicists from Harvard, Johns Hopkins, and Mayo Clinic published a joint letter supporting lottery systems as the most equitable approach. You're caught between public emotion and expert opinion. The judge will rule in 48 hours. Your next move could save or sink your career.",
+                        stakeholderReactions: {
+                            patients: { concern: "Confused by conflicting expert vs. public opinion" },
+                            families: { concern: "Emma's family vs. other lottery winners in legal battle" },
+                            staff: { concern: "Divided loyalty between boss and public pressure" },
+                            media: { concern: "Major story about ethics vs. emotion in healthcare" },
+                            board: { concern: "Panicked about reputation and legal liability" },
+                            regulators: { concern: "Watching case that could set national precedent" }
                         },
-                        negotiate: {
-                            text: "GeneTech's deal is on the table: 30% discount for becoming their flagship center, but they want exclusive rights to all patient data and first publication rights on research. Your research team is split - the discount could save 6 more children, but the exclusivity could harm scientific collaboration. The pharmaceutical company also wants to film marketing videos with your patients. Meanwhile, three other hospitals have reached out wanting to partner with you instead of GeneTech. Decision time.",
-                            stakeholders: [
-                                { name: "Research Team", mood: "conflicted", concern: "Balancing patient care with scientific integrity" },
-                                { name: "GeneTech Rep", mood: "pushy but friendly", concern: "Securing exclusive partnership and marketing rights" },
-                                { name: "Patient Families", mood: "hopeful", concern: "Want treatment regardless of corporate politics" },
-                                { name: "Partner Hospitals", mood: "offering alternatives", concern: "Creating competing consortium" }
-                            ],
-                            pressures: { time: 4, legal: 3, financial: 3, ethical: 4 },
-                            choices: [
-                                {
-                                    text: "Accept GeneTech deal but negotiate out the marketing videos",
-                                    nextStep: 3,
-                                    consequence: {
-                                        type: "mixed",
-                                        immediate: "You get the discount and data exclusivity, but no marketing exploitation. However, your research is now locked to one company, limiting future collaboration.",
-                                        stakeholderReactions: { patients: +15, families: +20, staff: -5, media: 0, board: +15, regulators: -5 },
-                                        ethicsChange: 3,
-                                        newPressures: { time: 2, legal: 4, financial: 1, ethical: 4 }
-                                    }
-                                },
-                                {
-                                    text: "Reject GeneTech, partner with the 3 hospitals for joint purchasing power",
-                                    nextStep: 3,
-                                    consequence: {
-                                        type: "positive",
-                                        immediate: "Your 4-hospital consortium negotiates a 25% discount with GeneTech while maintaining research independence. Stronger long-term position.",
-                                        stakeholderReactions: { patients: +10, families: +15, staff: +20, media: +15, board: +10, regulators: +15 },
-                                        ethicsChange: 8,
-                                        newPressures: { time: 3, legal: 2, financial: 2, ethical: 2 }
-                                    }
-                                },
-                                {
-                                    text: "Accept full GeneTech deal including marketing to maximize patient access",
-                                    nextStep: 3,
-                                    consequence: {
-                                        type: "negative",
-                                        immediate: "You get maximum discount but children become marketing props. Families feel exploited. Medical community questions your judgment.",
-                                        stakeholderReactions: { patients: +5, families: -10, staff: -15, media: -20, board:
+                        choices: [
+                            {
+                                text: "Stand firm on lottery, launch ethics education campaign",
+                                nextStep: 2,
+                                consequence: {
+                                    type: "positive",
+                                    immediate: "You partner with medical schools to launch public education on healthcare ethics. Judge rules in your favor. Emma gets slot #2 in lottery. Medical community rallies behind evidence-based ethics.",
+                                    stakeholderEffects: { patients: +15, families: +10, staff: +25, media: +20, board: +5, regulators: +25 },
+                                    ethicsChange: 20
+                                }
+                            },
+                            {
+                                text: "Abandon lottery, switch to medical triage under legal pressure",
+                                nextStep: 2,
+                                consequence: {
+                                    type: "negative",
+                                    immediate: "You cave to pressure and switch to medical ranking. Emma gets treated first, but other lottery winners feel betrayed. Medical ethics community condemns the decision as 'mob rule over medicine.'",
+                                    stakeholderEffects: { patients: -15, families: -10, staff: -20, media: -15, board: +10, regulators: -20 },
+                                    ethicsChange: -15
+                                }
+                            },
+                            {
+                                text: "Propose compromise: hybrid system with medical and random elements",
+                                nextStep: 2,
+                                consequence: {
+                                    type: "mixed",
+                                    immediate: "You create complex criteria combining medical severity with randomness for equal cases. System is fairer but confusing. Takes 3 weeks to implement while children wait for clarity.",
+                                    stakeholderEffects: { patients: +5, families: +5, staff: -5, media: +10, board: +10, regulators: +10 },
+                                    ethicsChange: 5
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    // Step 3 - New crisis emerges
+                    text: "Six months later, your gene therapy program has attracted national attention. The success has led to your promotion to Chief Ethics Officer for the entire hospital system. Now you face a new crisis: the hospital wants to implement an AI diagnostic system that analyzes patients' social media, shopping patterns, and location data to predict heart disease 6 months early. It's 87% accurate and could save 200+ lives annually, but privacy advocates are suing to block it. Your previous gene therapy decisions have shaped how stakeholders view your judgment. The board wants your recommendation in 72 hours.",
+                    choices: [
+                        {
+                            text: "Implement with robust consent process and privacy protections",
+                            nextStep: 3,
+                            consequence: {
+                                type: "positive",
+                                immediate: "You design an opt-in system with full transparency and data protection. 35% of patients participate. In year one, you prevent 74 heart attacks and detect 23 early cancers through the AI analysis.",
+                                stakeholderEffects: { patients: +15, families: +20, staff: +10, media: +15, board: +20, regulators: +15 },
+                                ethicsChange: 12
+                            }
+                        },
+                        {
+                            text: "Reject system due to privacy concerns and surveillance risks",
+                            nextStep: 3,
+                            consequence: {
+                                type: "mixed",
+                                immediate: "You block the AI system citing privacy rights. However, 38 preventable heart attacks occur in the first year. Families of victims question whether privacy was worth their loved ones' lives.",
+                                stakeholderEffects: { patients: -10, families: -15, staff: 0, media: +10, board: -15, regulators: +10 },
+                                ethicsChange: 5
+                            }
+                        },
+                        {
+                            text: "Pilot program with high-risk patients only",
+                            nextStep: 3,
+                            consequence: {
+                                type: "mixed",
+                                immediate: "You implement for diabetes and cardiac patients only. System prevents 31 heart attacks but creates two-tier healthcare. Questions arise about equal access to AI-powered medicine.",
+                                stakeholderEffects: { patients: +5, families: +10, staff: +5, media: +5, board: +10, regulators: +5 },
+                                ethicsChange: 8
+                            }
+                        }
+                    ]
+                },
+                {
+                    // Step 4 - Global implications
+                    text: "Your AI ethics work has caught international attention. BioGenX Corporation offers you the position of Global Chief Ethics Officer. Your first challenge: they've developed a universal flu vaccine that costs $8 per dose to produce, but the board wants to price it at $180 in wealthy countries and $90 in middle-income countries. Low-income countries would get it free through a foundation, but this pricing could still leave 500 million people without access. The World Health Organization is pressuring for global affordable pricing. Shareholders want maximum returns. Your decision will affect global health policy for decades.",
+                    choices: [
+                        {
+                            text: "Implement tiered pricing with wealthy countries subsidizing global access",
+                            nextStep: 4,
+                            consequence: {
+                                type: "positive",
+                                immediate: "You negotiate a system where wealthy nations pay premium prices that fund free distribution globally. 2.1 billion people get vaccinated in year one, preventing an estimated 890,000 deaths.",
+                                stakeholderEffects: { patients: +25, families: +30, staff: +20, media: +25, board: +10, regulators: +20 },
+                                ethicsChange: 20
+                            }
+                        },
+                        {
+                            text: "Price at cost globally, fund R&D through public-private partnerships",
+                            nextStep: 4,
+                            consequence: {
+                                type: "mixed",
+                                immediate: "You price the vaccine at $12 worldwide, funded by government partnerships. Universal access is achieved but future R&D depends on uncertain public funding. Some breakthrough research is delayed.",
+                                stakeholderEffects: { patients: +20, families: +25, staff: +15, media: +20, board: -10, regulators: +15 },
+                                ethicsChange: 15
+                            }
+                        },
+                        {
+                            text: "Maintain market-based pricing to fund future innovation",
+                            nextStep: 4,
+                            consequence: {
+                                type: "negative",
+                                immediate: "You keep high prices to fund next-generation vaccines. Wealthy populations are protected, but 500 million people remain vulnerable. Public health advocates condemn the decision as prioritizing profits over lives.",
+                                stakeholderEffects: { patients: -15, families: -20, staff: -10, media: -25, board: +20, regulators: -15 },
+                                ethicsChange: -18
+                            }
+                        }
+                    ]
+                }
+            ]
+        };
+
+        function startAdventure() {
+            document.getElementById('startScreen').style.display = 'none';
+            document.getElementById('storyScreen').style.display = 'block';
+            loadStep(0);
+        }
+
+        function loadStep(stepIndex) {
+            gameState.currentStep = stepIndex + 1;
+            
+            let stepData;
+            if (stepIndex === 0) {
+                stepData = scenario.steps[0];
+            } else if (stepIndex === 1) {
+                const path = gameState.scenarioPath[gameState.scenarioPath.length - 1];
+                stepData = scenario.steps[1][path];
+            } else {
+                stepData = scenario.steps[stepIndex];
+            }
+
+            document.getElementById('stepNumber').textContent = gameState.currentStep;
+            document.getElementById('totalSteps').textContent = gameState.totalSteps;
+            document.getElementById('storyTitle').textContent = scenario.title;
+            document.getElementById('storyIcon').textContent = scenario.icon;
+            document.getElementById('storyRole').textContent = scenario.role;
+            document.getElementById('ethicsScore').textContent = `Ethics Score: ${gameState.ethicsScore}`;
+            document.getElementById('storyText').textContent = stepData.text;
+
+            // Show stakeholder reactions if available
+            if (stepData.stakeholderReactions) {
+                showStakeholders(stepData.stakeholderReactions);
+            }
+
+            // Show previous consequences if any
+            if (gameState.consequences.length > 0) {
+                showConsequences();
+            } else {
+                document.getElementById('consequencesContainer').style.display = 'none';
+            }
+
+            // Load choices
+            loadChoices(stepData.choices);
+        }
+
+        function showStakeholders(reactions) {
+            document.getElementById('stakeholderSection').style.display = 'block';
+            const grid = document.getElementById('stakeholderGrid');
+            grid.innerHTML = '';
+
+            Object.keys(gameState.stakeholders).forEach(key => {
+                const stakeholder = gameState.stakeholders[key];
+                const reaction = reactions[key];
+                
+                let moodColor = 'bg-gray-100';
+                let moodText = 'Neutral';
+                
+                if (stakeholder.mood >= 70) { moodColor = 'bg-green-100'; moodText = 'Supportive'; }
