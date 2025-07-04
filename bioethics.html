@@ -1,442 +1,146 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>BioEthics Adventure</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.css" rel="stylesheet">
+    <title>BioEthics Test</title>
     <style>
-        .gradient-bg { background: linear-gradient(135deg, #dbeafe 0%, #f3e8ff 100%); }
-        .consequence-positive { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); border-left: 4px solid #10b981; }
-        .consequence-negative { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border-left: 4px solid #ef4444; }
-        .consequence-mixed { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-left: 4px solid #f59e0b; }
-        .choice-btn { transition: all 0.3s ease; }
-        .choice-btn:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        body { font-family: Arial, sans-serif; background: #f0f8ff; padding: 20px; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 10px; }
+        button { background: #4285f4; color: white; padding: 15px 30px; border: none; border-radius: 5px; font-size: 16px; cursor: pointer; }
+        button:hover { background: #3367d6; }
+        .hidden { display: none; }
+        .choice { background: #f8f9fa; border: 2px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 5px; cursor: pointer; }
+        .choice:hover { background: #e8f0fe; border-color: #4285f4; }
     </style>
 </head>
-<body class="gradient-bg min-h-screen">
-    <div id="app" class="max-w-5xl mx-auto p-6">
-        
+<body>
+    <div class="container">
         <!-- Start Screen -->
-        <div id="startScreen">
-            <div class="text-center">
-                <h1 class="text-5xl font-bold text-gray-800 mb-4">BioEthics Adventure</h1>
-                <p class="text-xl text-gray-600 mb-8">Navigate complex multi-step ethical dilemmas</p>
-                
-                <div class="bg-white rounded-lg shadow-xl p-8 max-w-4xl mx-auto">
-                    <div class="mb-8">
-                        <h3 class="text-2xl font-semibold mb-4 text-gray-800">🌊 Multi-Step Decision Making</h3>
-                        <p class="text-gray-700 leading-relaxed mb-6">
-                            Experience complex bioethical scenarios where each decision creates new challenges. 
-                            Your choices have cascading effects that require additional decisions.
-                        </p>
-                    </div>
-                    
-                    <div class="grid grid-cols-2 gap-6 mb-8">
-                        <div class="text-center">
-                            <div class="text-4xl mb-3">⚡</div>
-                            <h4 class="font-semibold text-gray-800">Cascading Effects</h4>
-                            <p class="text-sm text-gray-600">Each decision creates new situations</p>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-4xl mb-3">👥</div>
-                            <h4 class="font-semibold text-gray-800">Multiple Stakeholders</h4>
-                            <p class="text-sm text-gray-600">Different groups react to your choices</p>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-4xl mb-3">🔄</div>
-                            <h4 class="font-semibold text-gray-800">Emergent Dilemmas</h4>
-                            <p class="text-sm text-gray-600">New challenges emerge from decisions</p>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-4xl mb-3">📊</div>
-                            <h4 class="font-semibold text-gray-800">Real Impact</h4>
-                            <p class="text-sm text-gray-600">See concrete effects on lives</p>
-                        </div>
-                    </div>
-                    
-                    <button onclick="startGame()" class="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-12 py-4 rounded-lg font-semibold text-lg hover:transform hover:scale-105 transition-all shadow-lg">
-                        🚀 Begin Your Journey
-                    </button>
-                </div>
-            </div>
+        <div id="start">
+            <h1>BioEthics Adventure</h1>
+            <p>Navigate complex ethical dilemmas in healthcare</p>
+            <button onclick="startGame()">Start Game</button>
         </div>
 
         <!-- Game Screen -->
-        <div id="gameScreen" style="display: none;">
-            <div class="bg-white rounded-lg shadow-xl p-8 mb-6">
-                <!-- Header -->
-                <div class="flex justify-between items-center mb-6">
-                    <div>
-                        <h1 class="text-3xl font-bold text-gray-800" id="scenarioTitle">Gene Therapy Crisis</h1>
-                        <div class="flex items-center mt-2">
-                            <span id="scenarioIcon" class="text-2xl mr-3">🧬</span>
-                            <span id="playerRole" class="text-lg text-blue-600 font-medium">Chief Medical Officer</span>
-                        </div>
-                    </div>
-                    <div class="text-right">
-                        <div class="text-sm text-gray-600">Step <span id="currentStep">1</span> of 4</div>
-                        <div class="text-lg font-semibold text-purple-600" id="ethicsScore">Ethics Score: 100</div>
-                    </div>
-                </div>
-
-                <!-- Current Situation -->
-                <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 mb-6">
-                    <h3 class="font-semibold text-gray-800 mb-3 text-lg">📖 Current Situation</h3>
-                    <p id="situationText" class="text-gray-700 leading-relaxed text-lg"></p>
-                </div>
-
-                <!-- Previous Consequences -->
-                <div id="consequencesSection" style="display: none;" class="mb-6">
-                    <h3 class="font-semibold text-gray-800 mb-3 text-lg">⚡ Results of Your Previous Decision</h3>
-                    <div id="consequenceContent" class="rounded-lg p-4"></div>
-                </div>
-
-                <!-- Player Input -->
-                <div class="bg-gray-50 rounded-lg p-6 mb-6">
-                    <h3 class="font-semibold text-gray-800 mb-3">💭 Your Reasoning</h3>
-                    <textarea id="playerThinking" placeholder="What factors are you considering? What are your main concerns?" class="w-full p-3 border border-gray-300 rounded-lg resize-none" rows="3"></textarea>
-                    <div class="text-sm text-gray-600 mt-2">Your thought process will be tracked.</div>
-                </div>
-
-                <!-- Choices -->
-                <div class="space-y-4">
-                    <h3 class="font-semibold text-gray-800 mb-4 text-lg">🤔 What do you decide?</h3>
-                    <div id="choicesContainer"></div>
-                </div>
-            </div>
-
-            <!-- Ethics Framework -->
-            <div class="bg-white rounded-lg shadow-lg p-6">
-                <h3 class="font-semibold text-gray-800 mb-3">🎯 Ethical Principles</h3>
-                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
-                    <div class="bg-blue-50 p-3 rounded">
-                        <strong>Autonomy:</strong> Respecting individual choice
-                    </div>
-                    <div class="bg-green-50 p-3 rounded">
-                        <strong>Beneficence:</strong> Acting to benefit patients
-                    </div>
-                    <div class="bg-purple-50 p-3 rounded">
-                        <strong>Justice:</strong> Fair distribution of resources
-                    </div>
-                    <div class="bg-yellow-50 p-3 rounded">
-                        <strong>Non-maleficence:</strong> "Do no harm"
-                    </div>
-                </div>
-            </div>
+        <div id="game" class="hidden">
+            <h2 id="title">Gene Therapy Crisis</h2>
+            <p id="situation"></p>
+            <div id="choices"></div>
+            <p>Score: <span id="score">100</span></p>
         </div>
 
         <!-- Results Screen -->
-        <div id="resultsScreen" style="display: none;">
-            <div class="bg-white rounded-lg shadow-xl p-8">
-                <div class="text-center mb-8">
-                    <div class="text-6xl mb-4">🎯</div>
-                    <h2 class="text-4xl font-bold text-gray-800 mb-4">Journey Complete</h2>
-                    <div id="finalTitle" class="text-2xl font-semibold text-blue-600 mb-2">Ethical Decision Maker</div>
-                    <div class="text-lg">Final Score: <span id="finalScore" class="font-bold text-purple-600">85/100</span></div>
-                </div>
-
-                <div class="bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg p-6 mb-8">
-                    <h3 class="font-semibold text-gray-800 mb-3 text-lg">📚 Your Impact</h3>
-                    <div id="finalOutcome" class="text-gray-700 leading-relaxed"></div>
-                </div>
-
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-                    <div>
-                        <h3 class="font-semibold text-gray-800 mb-4 text-lg">🛤️ Your Decisions</h3>
-                        <div id="decisionHistory" class="space-y-3"></div>
-                    </div>
-                    <div>
-                        <h3 class="font-semibold text-gray-800 mb-4 text-lg">🧠 Your Reasoning</h3>
-                        <div id="reflectionHistory" class="bg-gray-50 rounded-lg p-4"></div>
-                    </div>
-                </div>
-
-                <div class="text-center">
-                    <button onclick="resetGame()" class="bg-gradient-to-r from-green-600 to-blue-600 text-white px-8 py-3 rounded-lg font-semibold hover:transform hover:scale-105 transition-all shadow-lg mr-4">
-                        🔄 Try Again
-                    </button>
-                </div>
-            </div>
+        <div id="results" class="hidden">
+            <h2>Results</h2>
+            <p id="outcome"></p>
+            <button onclick="restart()">Try Again</button>
         </div>
     </div>
 
     <script>
-        let gameState = {
-            currentStep: 1,
-            ethicsScore: 100,
-            decisions: [],
-            reflections: [],
-            consequences: []
-        };
+        var currentStep = 0;
+        var score = 100;
+        var decisions = [];
 
-        const scenarios = [
+        var scenarios = [
             {
-                title: "Initial Crisis: Gene Therapy Allocation",
-                text: "You're the Chief Medical Officer at Regional Medical Center. A breakthrough gene therapy costing $2.1 million per treatment can cure a fatal genetic disease affecting children. You have 18 children who desperately need this treatment, but your hospital's budget only covers 4 treatments. Families are pleading, media is investigating, and the board wants your decision in 48 hours.",
+                title: "Gene Therapy Crisis",
+                text: "You're a hospital director. A $2 million gene therapy can save children's lives, but you can only afford 4 treatments for 20 children who need it. How do you decide?",
                 choices: [
-                    {
-                        text: "Establish medical committee to rank patients by clinical severity",
-                        consequence: {
-                            type: "mixed",
-                            text: "You create a medical ethics committee that develops objective criteria. The ranking is medically sound but some families feel the process is impersonal. The committee spends 30 hours reviewing cases and creates transparent criteria.",
-                            ethicsChange: 8
-                        }
-                    },
-                    {
-                        text: "Launch emergency fundraising while treating 4 most critical patients",
-                        consequence: {
-                            type: "positive",
-                            text: "You begin treating the 4 sickest children while launching a fundraising campaign. Local media embraces your approach and donations flow quickly. However, you've committed to raising $14 million for all remaining children.",
-                            ethicsChange: 12
-                        }
-                    },
-                    {
-                        text: "Implement fair lottery system for all 18 children",
-                        consequence: {
-                            type: "negative",
-                            text: "You announce a lottery system. The family of the sickest child is outraged and their emotional plea goes viral. Medical ethicists debate your approach while social media explodes with criticism.",
-                            ethicsChange: -3
-                        }
-                    },
-                    {
-                        text: "Negotiate with pharmaceutical company for better pricing",
-                        consequence: {
-                            type: "mixed",
-                            text: "You contact the pharmaceutical company who offers a 25% discount in exchange for exclusive research partnership and patient data sharing. This raises questions about independence and privacy.",
-                            ethicsChange: 5
-                        }
-                    }
+                    { text: "Medical committee ranks by severity", points: 10 },
+                    { text: "Lottery system for fairness", points: 5 },
+                    { text: "Fundraising campaign", points: 15 },
+                    { text: "Treat youngest patients first", points: 0 }
                 ]
             },
             {
-                title: "Complications Emerge",
-                text: "Your initial decision has created new challenges. If you chose the committee approach, a major donor is threatening to withdraw funding unless their grandchild is treated. If you chose fundraising, the pharmaceutical company raised prices due to demand. If you chose the lottery, you're facing a lawsuit. If you chose negotiation, the contract terms are more restrictive than expected. How do you handle these complications?",
+                title: "AI Privacy Dilemma", 
+                text: "Your hospital wants AI that analyzes social media to predict heart attacks. It's 85% accurate but raises privacy concerns. What do you do?",
                 choices: [
-                    {
-                        text: "Stand firm on your principles despite pressure",
-                        consequence: {
-                            type: "positive",
-                            text: "You maintain your ethical stance despite intense pressure. Some stakeholders are angry, but medical ethicists praise your consistency. Your decision becomes a case study in principled leadership.",
-                            ethicsChange: 15
-                        }
-                    },
-                    {
-                        text: "Find creative compromise solution",
-                        consequence: {
-                            type: "mixed",
-                            text: "You develop a complex hybrid approach that addresses multiple concerns. It's more fair but complicated to implement and explain. Some stakeholders appreciate the effort to accommodate different viewpoints.",
-                            ethicsChange: 8
-                        }
-                    },
-                    {
-                        text: "Modify your approach under pressure",
-                        consequence: {
-                            type: "negative",
-                            text: "You change your decision due to external pressure. While this resolves immediate conflicts, it raises questions about your consistency and whether emotional appeals should override systematic ethical frameworks.",
-                            ethicsChange: -10
-                        }
-                    }
+                    { text: "Implement with patient consent", points: 15 },
+                    { text: "Reject due to privacy", points: 5 },
+                    { text: "Only for high-risk patients", points: 10 },
+                    { text: "Implement without telling patients", points: -10 }
                 ]
             },
             {
-                title: "New Technology Dilemma",
-                text: "Six months later, your gene therapy decisions have shaped your reputation. Now the hospital wants to implement AI that analyzes patient social media and shopping data to predict health risks. It's 87% accurate and could save 200+ lives annually, but privacy advocates are concerned. Your previous decisions influence how stakeholders view this proposal.",
+                title: "Vaccine Pricing",
+                text: "Your company developed a life-saving vaccine. It costs $5 to make but you could charge $200. Poor countries can't afford this. How do you price it?",
                 choices: [
-                    {
-                        text: "Implement with robust consent and privacy protections",
-                        consequence: {
-                            type: "positive",
-                            text: "You design an opt-in system with full transparency. 40% of patients participate and you prevent 80 health crises in the first year. This becomes a model for ethical AI implementation in healthcare.",
-                            ethicsChange: 12
-                        }
-                    },
-                    {
-                        text: "Reject due to privacy concerns",
-                        consequence: {
-                            type: "mixed",
-                            text: "You block the AI system citing privacy rights. However, 35 preventable health crises occur in the first year. Families of affected patients question whether privacy was worth the cost.",
-                            ethicsChange: 5
-                        }
-                    },
-                    {
-                        text: "Pilot with high-risk patients only",
-                        consequence: {
-                            type: "mixed",
-                            text: "You implement for high-risk patients with special consent. This prevents some crises but creates questions about equal access to AI-powered healthcare.",
-                            ethicsChange: 8
-                        }
-                    }
-                ]
-            },
-            {
-                title: "Global Impact Decision",
-                text: "Your work has gained international attention. A pharmaceutical company offers you the role of Global Ethics Officer. Your first challenge: pricing a universal vaccine that costs $8 to produce. The company wants to charge $180 in wealthy countries, potentially leaving 500 million people without access. Your decision will affect global health policy.",
-                choices: [
-                    {
-                        text: "Implement tiered pricing with cross-subsidization",
-                        consequence: {
-                            type: "positive",
-                            text: "You create a system where wealthy countries subsidize global access. 2 billion people get vaccinated, preventing 800,000 deaths. This becomes the new standard for global health equity.",
-                            ethicsChange: 20
-                        }
-                    },
-                    {
-                        text: "Price at cost globally through public funding",
-                        consequence: {
-                            type: "mixed",
-                            text: "You achieve universal access through government partnerships. Everyone gets the vaccine, but future R&D depends on uncertain public funding, potentially delaying breakthrough treatments.",
-                            ethicsChange: 15
-                        }
-                    },
-                    {
-                        text: "Maintain market pricing to fund innovation",
-                        consequence: {
-                            type: "negative",
-                            text: "You keep high prices to fund research. Wealthy populations are protected but 500 million remain vulnerable. Public health advocates condemn prioritizing profits over lives.",
-                            ethicsChange: -15
-                        }
-                    }
+                    { text: "Tiered pricing - rich countries subsidize poor", points: 20 },
+                    { text: "Charge cost price globally", points: 15 },
+                    { text: "Market price to fund research", points: -5 },
+                    { text: "Free in poor countries, expensive elsewhere", points: 10 }
                 ]
             }
         ];
 
         function startGame() {
-            document.getElementById('startScreen').style.display = 'none';
-            document.getElementById('gameScreen').style.display = 'block';
-            loadScenario(0);
+            document.getElementById('start').className = 'hidden';
+            document.getElementById('game').className = '';
+            loadScenario();
         }
 
-        function loadScenario(index) {
-            if (index >= scenarios.length) {
+        function loadScenario() {
+            if (currentStep >= scenarios.length) {
                 showResults();
                 return;
             }
 
-            const scenario = scenarios[index];
-            gameState.currentStep = index + 1;
+            var scenario = scenarios[currentStep];
+            document.getElementById('title').textContent = scenario.title;
+            document.getElementById('situation').textContent = scenario.text;
+            document.getElementById('score').textContent = score;
 
-            document.getElementById('currentStep').textContent = gameState.currentStep;
-            document.getElementById('ethicsScore').textContent = `Ethics Score: ${gameState.ethicsScore}`;
-            document.getElementById('scenarioTitle').textContent = scenario.title;
-            document.getElementById('situationText').textContent = scenario.text;
+            var choicesDiv = document.getElementById('choices');
+            choicesDiv.innerHTML = '';
 
-            // Show previous consequence if exists
-            if (gameState.consequences.length > 0) {
-                const lastConsequence = gameState.consequences[gameState.consequences.length - 1];
-                document.getElementById('consequencesSection').style.display = 'block';
-                document.getElementById('consequenceContent').className = `consequence-${lastConsequence.type} rounded-lg p-4`;
-                document.getElementById('consequenceContent').textContent = lastConsequence.text;
+            for (var i = 0; i < scenario.choices.length; i++) {
+                var choice = scenario.choices[i];
+                var choiceDiv = document.createElement('div');
+                choiceDiv.className = 'choice';
+                choiceDiv.textContent = choice.text;
+                choiceDiv.onclick = (function(points, text) {
+                    return function() {
+                        makeChoice(points, text);
+                    };
+                })(choice.points, choice.text);
+                choicesDiv.appendChild(choiceDiv);
             }
-
-            // Clear previous input
-            document.getElementById('playerThinking').value = '';
-
-            // Load choices
-            const container = document.getElementById('choicesContainer');
-            container.innerHTML = '';
-
-            scenario.choices.forEach((choice, choiceIndex) => {
-                const button = document.createElement('button');
-                button.className = 'choice-btn w-full text-left p-4 bg-white hover:bg-blue-50 rounded-lg border-2 border-gray-200 hover:border-blue-300 shadow-sm';
-                button.innerHTML = `
-                    <div class="flex items-center justify-between">
-                        <span class="text-gray-800 font-medium">${choice.text}</span>
-                        <span class="text-blue-500 font-bold">→</span>
-                    </div>
-                `;
-                button.onclick = () => makeChoice(choice, index);
-                container.appendChild(button);
-            });
         }
 
-        function makeChoice(choice, scenarioIndex) {
-            // Record thinking
-            const thinking = document.getElementById('playerThinking').value;
-            if (thinking.trim()) {
-                gameState.reflections.push({
-                    step: gameState.currentStep,
-                    thought: thinking.trim()
-                });
-            }
-
-            // Record decision
-            gameState.decisions.push({
-                step: gameState.currentStep,
-                choice: choice.text,
-                consequence: choice.consequence
-            });
-
-            // Record consequence
-            gameState.consequences.push(choice.consequence);
-
-            // Update score
-            gameState.ethicsScore += choice.consequence.ethicsChange;
-            gameState.ethicsScore = Math.max(0, Math.min(100, gameState.ethicsScore));
-
-            // Load next scenario
-            setTimeout(() => loadScenario(scenarioIndex + 1), 1000);
+        function makeChoice(points, text) {
+            score += points;
+            decisions.push(text);
+            currentStep++;
+            setTimeout(loadScenario, 500);
         }
 
         function showResults() {
-            document.getElementById('gameScreen').style.display = 'none';
-            document.getElementById('resultsScreen').style.display = 'block';
-
-            // Determine final assessment
-            let title, outcome;
-            if (gameState.ethicsScore >= 80) {
-                title = "Ethical Leader";
-                outcome = "Your consistent commitment to ethical principles while balancing practical concerns has made you a respected leader in bioethics. Your decisions have created positive precedents that will influence healthcare ethics for years to come.";
-            } else if (gameState.ethicsScore >= 60) {
-                title = "Thoughtful Decision Maker";
-                outcome = "You've navigated complex ethical challenges with generally positive results. While not every decision was perfect, you've shown the ability to learn and adapt your approach based on new information and feedback.";
-            } else if (gameState.ethicsScore >= 40) {
-                title = "Learning Navigator";
-                outcome = "Your journey through these ethical dilemmas shows both successes and areas for growth. The complexity of healthcare ethics means even experienced professionals continue learning with each decision.";
+            document.getElementById('game').className = 'hidden';
+            document.getElementById('results').className = '';
+            
+            var outcome = '';
+            if (score >= 90) {
+                outcome = 'Excellent! You showed strong ethical leadership.';
+            } else if (score >= 70) {
+                outcome = 'Good work! You balanced competing interests well.';
+            } else if (score >= 50) {
+                outcome = 'Mixed results. Consider how to better balance ethical principles.';
             } else {
-                title = "Developing Ethicist";
-                outcome = "These challenging scenarios have highlighted the difficulty of ethical decision-making in healthcare. Your experience demonstrates the importance of consistent ethical frameworks and stakeholder consideration.";
+                outcome = 'Challenging journey. Reflect on stakeholder impacts.';
             }
-
-            document.getElementById('finalTitle').textContent = title;
-            document.getElementById('finalScore').textContent = `${gameState.ethicsScore}/100`;
-            document.getElementById('finalOutcome').textContent = outcome;
-
-            // Show decision history
-            const decisionContainer = document.getElementById('decisionHistory');
-            decisionContainer.innerHTML = '';
-            gameState.decisions.forEach((decision, index) => {
-                const div = document.createElement('div');
-                div.className = `consequence-${decision.consequence.type} rounded-lg p-3 mb-2`;
-                div.innerHTML = `
-                    <div class="font-semibold">Step ${decision.step}: ${decision.choice}</div>
-                    <div class="text-sm mt-1">${decision.consequence.text}</div>
-                `;
-                decisionContainer.appendChild(div);
-            });
-
-            // Show reflections
-            const reflectionContainer = document.getElementById('reflectionHistory');
-            if (gameState.reflections.length > 0) {
-                reflectionContainer.innerHTML = gameState.reflections.map(r => 
-                    `<div class="mb-3"><strong>Step ${r.step}:</strong> ${r.thought}</div>`
-                ).join('');
-            } else {
-                reflectionContainer.innerHTML = '<div class="text-gray-500 italic">No reflections recorded during your journey.</div>';
-            }
+            
+            outcome += ' Final score: ' + score + '/100';
+            document.getElementById('outcome').textContent = outcome;
         }
 
-        function resetGame() {
-            gameState = {
-                currentStep: 1,
-                ethicsScore: 100,
-                decisions: [],
-                reflections: [],
-                consequences: []
-            };
-            
-            document.getElementById('resultsScreen').style.display = 'none';
-            document.getElementById('startScreen').style.display = 'block';
+        function restart() {
+            currentStep = 0;
+            score = 100;
+            decisions = [];
+            document.getElementById('results').className = 'hidden';
+            document.getElementById('start').className = '';
         }
     </script>
 </body>
