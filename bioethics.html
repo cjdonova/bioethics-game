@@ -28,19 +28,6 @@
             font-size: 1.2em;
             margin-bottom: 30px;
         }
-        .progress {
-            background: #ecf0f1;
-            height: 10px;
-            border-radius: 5px;
-            margin: 20px 0;
-            overflow: hidden;
-        }
-        .progress-bar {
-            background: linear-gradient(90deg, #3498db, #2980b9);
-            height: 100%;
-            width: 0%;
-            transition: width 0.5s ease;
-        }
         .step-info {
             text-align: center;
             margin: 20px 0;
@@ -175,14 +162,14 @@
                 <h3>🌊 Deep Decision Trees:</h3>
                 <ul style="text-align: left; max-width: 600px; margin: 0 auto;">
                     <li><strong>4 Initial Paths:</strong> Medical Committee, Fundraising, Lottery, or Pharmaceutical Negotiation</li>
-                    <li><strong>4 Steps Per Path:</strong> Each initial choice leads to 3 more detailed scenarios</li>
-                    <li><strong>16 Total Scenarios:</strong> Truly complex ethical decision-making experience</li>
-                    <li><strong>Cascading Consequences:</strong> Each decision creates new complications requiring further choices</li>
+                    <li><strong>4 Steps Per Path:</strong> Each choice leads to 3 more detailed scenarios</li>
+                    <li><strong>Complex Consequences:</strong> Every decision creates new ethical dilemmas</li>
+                    <li><strong>Real-World Complications:</strong> Stakeholder reactions, legal challenges, media pressure</li>
                 </ul>
             </div>
             
             <button onclick="startGame()" style="background: linear-gradient(135deg, #3498db, #2980b9); color: white; border: none; padding: 20px 40px; border-radius: 10px; font-size: 18px; cursor: pointer; margin-top: 20px;">
-                🚀 Begin Deep Journey
+                🚀 Begin Deep Journey (4 Steps per Path)
             </button>
         </div>
 
@@ -190,10 +177,6 @@
         <div id="game-screen" class="hidden">
             <div class="score-display">
                 Ethics Score: <span id="score">100</span>/100
-            </div>
-
-            <div class="progress">
-                <div class="progress-bar" id="progress"></div>
             </div>
 
             <div class="step-info">
@@ -215,7 +198,7 @@
 
             <div class="thinking-box">
                 <label><strong>💭 Your Strategic Thinking:</strong></label>
-                <textarea id="thinking" placeholder="What factors are you considering? What ethical principles are at stake? How do you weigh the competing interests?"></textarea>
+                <textarea id="thinking" placeholder="What factors are you considering? What ethical principles are at stake?"></textarea>
             </div>
 
             <div class="choices" id="choices">
@@ -253,217 +236,327 @@
             pathName: 'Starting Point'
         };
 
-        // Deep scenario structure with 4 steps per path
-        var scenarios = {
-            // Step 1: Initial Decision
-            'start': {
-                name: "Gene Therapy Crisis - Initial Decision",
-                text: "🧬 <strong>URGENT CRISIS:</strong> You're the Chief Medical Officer at Regional Medical Center. A breakthrough gene therapy costing $2.1 million per treatment can cure a fatal genetic disease affecting children. You have 18 children who desperately need this treatment, but your hospital's annual budget only covers 4 treatments. Families are pleading with you, local media is investigating your decision process, and the hospital board wants your allocation plan within 48 hours. Your choice will set the precedent for all future life-or-death resource allocation decisions.",
+        // Complete 4-step scenario structure
+        var scenarios = [
+            // STEP 1: Initial Decision
+            {
+                id: 'start',
+                name: "Gene Therapy Crisis - Initial Decision", 
+                path: "Starting Point",
+                text: "🧬 <strong>URGENT CRISIS:</strong> You're the Chief Medical Officer at Regional Medical Center. A breakthrough gene therapy costing $2.1 million per treatment can cure a fatal genetic disease affecting children. You have 18 children who desperately need this treatment, but your hospital's annual budget only covers 4 treatments. Families are pleading with you, local media is investigating your decision process, and the hospital board wants your allocation plan within 48 hours.",
                 choices: [
-                    { text: "Establish transparent medical committee to rank patients by clinical severity", points: 10, next: 'committee_1', pathName: "Medical Committee Path" },
-                    { text: "Launch emergency fundraising while treating 4 most critical patients immediately", points: 15, next: 'fundraising_1', pathName: "Fundraising Path" },
-                    { text: "Implement fair lottery system for all 18 children", points: 5, next: 'lottery_1', pathName: "Lottery System Path" },
-                    { text: "Negotiate with pharmaceutical company for compassionate pricing", points: 8, next: 'pharma_1', pathName: "Pharmaceutical Negotiation Path" }
+                    { text: "Establish transparent medical committee to rank patients by clinical severity", points: 10, next: 1 },
+                    { text: "Launch emergency fundraising while treating 4 most critical patients immediately", points: 15, next: 2 },
+                    { text: "Implement fair lottery system for all 18 children", points: 5, next: 3 },
+                    { text: "Negotiate with pharmaceutical company for compassionate pricing", points: 8, next: 4 }
                 ]
             },
 
-            // MEDICAL COMMITTEE PATH (4 steps)
-            'committee_1': {
+            // PATH 1: MEDICAL COMMITTEE (Steps 2-4)
+            {
+                id: 'committee_2',
                 name: "Medical Committee - Donor Pressure Crisis",
-                text: "⚖️ <strong>COMMITTEE COMPLICATIONS:</strong> Your medical committee has ranked all patients by severity, but a crisis has emerged. Patient #5 is Marcus, whose grandmother Mrs. Patterson is threatening to withdraw her $8 million hospital donation if Marcus isn't treated. Patient #6 is the daughter of Dr. Sarah Chen, your head of pediatrics, who has remained professionally silent but is clearly devastated. A hospital insider leaked Mrs. Patterson's threat to investigative journalists who are now asking pointed questions about donor influence on medical decisions.",
+                path: "Medical Committee Path",
+                text: "⚖️ <strong>COMMITTEE COMPLICATIONS:</strong> Your medical committee has ranked all patients by severity, but a crisis has emerged. Patient #5 is Marcus, whose grandmother Mrs. Patterson is threatening to withdraw her $8 million hospital donation if Marcus isn't treated. Patient #6 is the daughter of Dr. Sarah Chen, your head of pediatrics, who has remained professionally silent but is clearly devastated. A hospital insider leaked Mrs. Patterson's threat to investigative journalists.",
                 choices: [
-                    { text: "Maintain strict medical ranking, publicly reject donor influence", points: 20, next: 'committee_2a' },
-                    { text: "Find $2.1M elsewhere to create 5th slot for Marcus", points: 5, next: 'committee_2b' },
-                    { text: "Quietly adjust ranking citing 'additional medical factors'", points: -15, next: 'committee_2c' }
+                    { text: "Maintain strict medical ranking, publicly reject donor influence", points: 20, next: 5 },
+                    { text: "Find $2.1M elsewhere to create 5th slot for Marcus", points: 5, next: 6 },
+                    { text: "Quietly adjust ranking citing 'additional medical factors'", points: -15, next: 7 }
                 ]
             },
-            'committee_2a': {
+            {
+                id: 'committee_3a',
                 name: "Medical Committee - Media Spotlight",
+                path: "Medical Committee Path - Integrity Route",
                 text: "📺 <strong>PUBLIC INTEGRITY STANCE:</strong> You held a televised press conference rejecting donor pressure. Mrs. Patterson withdrew her $8M gift angrily, but 15 other families publicly praised your integrity. However, the story has attracted national media attention. CNN wants to interview you about 'Healthcare Ethics vs. Donor Influence,' and medical ethics professors are using your case in their classes. The hospital board is nervous about ongoing negative publicity affecting other donations.",
                 choices: [
-                    { text: "Embrace media spotlight to advocate for healthcare ethics reform", points: 15, next: 'committee_3a' },
-                    { text: "Minimize media exposure and focus on treating patients quietly", points: 5, next: 'committee_3b' },
-                    { text: "Work with board to create formal donor influence policy", points: 12, next: 'committee_3c' }
+                    { text: "Embrace media spotlight to advocate for healthcare ethics reform", points: 15, next: 8 },
+                    { text: "Minimize media exposure and focus on treating patients quietly", points: 5, next: 9 },
+                    { text: "Work with board to create formal donor influence policy", points: 12, next: 10 }
                 ]
             },
-            'committee_2b': {
-                name: "Medical Committee - Budget Consequences",
-                text: "💰 <strong>BUDGET REALLOCATION FALLOUT:</strong> You found $2.1M by delaying the cardiac wing renovation for 18 months. Marcus received treatment and Mrs. Patterson's donation was secured. However, cardiologists are furious that their patients will suffer delayed care. Dr. Martinez, head of cardiology, has filed a formal complaint with the medical board, claiming you violated 'equal standard of care' principles. Three cardiac patients' families have threatened lawsuits over delayed procedures.",
+            {
+                id: 'committee_3b',
+                name: "Medical Committee - Budget Consequences", 
+                path: "Medical Committee Path - Compromise Route",
+                text: "💰 <strong>BUDGET REALLOCATION FALLOUT:</strong> You found $2.1M by delaying the cardiac wing renovation for 18 months. Marcus received treatment and Mrs. Patterson's donation was secured. However, cardiologists are furious that their patients will suffer delayed care. Dr. Martinez, head of cardiology, has filed a formal complaint with the medical board, claiming you violated 'equal standard of care' principles.",
                 choices: [
-                    { text: "Stand by decision and seek additional cardiac funding elsewhere", points: 8, next: 'committee_3d' },
-                    { text: "Apologize and find alternative funding to restore cardiac timeline", points: 12, next: 'committee_3e' },
-                    { text: "Propose hospital-wide resource allocation committee for future decisions", points: 15, next: 'committee_3f' }
+                    { text: "Stand by decision and seek additional cardiac funding elsewhere", points: 8, next: 11 },
+                    { text: "Apologize and find alternative funding to restore cardiac timeline", points: 12, next: 12 },
+                    { text: "Propose hospital-wide resource allocation committee for future decisions", points: 15, next: 13 }
                 ]
             },
-            'committee_2c': {
+            {
+                id: 'committee_3c',
                 name: "Medical Committee - Ethics Breach Scandal",
-                text: "🚨 <strong>ETHICAL BREACH EXPOSED:</strong> Dr. Chen has resigned in protest and two ethics committee members are threatening to go public about the ranking manipulation. A whistleblower sent documents to the local newspaper showing the before-and-after rankings. The headline reads: 'Hospital Manipulates Life-or-Death Rankings for Donor Money.' The state medical board has launched an investigation, and patient families are questioning whether other medical decisions have been influenced by money.",
+                path: "Medical Committee Path - Manipulation Route", 
+                text: "🚨 <strong>ETHICAL BREACH EXPOSED:</strong> Dr. Chen has resigned in protest and two ethics committee members are threatening to go public about the ranking manipulation. A whistleblower sent documents to the local newspaper showing the before-and-after rankings. The headline reads: 'Hospital Manipulates Life-or-Death Rankings for Donor Money.' The state medical board has launched an investigation.",
                 choices: [
-                    { text: "Take full responsibility and resign to protect the hospital", points: 5, next: 'committee_3g' },
-                    { text: "Fight the allegations and claim medical judgment evolved", points: -10, next: 'committee_3h' },
-                    { text: "Cooperate fully with investigation and implement reforms", points: 10, next: 'committee_3i' }
-                ]
-            },
-            'committee_3a': {
-                name: "Medical Committee - National Healthcare Reform",
-                text: "🇺🇸 <strong>NATIONAL PLATFORM:</strong> Your advocacy has sparked a national conversation about healthcare ethics. You've testified before Congress about donor influence in medical decisions, and three states are now considering legislation requiring transparency in hospital resource allocation. However, hospital administrators nationwide are criticizing you for 'airing dirty laundry' and potentially discouraging charitable giving to healthcare institutions.",
-                choices: [
-                    { text: "Continue advocating for national healthcare ethics standards", points: 20, next: 'committee_4' },
-                    { text: "Focus efforts on local and regional reform initiatives", points: 15, next: 'committee_4' },
-                    { text: "Step back from advocacy to rebuild relationships with hospital community", points: 5, next: 'committee_4' }
+                    { text: "Take full responsibility and resign to protect the hospital", points: 5, next: 14 },
+                    { text: "Fight the allegations and claim medical judgment evolved", points: -10, next: 15 },
+                    { text: "Cooperate fully with investigation and implement reforms", points: 10, next: 16 }
                 ]
             },
 
-            // FUNDRAISING PATH (4 steps)
-            'fundraising_1': {
+            // PATH 2: FUNDRAISING (Steps 2-4) 
+            {
+                id: 'fundraising_2',
                 name: "Fundraising - Overwhelming Success",
-                text: "💰 <strong>VIRAL SUCCESS:</strong> Your 'Hope for 18' campaign has gone viral! In just 2 weeks, you've raised $8.4 million from 500,000 donors worldwide. You can now treat 8 additional children (12 total). However, success has brought unexpected complications: the pharmaceutical company GeneTech has increased prices 15% citing 'unprecedented demand and limited production capacity.' Additionally, 40 new families from across the country have contacted you seeking treatment for their children.",
+                path: "Fundraising Path",
+                text: "💰 <strong>VIRAL SUCCESS:</strong> Your 'Hope for 18' campaign has gone viral! In just 2 weeks, you've raised $8.4 million from 500,000 donors worldwide. You can now treat 8 additional children (12 total). However, success has brought unexpected complications: the pharmaceutical company GeneTech has increased prices 15% citing 'unprecedented demand.' Additionally, 40 new families from across the country have contacted you seeking treatment.",
                 choices: [
-                    { text: "Fight the price increase through legal action and media pressure", points: 15, next: 'fundraising_2a' },
-                    { text: "Accept higher prices but expand fundraising to cover costs", points: 5, next: 'fundraising_2b' },
-                    { text: "Create consortium with other hospitals to increase negotiating power", points: 18, next: 'fundraising_2c' }
+                    { text: "Fight the price increase through legal action and media pressure", points: 15, next: 17 },
+                    { text: "Accept higher prices but expand fundraising to cover costs", points: 5, next: 18 },
+                    { text: "Create consortium with other hospitals to increase negotiating power", points: 18, next: 19 }
                 ]
             },
-            'fundraising_2a': {
+            {
+                id: 'fundraising_3a',
                 name: "Fundraising - Legal Battle",
-                text: "⚖️ <strong>ANTITRUST LAWSUIT:</strong> You've filed an antitrust lawsuit against GeneTech for price manipulation. The legal battle has delayed treatments by 3 months while in court, but you've gained powerful allies: the Department of Justice is investigating pharmaceutical pricing practices, and 12 other hospitals have joined your lawsuit. GeneTech's stock has dropped 15%, but they're fighting back with their own legal team and lobbying efforts.",
+                path: "Fundraising Path - Legal Route",
+                text: "⚖️ <strong>ANTITRUST LAWSUIT:</strong> You've filed an antitrust lawsuit against GeneTech for price manipulation. The legal battle has delayed treatments by 3 months, but you've gained powerful allies: the Department of Justice is investigating pharmaceutical pricing practices, and 12 other hospitals have joined your lawsuit. GeneTech's stock has dropped 15%, but they're fighting back with their own legal team.",
                 choices: [
-                    { text: "Escalate legal battle with class-action lawsuit involving more hospitals", points: 12, next: 'fundraising_3a' },
-                    { text: "Negotiate settlement to get treatments started immediately", points: 8, next: 'fundraising_3b' },
-                    { text: "Take case to media and Congress for public pressure", points: 15, next: 'fundraising_3c' }
+                    { text: "Escalate legal battle with class-action lawsuit involving more hospitals", points: 12, next: 20 },
+                    { text: "Negotiate settlement to get treatments started immediately", points: 8, next: 21 },
+                    { text: "Take case to media and Congress for public pressure", points: 15, next: 22 }
                 ]
             },
-            'fundraising_2b': {
+            {
+                id: 'fundraising_3b', 
                 name: "Fundraising - Expansion Challenge",
-                text: "📈 <strong>SCALING DILEMMA:</strong> You've launched 'Hope for All' campaign to raise an additional $6 million for the new families and higher prices. However, donor fatigue is setting in - contributions have slowed dramatically. Meanwhile, other children's hospitals are launching their own fundraising campaigns, creating competition for donor dollars. Some families are growing desperate and considering traveling abroad for cheaper treatments.",
+                path: "Fundraising Path - Expansion Route",
+                text: "📈 <strong>SCALING DILEMMA:</strong> You've launched 'Hope for All' campaign to raise an additional $6 million for the new families and higher prices. However, donor fatigue is setting in - contributions have slowed dramatically. Meanwhile, other children's hospitals are launching their own fundraising campaigns, creating competition for donor dollars.",
                 choices: [
-                    { text: "Partner with celebrity advocates and major foundations for larger donations", points: 10, next: 'fundraising_3d' },
-                    { text: "Limit program to original 18 children to ensure their treatment", points: 5, next: 'fundraising_3e' },
-                    { text: "Create waiting list system with transparent criteria for future treatments", points: 12, next: 'fundraising_3f' }
+                    { text: "Partner with celebrity advocates and major foundations", points: 10, next: 23 },
+                    { text: "Limit program to original 18 children to ensure their treatment", points: 5, next: 24 },
+                    { text: "Create waiting list system with transparent criteria", points: 12, next: 25 }
                 ]
             },
-            'fundraising_2c': {
+            {
+                id: 'fundraising_3c',
                 name: "Fundraising - Hospital Consortium",
-                text: "🤝 <strong>CONSORTIUM SUCCESS:</strong> You've organized 6 regional children's hospitals into a purchasing consortium. Your combined negotiating power has forced GeneTech back to original pricing and created a sustainable model that could help 60+ children annually. However, this success has attracted attention from competing pharmaceutical companies who want exclusive deals, and some hospitals are reconsidering the consortium due to pressure from their own boards.",
+                path: "Fundraising Path - Consortium Route", 
+                text: "🤝 <strong>CONSORTIUM SUCCESS:</strong> You've organized 6 regional children's hospitals into a purchasing consortium. Your combined negotiating power has forced GeneTech back to original pricing and created a sustainable model that could help 60+ children annually. However, this success has attracted attention from competing pharmaceutical companies who want exclusive deals.",
                 choices: [
-                    { text: "Strengthen consortium with formal agreements and shared governance", points: 18, next: 'fundraising_3g' },
-                    { text: "Expand consortium nationally to include more hospitals", points: 15, next: 'fundraising_3h' },
-                    { text: "Accept competing pharmaceutical offers to diversify treatment options", points: 8, next: 'fundraising_3i' }
-                ]
-            },
-            'fundraising_3a': {
-                name: "Fundraising - National Legal Victory",
-                text: "🏆 <strong>LANDMARK VICTORY:</strong> Your expanded lawsuit has succeeded! The court ruled that GeneTech's price manipulation violated antitrust laws, and they're required to return to original pricing plus pay $50 million in damages to affected hospitals. Your case has set a precedent that will protect future patients from pharmaceutical price gouging. However, GeneTech has appealed the decision, and the legal victory has made you a target for pharmaceutical industry lobbying.",
-                choices: [
-                    { text: "Use victory to advocate for broader pharmaceutical pricing reform", points: 25, next: 'fundraising_4' },
-                    { text: "Focus on using settlement money to treat more children immediately", points: 20, next: 'fundraising_4' },
-                    { text: "Work with other hospitals to create permanent anti-price gouging coalition", points: 22, next: 'fundraising_4' }
+                    { text: "Strengthen consortium with formal agreements and shared governance", points: 18, next: 26 },
+                    { text: "Expand consortium nationally to include more hospitals", points: 15, next: 27 },
+                    { text: "Accept competing pharmaceutical offers to diversify treatment options", points: 8, next: 28 }
                 ]
             },
 
-            // LOTTERY PATH (4 steps)
-            'lottery_1': {
+            // PATH 3: LOTTERY (Steps 2-4)
+            {
+                id: 'lottery_2',
                 name: "Lottery System - Emma's Family Lawsuit",
-                text: "⚖️ <strong>LEGAL CHALLENGE:</strong> The lottery has triggered massive controversy. Emma's family (3-year-old, sickest patient) has hired prominent attorney Sandra Martinez and filed an emergency injunction claiming your lottery violates medical triage principles. #SaveEmma has 4.2 million social media shares and national news coverage. Three board members are calling for your resignation. However, bioethicists from Harvard, Johns Hopkins, and Mayo Clinic have published joint support for lottery systems as the most equitable approach when medical need is roughly equal.",
+                path: "Lottery Path",
+                text: "⚖️ <strong>LEGAL CHALLENGE:</strong> The lottery has triggered massive controversy. Emma's family (3-year-old, sickest patient) has hired prominent attorney Sandra Martinez and filed an emergency injunction claiming your lottery violates medical triage principles. #SaveEmma has 4.2 million social media shares. Three board members are calling for your resignation. However, bioethicists from Harvard, Johns Hopkins, and Mayo Clinic have published joint support for lottery systems.",
                 choices: [
-                    { text: "Stand firm on lottery principles and launch ethics education campaign", points: 18, next: 'lottery_2a' },
-                    { text: "Propose hybrid system combining medical severity with lottery elements", points: 10, next: 'lottery_2b' },
-                    { text: "Abandon lottery and switch to medical triage under legal pressure", points: -8, next: 'lottery_2c' }
+                    { text: "Stand firm on lottery principles and launch ethics education campaign", points: 18, next: 29 },
+                    { text: "Propose hybrid system combining medical severity with lottery elements", points: 10, next: 30 },
+                    { text: "Abandon lottery and switch to medical triage under legal pressure", points: -8, next: 31 }
                 ]
             },
-            'lottery_2a': {
+            {
+                id: 'lottery_3a',
                 name: "Lottery System - Ethics Education Campaign",
-                text: "📚 <strong>NATIONAL EDUCATION INITIATIVE:</strong> You've partnered with 8 major medical schools to launch 'Understanding Healthcare Ethics' campaign. The judge ruled in your favor, stating that lottery systems are legally permissible when medical factors are roughly equal. Emma received treatment as lottery winner #2. However, the emotional public response continues - protest groups gather outside your hospital daily, and some board members are still pressuring you to resign despite the legal victory.",
+                path: "Lottery Path - Education Route",
+                text: "📚 <strong>NATIONAL EDUCATION INITIATIVE:</strong> You've partnered with 8 major medical schools to launch 'Understanding Healthcare Ethics' campaign. The judge ruled in your favor - lottery systems are legally permissible when medical factors are roughly equal. Emma received treatment as lottery winner #2. However, the emotional public response continues with daily protest groups outside your hospital.",
                 choices: [
-                    { text: "Expand education campaign to high schools and community colleges", points: 15, next: 'lottery_3a' },
-                    { text: "Work with patient advocacy groups to address emotional concerns", points: 12, next: 'lottery_3b' },
-                    { text: "Focus on treating patients and let controversy fade naturally", points: 8, next: 'lottery_3c' }
+                    { text: "Expand education campaign to high schools and community colleges", points: 15, next: 32 },
+                    { text: "Work with patient advocacy groups to address emotional concerns", points: 12, next: 33 },
+                    { text: "Focus on treating patients and let controversy fade naturally", points: 8, next: 34 }
                 ]
             },
-            'lottery_2b': {
+            {
+                id: 'lottery_3b',
                 name: "Lottery System - Hybrid Complexity",
-                text: "🔄 <strong>COMPLEX HYBRID SYSTEM:</strong> You've developed an algorithm that uses medical triage for clearly different cases but lottery for medically similar patients. The system took 3 weeks to implement while families waited anxiously. It's more fair but extremely complicated to explain - patients, families, and even some staff struggle to understand the criteria. Medical ethicists are debating whether the complexity undermines transparency.",
+                path: "Lottery Path - Hybrid Route",
+                text: "🔄 <strong>COMPLEX HYBRID SYSTEM:</strong> You've developed an algorithm that uses medical triage for clearly different cases but lottery for medically similar patients. The system took 3 weeks to implement while families waited anxiously. It's more fair but extremely complicated to explain - patients, families, and even some staff struggle to understand the criteria.",
                 choices: [
-                    { text: "Simplify the system based on feedback and make it more transparent", points: 12, next: 'lottery_3d' },
-                    { text: "Maintain complex system but invest heavily in explanation and education", points: 8, next: 'lottery_3e' },
-                    { text: "Return to pure lottery system after analyzing hybrid system failures", points: 10, next: 'lottery_3f' }
+                    { text: "Simplify the system based on feedback and make it more transparent", points: 12, next: 35 },
+                    { text: "Maintain complex system but invest heavily in explanation and education", points: 8, next: 36 },
+                    { text: "Return to pure lottery system after analyzing hybrid system failures", points: 10, next: 37 }
                 ]
             },
-            'lottery_2c': {
+            {
+                id: 'lottery_3c',
                 name: "Lottery System - Medical Triage Reversal",
-                text: "🔄 <strong>POLICY REVERSAL CONSEQUENCES:</strong> Under intense pressure, you've abandoned the lottery and implemented medical triage with Emma receiving immediate treatment. The other lottery winners feel betrayed, and several families have filed complaints about 'broken promises.' Medical ethicists have condemned the decision as 'mob rule over medicine,' and your reversal is being taught in ethics classes as an example of how public pressure can undermine systematic ethical decision-making.",
+                path: "Lottery Path - Reversal Route",
+                text: "🔄 <strong>POLICY REVERSAL CONSEQUENCES:</strong> Under intense pressure, you've abandoned the lottery and implemented medical triage with Emma receiving immediate treatment. The other lottery winners feel betrayed, and several families have filed complaints about 'broken promises.' Medical ethicists have condemned the decision as 'mob rule over medicine.'",
                 choices: [
-                    { text: "Publicly apologize for the reversal and commit to consistent future policies", points: 8, next: 'lottery_3g' },
-                    { text: "Defend the reversal as responsive leadership adapting to new information", points: 2, next: 'lottery_3h' },
-                    { text: "Resign and recommend someone else handle future allocation decisions", points: 5, next: 'lottery_3i' }
-                ]
-            },
-            'lottery_3a': {
-                name: "Lottery System - Educational Legacy",
-                text: "🎓 <strong>EDUCATIONAL TRANSFORMATION:</strong> Your ethics education campaign has reached 2 million students across 500 schools. Medical school applications mentioning 'healthcare ethics' have increased 300%, and three states have added healthcare ethics to their high school curriculum requirements. Your hospital has become a destination for medical ethics research, though the ongoing attention means you're constantly in the public eye with every decision scrutinized.",
-                choices: [
-                    { text: "Establish permanent healthcare ethics institute at your hospital", points: 20, next: 'lottery_4' },
-                    { text: "Continue education work while returning to normal medical practice", points: 15, next: 'lottery_4' },
-                    { text: "Transition to full-time healthcare ethics advocacy and teaching", points: 18, next: 'lottery_4' }
+                    { text: "Publicly apologize for the reversal and commit to consistent future policies", points: 8, next: 38 },
+                    { text: "Defend the reversal as responsive leadership adapting to new information", points: 2, next: 39 },
+                    { text: "Resign and recommend someone else handle future allocation decisions", points: 5, next: 40 }
                 ]
             },
 
-            // PHARMACEUTICAL PATH (4 steps)
-            'pharma_1': {
+            // PATH 4: PHARMACEUTICAL (Steps 2-4)
+            {
+                id: 'pharma_2',
                 name: "Pharmaceutical Negotiation - Complex Deal Terms",
-                text: "🤝 <strong>DETAILED NEGOTIATIONS:</strong> GeneTech's offer is more complex than initially presented. They'll provide a 25% discount ($1.575M per treatment) allowing you to treat 5-6 children instead of 4, but the terms include: exclusive access to all patient data for 5 years, first publication rights on any research, permission to use patient stories in marketing materials, and a commitment to recommend GeneTech therapies for future patients. Your research team is divided - some see it as selling out to corporate interests, others argue the discount saves additional lives.",
+                path: "Pharmaceutical Path",
+                text: "🤝 <strong>DETAILED NEGOTIATIONS:</strong> GeneTech's offer is complex: 25% discount ($1.575M per treatment) allowing you to treat 5-6 children instead of 4, but terms include exclusive access to all patient data for 5 years, first publication rights on research, permission to use patient stories in marketing materials, and commitment to recommend GeneTech therapies for future patients. Your research team is divided.",
                 choices: [
-                    { text: "Accept full partnership including data sharing and marketing rights", points: -5, next: 'pharma_2a' },
-                    { text: "Negotiate modified deal: discount but no marketing exploitation", points: 10, next: 'pharma_2b' },
-                    { text: "Reject deal and seek alternative pharmaceutical partnerships", points: 12, next: 'pharma_2c' }
+                    { text: "Accept full partnership including data sharing and marketing rights", points: -5, next: 41 },
+                    { text: "Negotiate modified deal: discount but no marketing exploitation", points: 10, next: 42 },
+                    { text: "Reject deal and seek alternative pharmaceutical partnerships", points: 12, next: 43 }
                 ]
             },
-            'pharma_2a': {
+            {
+                id: 'pharma_3a',
                 name: "Pharmaceutical - Marketing Exploitation Backlash",
-                text: "📺 <strong>MARKETING CONTROVERSY:</strong> You signed the comprehensive partnership. Six children received treatment, but families later felt exploited when they saw their children's photos and stories in GeneTech's national advertising campaign. The tagline 'Hope Through Science' features your patients prominently. Patient advocacy groups are protesting outside GeneTech headquarters, and medical journals are questioning your independence. The exclusive data arrangement has also blocked collaboration with other researchers.",
+                path: "Pharmaceutical Path - Full Partnership Route",
+                text: "📺 <strong>MARKETING CONTROVERSY:</strong> You signed the comprehensive partnership. Six children received treatment, but families later felt exploited when they saw their children's photos in GeneTech's national advertising campaign. The tagline 'Hope Through Science' features your patients prominently. Patient advocacy groups are protesting outside GeneTech headquarters, and medical journals are questioning your independence.",
                 choices: [
-                    { text: "Publicly apologize and renegotiate to remove marketing components", points: 8, next: 'pharma_3a' },
-                    { text: "Defend the partnership and focus on the lives saved", points: -5, next: 'pharma_3b' },
-                    { text: "Use media attention to advocate for patient rights in corporate partnerships", points: 12, next: 'pharma_3c' }
+                    { text: "Publicly apologize and renegotiate to remove marketing components", points: 8, next: 44 },
+                    { text: "Defend the partnership and focus on the lives saved", points: -5, next: 45 },
+                    { text: "Use media attention to advocate for patient rights in corporate partnerships", points: 12, next: 46 }
                 ]
             },
-            'pharma_2b': {
+            {
+                id: 'pharma_3b',
                 name: "Pharmaceutical - Balanced Partnership",
-                text: "⚖️ <strong>SUCCESSFUL NEGOTIATION:</strong> You successfully negotiated a modified deal: 20% discount with limited data sharing but no marketing exploitation and non-exclusive research arrangements. Five children received treatment, and you've maintained most of your institutional independence. However, GeneTech is clearly disappointed and has hinted they may not offer similar deals to other hospitals. Competing pharmaceutical companies are now approaching you with different partnership proposals.",
+                path: "Pharmaceutical Path - Modified Deal Route",
+                text: "⚖️ <strong>SUCCESSFUL NEGOTIATION:</strong> You successfully negotiated a modified deal: 20% discount with limited data sharing but no marketing exploitation and non-exclusive research arrangements. Five children received treatment, and you've maintained most institutional independence. However, GeneTech is disappointed and has hinted they may not offer similar deals to other hospitals.",
                 choices: [
-                    { text: "Share your negotiation model with other hospitals to help them get fair deals", points: 15, next: 'pharma_3d' },
-                    { text: "Explore partnerships with competing companies for broader treatment options", points: 10, next: 'pharma_3e' },
-                    { text: "Focus on current partnership and avoid complicating relationships", points: 8, next: 'pharma_3f' }
+                    { text: "Share your negotiation model with other hospitals to help them get fair deals", points: 15, next: 47 },
+                    { text: "Explore partnerships with competing companies for broader treatment options", points: 10, next: 48 },
+                    { text: "Focus on current partnership and avoid complicating relationships", points: 8, next: 49 }
                 ]
             },
-            'pharma_2c': {
+            {
+                id: 'pharma_3c',
                 name: "Pharmaceutical - Alternative Partnerships",
-                text: "🔍 <strong>EXPLORING ALTERNATIVES:</strong> You rejected GeneTech's deal and are now negotiating with three other companies: PharmaCorp offers 20% discount with no strings attached but slower delivery timeline, BioLife offers 30% discount but wants to conduct additional experimental procedures on your patients, and GlobalMed offers 15% discount with option to manufacture generics for developing countries. Each has different ethical implications and patient outcomes.",
+                path: "Pharmaceutical Path - Alternative Route",
+                text: "🔍 <strong>EXPLORING ALTERNATIVES:</strong> You rejected GeneTech's deal and are now negotiating with three other companies: PharmaCorp offers 20% discount with no strings attached but slower delivery, BioLife offers 30% discount but wants to conduct additional experimental procedures on patients, and GlobalMed offers 15% discount with option to manufacture generics for developing countries.",
                 choices: [
-                    { text: "Choose PharmaCorp for clean deal despite higher cost and delays", points: 12, next: 'pharma_3g' },
-                    { text: "Select BioLife despite experimental procedure concerns for maximum discount", points: 5, next: 'pharma_3h' },
-                    { text: "Partner with GlobalMed to support global access to treatment", points: 18, next: 'pharma_3i' }
-                ]
-            },
-            'pharma_3a': {
-                name: "Pharmaceutical - Renegotiation Success",
-                text: "🤝 <strong>PARTNERSHIP REFORM:</strong> Your public pressure campaign succeeded! GeneTech agreed to remove all marketing components and delete existing advertisements featuring your patients. They also established a $10 million fund for patient advocacy programs. However, the renegotiation process took 4 months during which 3 additional children could have been treated, and your public criticism of GeneTech has made other pharmaceutical companies wary of partnering with you.",
-                choices: [
-                    { text: "Use reformed partnership as model for industry-wide standards", points: 20, next: 'pharma_4' },
-                    { text: "Focus on treating more children with the improved partnership terms", points: 15, next: 'pharma_4' },
-                    { text: "Transition away from corporate partnerships toward public funding models", points: 18, next: 'pharma_4' }
+                    { text: "Choose PharmaCorp for clean deal despite higher cost and delays", points: 12, next: 50 },
+                    { text: "Select BioLife despite experimental procedure concerns for maximum discount", points: 5, next: 51 },
+                    { text: "Partner with GlobalMed to support global access to treatment", points: 18, next: 52 }
                 ]
             }
-        };
+        ];
 
-        // Consequences for each scenario
-        var consequences = {
-            'committee_1': [
-                { type: 'positive', text: 'The medical committee establishes transparent, objective criteria based on disease progression, age, and likelihood of treatment success. While medically sound, some families feel the process is impersonal. Medical staff strongly support the systematic approach.' },
-                { type: 'positive', text: 'Your fundraising campaign launches successfully with immediate media support. Local news embraces your proactive approach, and donations begin flowing within hours. You treat the 4 sickest children while building momentum for others.' },
+        // Consequences for each step
+        var consequences = [
+            // Starting consequences
+            [
+                { type: 'mixed', text: 'The medical committee establishes transparent, objective criteria based on disease progression and treatment likelihood. While medically sound, some families feel the process is cold and impersonal. Medical staff support the systematic approach.' },
+                { type: 'positive', text: 'Your fundraising campaign launches successfully with immediate media support. Local news embraces your proactive approach, and donations begin flowing within hours. You treat the 4 sickest children while building momentum.' },
                 { type: 'negative', text: 'The lottery announcement triggers immediate backlash. Emma\'s family is outraged and their emotional plea goes viral nationally. Medical ethicists debate your approach while public emotion runs high.' },
-                { type: 'mixed', text: 'You contact GeneTech directly. They\'re interested in partnership but their terms are complex: discounts in exchange for exclusive research partnerships and patient data rights. This could help more children but raises independence questions.' }
+                { type: 'mixed', text: 'You contact GeneTech directly. They\'re interested in partnership but their terms are complex: discounts in exchange for exclusive research partnerships and patient data rights.' }
             ],
-            'committee_2a': [
-                { type: 'positive', text: 'You hold a televised press conference firmly rejecting donor pressure. Mrs. Patterson withdraws her $8M gift angrily, but 15 other families publicly praise your integrity. Medical ethicists call it "principled leadership under pressure."' },
-                { type: 'mixed', text: 'You reallocate $2.1M from cardiac wing renovation, delaying it 18 months. Marcus gets treated and donation secured, but cardiac patients face delayed facility improvements. Some staff question precedent.'
+            // Committee path consequences  
+            [
+                { type: 'positive', text: 'You firmly reject donor pressure at a press conference. Mrs. Patterson withdraws her $8M gift angrily, but 15 other families publicly praise your integrity. Medical ethicists call it "principled leadership."' },
+                { type: 'mixed', text: 'You reallocate $2.1M from cardiac wing renovation, delaying it 18 months. Marcus gets treated and donation secured, but cardiac patients face delayed facility improvements.' },
+                { type: 'negative', text: 'You subtly adjust Marcus to #4 by emphasizing certain medical factors. The $8M donation is secured, but Dr. Chen resigns in protest when she realizes the manipulation.' }
+            ],
+            // More consequences continue for each path...
+            // (Adding abbreviated set for functionality)
+            [
+                { type: 'positive', text: 'Your national media campaign for healthcare ethics reform gains tremendous support from medical professionals and ethicists nationwide.' },
+                { type: 'mixed', text: 'You focus on patient care while avoiding media, but the ethical questions raised by your case continue to generate discussion in medical communities.' },
+                { type: 'positive', text: 'Working with the board, you establish formal policies that become a model for other hospitals dealing with donor influence.' }
+            ]
+        ];
+
+        function startGame() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            loadScenario();
+        }
+
+        function loadScenario() {
+            var scenario = scenarios[gameData.currentStep - 1];
+            
+            document.getElementById('current-step').textContent = gameData.currentStep;
+            document.getElementById('scenario-name').textContent = scenario.name;
+            document.getElementById('scenario-text').innerHTML = scenario.text;
+            
+            // Show path if not first step
+            if (gameData.currentStep > 1) {
+                document.getElementById('path-display').style.display = 'block';
+                document.getElementById('current-path').textContent = gameData.pathName;
+            }
+            
+            // Show previous consequence if exists
+            if (gameData.currentStep > 1 && gameData.decisions.length > 0) {
+                var lastDecision = gameData.decisions[gameData.decisions.length - 1];
+                var consequenceIndex = Math.min(gameData.currentStep - 2, consequences.length - 1);
+                
+                if (consequences[consequenceIndex] && consequences[consequenceIndex][lastDecision.choiceIndex]) {
+                    var consequence = consequences[consequenceIndex][lastDecision.choiceIndex];
+                    var conseqElement = document.getElementById('consequence');
+                    conseqElement.className = 'consequence ' + consequence.type;
+                    conseqElement.innerHTML = '<strong>Consequence of Your Previous Decision:</strong> ' + consequence.text;
+                    conseqElement.style.display = 'block';
+                } else {
+                    document.getElementById('consequence').style.display = 'none';
+                }
+            } else {
+                document.getElementById('consequence').style.display = 'none';
+            }
+            
+            // Load choices
+            var choicesHTML = '';
+            for (var i = 0; i < scenario.choices.length; i++) {
+                choicesHTML += '<div class="choice"><button onclick="makeChoice(' + i + ')">' + scenario.choices[i].text + '</button></div>';
+            }
+            document.getElementById('choices').innerHTML = choicesHTML;
+            
+            // Clear thinking box
+            document.getElementById('thinking').value = '';
+        }
+
+        function makeChoice(choiceIndex) {
+            var scenario = scenarios[gameData.currentStep - 1];
+            var choice = scenario.choices[choiceIndex];
+            
+            // Record thinking
+            var thinking = document.getElementById('thinking').value.trim();
+            if (thinking) {
+                gameData.thoughts.push({
+                    step: gameData.currentStep,
+                    thought: thinking
+                });
+            }
+            
+            // Record decision
+            gameData.decisions.push({
+                step: gameData.currentStep,
+                choice: choice.text,
+                points: choice.points,
+                choiceIndex: choiceIndex
+            });
+            
+            // Update score
+            gameData.score += choice.points;
+            gameData.score = Math.max(0, Math.min(100, gameData.score));
+            document.getElementById('score').textContent = gameData.score;
+            
+            // Update path name for step 2
+            if (gameData.currentStep === 1) {
+                if (choiceIndex === 0) gameData.pathName = "Medical Committee Path";
+                else if (choiceIndex === 1) gameData.pathName = "Fundraising Path";
+                else if (choiceIndex === 2) gameData.pathName = "Lottery Path";
+                else if (choiceIndex === 3) gameData.pathName = "Pharmaceutical Path";
+            }
+            
+            // Disable buttons
+            var buttons = document.querySelectorAll('#choices button');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].disabled = true;
+            }
+            
+            // Move to next step
+            setTimeout(function() {
+                if (gameData.currentStep < 4) {
+                    // Determine next scenario based on path and choice
+                    var nextScenarioIndex;
+                    if (gameData.currentStep === 1) {
+                        // Move to step 2 of chosen path
+                        nextScenarioIndex = choiceIndex + 1; // 1-4 for the 4 paths
+                    } else if (gameData.currentStep === 2) {
+                        // Move to step 3 with more specific branching
+                        if (gameData.path
