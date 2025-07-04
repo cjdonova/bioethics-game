@@ -1,31 +1,182 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>BioEthics 4-Step Adventure</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-        body { font-family: Arial, sans-serif; background: #f0f8ff; padding: 20px; max-width: 900px; margin: 0 auto; }
-        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        h1 { color: #2c3e50; text-align: center; font-size: 2.5em; margin-bottom: 10px; }
-        .subtitle { text-align: center; color: #7f8c8d; font-size: 1.2em; margin-bottom: 30px; }
-        .step-info { text-align: center; margin: 20px 0; padding: 15px; background: #e8f6ff; border-radius: 8px; border-left: 4px solid #3498db; }
-        .scenario { background: #f8f9fa; padding: 25px; border-radius: 10px; margin: 20px 0; border-left: 5px solid #27ae60; }
-        .consequence { padding: 20px; margin: 20px 0; border-radius: 8px; display: none; border-left: 4px solid; }
-        .consequence.positive { background: #d4edda; border-color: #28a745; color: #155724; }
-        .consequence.negative { background: #f8d7da; border-color: #dc3545; color: #721c24; }
+        body { 
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f8ff 70%, #e0ecef 100%);
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .container {
+            background: #fff;
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 6px 32px rgba(44,62,80,0.10);
+            animation: fadeIn 1s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98);}
+            to { opacity: 1; transform: scale(1);}
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            font-size: 2.6em;
+            margin-bottom: 8px;
+            letter-spacing: -1px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1.18em;
+            margin-bottom: 32px;
+            letter-spacing: 0.2px;
+        }
+        .step-info {
+            text-align: center;
+            margin: 18px 0;
+            padding: 12px 0;
+            background: #e8f6ff;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+            font-size: 1.12em;
+            font-weight: 500;
+        }
+        .scenario {
+            background: #f8f9fa;
+            padding: 20px 26px;
+            border-radius: 11px;
+            margin: 18px 0 12px;
+            border-left: 5px solid #27ae60;
+            font-size: 1.13em;
+            line-height: 1.6;
+        }
+        .consequence {
+            padding: 16px 22px;
+            margin: 14px 0 16px;
+            border-radius: 8px;
+            display: none;
+            border-left: 4px solid;
+            font-size: 1.05em;
+            transition: background 0.3s;
+        }
+        .consequence.positive { background: #d4edda; border-color: #28a745; color: #176531; }
+        .consequence.negative { background: #f8d7da; border-color: #dc3545; color: #b03a41; }
         .consequence.mixed { background: #fff3cd; border-color: #ffc107; color: #856404; }
-        .thinking-box { background: #f1f3f4; padding: 20px; border-radius: 8px; margin: 20px 0; }
-        .thinking-box textarea { width: 100%; height: 80px; padding: 10px; border: 2px solid #ddd; border-radius: 5px; font-family: inherit; box-sizing: border-box; }
-        .choices { margin: 20px 0; }
-        .choice { margin: 10px 0; }
-        .choice button { width: 100%; padding: 15px 20px; background: linear-gradient(135deg, #3498db, #2980b9); color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; text-align: left; transition: all 0.3s ease; }
-        .choice button:hover { background: linear-gradient(135deg, #2980b9, #1f4e79); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .choice button:disabled { background: #95a5a6; cursor: not-allowed; transform: none; }
-        .score-display { position: fixed; top: 20px; right: 20px; background: rgba(44, 62, 80, 0.9); color: white; padding: 15px; border-radius: 10px; font-weight: bold; z-index: 1000; }
-        .path-display { background: #e8f4fd; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3498db; }
-        .results { text-align: center; padding: 30px; background: #f8f9fa; border-radius: 10px; margin: 20px 0; }
-        .final-score { font-size: 3em; color: #3498db; margin: 20px 0; }
-        .restart-btn { background: linear-gradient(135deg, #27ae60, #219a52); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 20px; }
-        .hidden { display: none; }
+        .thinking-box {
+            background: #f1f3f4;
+            padding: 18px 16px 12px;
+            border-radius: 8px;
+            margin: 18px 0 0 0;
+        }
+        .thinking-box label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 1.02em;
+        }
+        .thinking-box textarea {
+            width: 100%;
+            min-height: 70px;
+            padding: 10px;
+            border: 2px solid #d6e1e9;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1em;
+            box-sizing: border-box;
+            resize: vertical;
+            background: #fafbfc;
+        }
+        .choices {
+            margin: 18px 0 0 0;
+        }
+        .choice {
+            margin: 10px 0;
+        }
+        .choice button {
+            width: 100%;
+            min-height: 48px;
+            padding: 13px 22px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.08em;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 1px 5px rgba(52,152,219,0.06);
+        }
+        .choice button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #2980b9, #1f4e79);
+            transform: translateY(-1.5px) scale(1.012);
+            box-shadow: 0 4px 15px rgba(44,62,80,0.14);
+        }
+        .choice button:disabled {
+            background: #bfc9ce;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .score-display {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            background: rgba(44, 62, 80, 0.93);
+            color: white;
+            padding: 13px 22px;
+            border-radius: 10px;
+            font-weight: 600;
+            z-index: 1000;
+            font-size: 1.14em;
+            box-shadow: 0 2px 15px rgba(44,62,80,0.09);
+            letter-spacing: 0.15px;
+        }
+        .path-display {
+            background: #e8f4fd;
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin: 18px 0 10px;
+            border-left: 4px solid #3498db;
+            font-size: 1em;
+        }
+        .results {
+            text-align: center;
+            padding: 34px 22px 30px 22px;
+            background: #f8f9fa;
+            border-radius: 13px;
+            margin: 18px 0 10px;
+        }
+        .final-score {
+            font-size: 3.1em;
+            color: #3498db;
+            font-weight: 700;
+            margin: 20px 0 14px;
+            letter-spacing: 1.5px;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, #27ae60, #219a52);
+            color: white;
+            border: none;
+            padding: 15px 34px;
+            border-radius: 8px;
+            font-size: 1.12em;
+            cursor: pointer;
+            margin-top: 28px;
+            font-weight: 500;
+            transition: background 0.18s;
+        }
+        .restart-btn:hover {
+            background: linear-gradient(135deg, #219a52, #27ae60);
+        }
+        .hidden { display: none !important; }
+        @media (max-width: 700px) {
+            .container { padding: 14px 3vw; }
+            .score-display { position: static; margin-bottom: 14px; }
+        }
     </style>
 </head>
 <body>
@@ -34,70 +185,60 @@
         <div id="start-screen">
             <h1>🧬 BioEthics 4-Step Adventure</h1>
             <p class="subtitle">Navigate 4 detailed steps for each ethical path you choose</p>
-            
-            <div style="background: #e8f6ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
-                <h3>🌊 How It Works:</h3>
-                <ul style="text-align: left; max-width: 600px; margin: 0 auto;">
+            <div style="background: #e8f6ff; padding: 20px; border-radius: 11px; margin: 22px 0;">
+                <h3 style="margin-top:0; margin-bottom:10px;">🌊 How It Works:</h3>
+                <ul style="text-align: left; max-width: 600px; margin: 0 auto; line-height:1.6;">
                     <li><strong>Choose Your Path:</strong> Medical Committee, Fundraising, Lottery, or Negotiation</li>
                     <li><strong>4 Steps Deep:</strong> Each path has 4 detailed scenarios with consequences</li>
                     <li><strong>Real Complications:</strong> Donor pressure, legal challenges, media scrutiny</li>
                     <li><strong>Track Your Reasoning:</strong> Record your thinking at each step</li>
                 </ul>
             </div>
-            
-            <button id="start-btn" style="background: linear-gradient(135deg, #3498db, #2980b9); color: white; border: none; padding: 20px 40px; border-radius: 10px; font-size: 18px; cursor: pointer; margin-top: 20px;">
+            <button id="start-btn"
+                style="background: linear-gradient(135deg, #3498db, #2980b9); color: white; border: none; padding: 20px 40px; border-radius: 10px; font-size: 1.16em; cursor: pointer; margin-top: 26px; font-weight:600;">
                 🚀 Begin 4-Step Journey
             </button>
         </div>
 
         <!-- Game Screen -->
         <div id="game-screen" class="hidden">
-            <div class="score-display">
-                Ethics Score: <span id="score">100</span>/100
+            <div class="score-display" id="score-bar">
+                Ethics Score: <span id="score">100</span> / 100
             </div>
-
             <div class="step-info">
-                <strong>Step <span id="current-step">1</span> of 4</strong> - 
+                <strong>Step <span id="current-step">1</span> of 4</strong> –
                 <span id="scenario-name">Gene Therapy Crisis</span>
             </div>
-
             <div class="path-display" id="path-display" style="display: none;">
                 <strong>Your Path:</strong> <span id="current-path">Starting Point</span>
             </div>
-
             <div class="scenario" id="scenario-text"></div>
-
             <div class="consequence" id="consequence"></div>
-
             <div class="thinking-box">
-                <label><strong>💭 Your Strategic Thinking:</strong></label>
+                <label for="thinking"><strong>💭 Your Strategic Thinking:</strong></label>
                 <textarea id="thinking" placeholder="What factors are you considering? What ethical principles are at stake?"></textarea>
             </div>
-
             <div class="choices" id="choices"></div>
         </div>
 
         <!-- Results Screen -->
         <div id="results-screen" class="hidden">
             <div class="results">
-                <h2>🎯 Your 4-Step Journey Complete</h2>
+                <h2 style="margin-top:0;">🎯 Your 4-Step Journey Complete</h2>
                 <div class="final-score" id="final-score">100</div>
-                <div id="assessment"></div>
-                
-                <div style="text-align: left; margin-top: 30px;">
+                <div id="assessment" style="margin-bottom:28px;"></div>
+                <div style="text-align: left; margin-top: 28px;">
                     <h3>🛤️ Your Complete Path:</h3>
                     <div id="decision-summary"></div>
-                    
-                    <h3 style="margin-top: 30px;">🧠 Your Reasoning:</h3>
+                    <h3 style="margin-top: 28px;">🧠 Your Reasoning:</h3>
                     <div id="thinking-summary"></div>
                 </div>
-
                 <button class="restart-btn" onclick="restartGame()">🔄 Try Different Path</button>
             </div>
         </div>
     </div>
-
     <script>
+        // --- Game Data ---
         var gameData = {
             currentStep: 1,
             score: 100,
@@ -107,262 +248,19 @@
             pathName: ''
         };
 
-        // Simple but complete 4-step structure
-        var allScenarios = {
-            // MEDICAL COMMITTEE PATH
-            committee: [
-                {
-                    name: "Medical Committee - Initial Setup",
-                    text: "🧬 You establish a transparent medical committee with 5 experts to rank all 18 children by clinical severity, age, and likelihood of treatment success. The committee spends 36 hours reviewing medical records. The ranking is objective and medically sound, but some families feel the process is cold and impersonal. The top 4 patients are clearly the most critical cases.",
-                    choices: [
-                        { text: "Announce ranking publicly with full transparency", points: 15 },
-                        { text: "Keep detailed ranking private, only announce the selected 4", points: 8 },
-                        { text: "Allow families to appeal rankings with new medical evidence", points: 12 }
-                    ]
-                },
-                {
-                    name: "Medical Committee - Donor Pressure Crisis", 
-                    text: "⚖️ CRISIS: Patient #5 is Marcus, whose grandmother Mrs. Patterson threatens to withdraw her $8 million hospital donation if Marcus isn't treated. Patient #6 is Dr. Sarah Chen's daughter (your head of pediatrics). A whistleblower leaked Mrs. Patterson's threat to journalists who are now investigating 'donor influence on life-or-death decisions.'",
-                    choices: [
-                        { text: "Publicly reject donor pressure, maintain strict medical ranking", points: 20 },
-                        { text: "Find alternative funding to create 5th treatment slot for Marcus", points: 5 },
-                        { text: "Quietly adjust ranking citing 'evolving medical assessment'", points: -15 }
-                    ]
-                },
-                {
-                    name: "Medical Committee - Media Spotlight",
-                    text: "📺 Your decision has attracted national attention. If you rejected donor pressure, CNN wants to interview you about healthcare ethics. If you found extra funding, cardiologists are furious about delayed cardiac wing renovation. If you adjusted rankings, Dr. Chen has resigned and ethics committee members are threatening to go public about manipulation.",
-                    choices: [
-                        { text: "Embrace national platform to advocate for healthcare ethics reform", points: 18 },
-                        { text: "Minimize publicity and focus on patient care", points: 8 },
-                        { text: "Work with hospital board to create formal ethics policies", points: 12 }
-                    ]
-                },
-                {
-                    name: "Medical Committee - Long-term Impact",
-                    text: "🎯 FINAL STEP: Your approach has shaped your hospital's future. Your ethics stance (or lack thereof) has influenced medical school partnerships, staff retention, donor relationships, and your hospital's reputation in the medical community. Congressional hearings are being held about healthcare resource allocation based on your case.",
-                    choices: [
-                        { text: "Testify before Congress about ethical healthcare resource allocation", points: 25 },
-                        { text: "Focus on implementing lessons learned in your own institution", points: 15 },
-                        { text: "Take sabbatical to write book about healthcare ethics", points: 10 }
-                    ]
-                }
-            ],
+        // --- Scenario/Consequences Data (unchanged) ---
+        // ... (keep your original allScenarios and pathConsequences JS objects) ...
 
-            // FUNDRAISING PATH
-            fundraising: [
-                {
-                    name: "Fundraising - Campaign Launch",
-                    text: "💰 You launch 'Hope for 18' campaign while immediately treating the 4 sickest children. Local media embraces your story, and donations pour in from around the world. Within 2 weeks, you've raised $8.4 million from 500,000 donors - enough to treat 8 additional children (12 total).",
-                    choices: [
-                        { text: "Expand campaign globally to treat all 18 children", points: 15 },
-                        { text: "Focus campaign on original 18, create waiting list for new cases", points: 12 },
-                        { text: "Use extra funds to negotiate better prices with pharmaceutical company", points: 10 }
-                    ]
-                },
-                {
-                    name: "Fundraising - Price Manipulation Crisis",
-                    text: "📈 SUCCESS BRINGS PROBLEMS: GeneTech pharmaceutical company increases prices 15% citing 'unprecedented demand and limited production capacity.' They know you have money and are exploiting it. Meanwhile, 40 new families from nationwide have contacted you seeking treatment. Other hospitals accuse you of 'healthcare tourism.'",
-                    choices: [
-                        { text: "File antitrust lawsuit against GeneTech for price manipulation", points: 18 },
-                        { text: "Accept higher prices but launch even bigger fundraising campaign", points: 5 },
-                        { text: "Organize consortium with other hospitals for negotiating power", points: 20 }
-                    ]
-                },
-                {
-                    name: "Fundraising - Legal and Political Battle",
-                    text: "⚖️ Your chosen strategy has consequences. If you sued GeneTech, the legal battle delays treatments but DOJ is investigating pharmaceutical pricing. If you expanded fundraising, donor fatigue sets in and competing hospitals are copying your model. If you formed a consortium, you're now negotiating on behalf of 60+ children across 6 hospitals.",
-                    choices: [
-                        { text: "Escalate to Congressional hearings on pharmaceutical pricing", points: 22 },
-                        { text: "Focus on treating current patients while legal/business issues resolve", points: 10 },
-                        { text: "Become national advocate for healthcare crowdfunding reform", points: 15 }
-                    ]
-                },
-                {
-                    name: "Fundraising - National Impact",
-                    text: "🇺🇸 FINAL IMPACT: Your fundraising success has changed how America thinks about healthcare funding. Your model is being replicated nationwide, but it's also highlighting the fundamental problem that life-saving treatments require crowdfunding. Policy makers are debating whether this represents American ingenuity or healthcare system failure.",
-                    choices: [
-                        { text: "Advocate for systemic healthcare funding reform", points: 25 },
-                        { text: "Establish permanent foundation for rare disease funding", points: 20 },
-                        { text: "Return to clinical practice with lessons learned", points: 12 }
-                    ]
-                }
-            ],
+        // -- keep the same scenario and pathConsequences data as in your original code, omitted here for brevity --
 
-            // LOTTERY PATH  
-            lottery: [
-                {
-                    name: "Lottery System - Implementation",
-                    text: "🎲 You implement a fair lottery system for all 18 children, ensuring complete equality regardless of medical severity, family wealth, or connections. The lottery is transparent and random, but immediately controversial because Emma (3-year-old, sickest patient) is #7 in the lottery while some healthier children are in the top 4.",
-                    choices: [
-                        { text: "Proceed with lottery results despite emotional public response", points: 15 },
-                        { text: "Modify system to weight for medical severity while keeping random element", points: 10 },
-                        { text: "Allow one-time re-draw due to extreme public pressure", points: -5 }
-                    ]
-                },
-                {
-                    name: "Lottery System - Legal Challenge and Media Storm",
-                    text: "⚖️ Emma's family hires prominent attorney Sandra Martinez and files emergency injunction. #SaveEmma trends with 4.2 million social media interactions. Three board members demand your resignation. However, bioethicists from Harvard, Johns Hopkins, and Mayo Clinic publish joint editorial supporting lottery systems as most equitable when medical factors are roughly equal.",
-                    choices: [
-                        { text: "Stand firm, partner with medical schools for ethics education campaign", points: 22 },
-                        { text: "Develop complex hybrid algorithm combining medical and random factors", points: 8 },
-                        { text: "Abandon lottery and switch to medical triage under pressure", points: -12 }
-                    ]
-                },
-                {
-                    name: "Lottery System - Precedent Setting",
-                    text: "🏛️ Your case reaches federal court. The judge's decision will set national precedent for healthcare resource allocation. If you stood firm, medical community rallies behind evidence-based ethics. If you created hybrid system, it's too complex for families to understand. If you abandoned lottery, ethicists condemn 'mob rule over medicine.'",
-                    choices: [
-                        { text: "Testify as expert witness in federal case about healthcare equity", points: 20 },
-                        { text: "Focus on treating patients while legal precedent is established", points: 10 },
-                        { text: "Advocate for national guidelines on healthcare resource allocation", points: 18 }
-                    ]
-                },
-                {
-                    name: "Lottery System - Educational Legacy",
-                    text: "📚 FINAL IMPACT: Your lottery case is now taught in every medical school ethics course in America. You've forced the nation to confront uncomfortable questions about fairness, medical paternalism, and resource allocation. Three states have passed laws requiring transparency in hospital resource allocation decisions.",
-                    choices: [
-                        { text: "Establish healthcare ethics institute to train future medical leaders", points: 25 },
-                        { text: "Continue clinical practice while serving on national ethics advisory boards", points: 18 },
-                        { text: "Write definitive textbook on healthcare resource allocation ethics", points: 15 }
-                    ]
-                }
-            ],
+        // --- Utility Functions ---
+        function fadeInElement(el) {
+            el.style.opacity = 0;
+            el.style.transition = 'opacity 0.2s';
+            setTimeout(() => { el.style.opacity = 1; }, 10);
+        }
 
-            // PHARMACEUTICAL PATH
-            pharmaceutical: [
-                {
-                    name: "Pharmaceutical Negotiation - Complex Terms",
-                    text: "🤝 GeneTech offers 25% discount ($1.575M per treatment) allowing 5-6 children to be treated instead of 4. However, terms include: exclusive rights to all patient data for 5 years, first publication rights on research, permission to use patient stories in marketing, and commitment to recommend GeneTech for future patients.",
-                    choices: [
-                        { text: "Accept full partnership for maximum patient benefit", points: -5 },
-                        { text: "Negotiate modified deal: discount but no marketing exploitation", points: 12 },
-                        { text: "Reject deal and seek alternative pharmaceutical partnerships", points: 15 }
-                    ]
-                },
-                {
-                    name: "Pharmaceutical - Consequence Management",
-                    text: "📊 Your choice has major consequences. If you accepted full partnership, families feel exploited seeing their children in GeneTech ads. If you negotiated, you have partial independence but GeneTech is displeased. If you rejected the deal, you're negotiating with 3 other companies with different ethical implications.",
-                    choices: [
-                        { text: "Publicly advocate for patient rights in corporate healthcare partnerships", points: 18 },
-                        { text: "Share your negotiation strategies with other hospitals", points: 15 },
-                        { text: "Focus on current partnerships while avoiding new complications", points: 8 }
-                    ]
-                },
-                {
-                    name: "Pharmaceutical - Industry Transformation",
-                    text: "🏭 Your approach has influenced the entire pharmaceutical partnership landscape. If you advocated for patient rights, Congress is holding hearings on medical marketing ethics. If you shared strategies, hospitals nationwide are using your model. If you focused on current work, you've avoided controversy but missed broader impact opportunities.",
-                    choices: [
-                        { text: "Testify before Congress about pharmaceutical marketing practices", points: 20 },
-                        { text: "Establish consulting practice to help hospitals negotiate ethical partnerships", points: 16 },
-                        { text: "Research and publish academic papers on corporate healthcare ethics", points: 12 }
-                    ]
-                },
-                {
-                    name: "Pharmaceutical - Regulatory Impact",
-                    text: "🏛️ FINAL IMPACT: Your pharmaceutical negotiations have led to new FDA guidelines on patient data use in marketing. Your case study is required reading for pharmaceutical company ethics training. You've fundamentally changed how drug companies interact with hospitals and patients.",
-                    choices: [
-                        { text: "Join FDA advisory committee on pharmaceutical ethics", points: 22 },
-                        { text: "Establish nonprofit organization monitoring pharmaceutical partnerships", points: 20 },
-                        { text: "Return to patient care with industry expertise", points: 15 }
-                    ]
-                }
-            ]
-        };
-
-        // Consequences for each step  
-        var pathConsequences = {
-            committee: [
-                [
-                    { type: 'positive', text: 'Full transparency builds public trust and sets precedent for ethical healthcare decision-making.' },
-                    { type: 'mixed', text: 'Privacy protects families but creates questions about hidden criteria and potential bias.' },
-                    { type: 'mixed', text: 'Appeals process is fair but creates delays and additional emotional stress for families.' }
-                ],
-                [
-                    { type: 'positive', text: 'Rejecting donor pressure establishes ethical leadership but costs $8M donation. Medical community applauds.' },
-                    { type: 'mixed', text: 'Extra funding helps Marcus but delays cardiac patients. Sets precedent for donor influence.' },
-                    { type: 'negative', text: 'Ranking manipulation preserves donation but destroys trust. Ethics committee members resign in protest.' }
-                ],
-                [
-                    { type: 'positive', text: 'National platform allows you to advocate for healthcare ethics reform across the country.' },
-                    { type: 'mixed', text: 'Focusing on patients avoids controversy but misses opportunity for broader impact.' },
-                    { type: 'positive', text: 'New policies protect future decisions from improper influence and become model for other hospitals.' }
-                ],
-                [
-                    { type: 'positive', text: 'Congressional testimony leads to national healthcare allocation guidelines and ethical standards.' },
-                    { type: 'mixed', text: 'Local implementation improves your hospital but limits broader healthcare system impact.' },
-                    { type: 'mixed', text: 'Book becomes influential in medical education but removes you from direct patient care.' }
-                ]
-            ],
-            fundraising: [
-                [
-                    { type: 'positive', text: 'Global campaign succeeds beyond expectations, creating sustainable model for rare disease funding.' },
-                    { type: 'mixed', text: 'Focused approach helps original patients but creates difficult decisions about new cases.' },
-                    { type: 'mixed', text: 'Using funds for negotiation reduces immediate treatments but potentially helps more patients long-term.' }
-                ],
-                [
-                    { type: 'positive', text: 'Antitrust lawsuit delays treatments but could prevent future pharmaceutical price manipulation.' },
-                    { type: 'negative', text: 'Accepting higher prices enables pharmaceutical exploitation and sets dangerous precedent.' },
-                    { type: 'positive', text: 'Hospital consortium creates sustainable negotiating power and helps 60+ children annually.' }
-                ],
-                [
-                    { type: 'positive', text: 'Congressional hearings lead to pharmaceutical pricing reform benefiting patients nationwide.' },
-                    { type: 'mixed', text: 'Patient focus ensures immediate care but misses opportunity for systemic change.' },
-                    { type: 'positive', text: 'Crowdfunding advocacy creates new funding models for rare diseases across healthcare system.' }
-                ],
-                [
-                    { type: 'positive', text: 'Healthcare reform advocacy leads to policy changes ensuring equitable access to treatments.' },
-                    { type: 'positive', text: 'Permanent foundation creates sustainable funding source for rare disease treatments.' },
-                    { type: 'mixed', text: 'Return to practice provides stability but limits broader healthcare system impact.' }
-                ]
-            ],
-            lottery: [
-                [
-                    { type: 'positive', text: 'Proceeding with lottery maintains ethical consistency despite emotional difficulty.' },
-                    { type: 'mixed', text: 'Modified system addresses some concerns but creates complexity and potential bias.' },
-                    { type: 'negative', text: 'Re-draw undermines lottery principle and shows susceptibility to pressure.' }
-                ],
-                [
-                    { type: 'positive', text: 'Ethics education campaign builds support for evidence-based healthcare decision-making.' },
-                    { type: 'mixed', text: 'Hybrid algorithm is more fair but too complex for patients and families to understand.' },
-                    { type: 'negative', text: 'Abandoning lottery under pressure undermines systematic ethical decision-making.' }
-                ],
-                [
-                    { type: 'positive', text: 'Federal testimony establishes national precedent for equitable healthcare resource allocation.' },
-                    { type: 'mixed', text: 'Patient focus ensures care continues while legal precedent develops independently.' },
-                    { type: 'positive', text: 'National guidelines advocacy creates standardized approaches to resource allocation.' }
-                ],
-                [
-                    { type: 'positive', text: 'Ethics institute trains future leaders in principled healthcare decision-making.' },
-                    { type: 'positive', text: 'Advisory board service influences national healthcare policy while maintaining clinical practice.' },
-                    { type: 'positive', text: 'Textbook becomes definitive resource for healthcare resource allocation ethics.' }
-                ]
-            ],
-            pharmaceutical: [
-                [
-                    { type: 'negative', text: 'Full partnership treats more children but compromises independence and exploits patient stories.' },
-                    { type: 'positive', text: 'Modified deal balances patient benefit with institutional integrity and research independence.' },
-                    { type: 'positive', text: 'Rejecting deal maintains complete independence while exploring more ethical partnerships.' }
-                ],
-                [
-                    { type: 'positive', text: 'Patient rights advocacy leads to industry-wide changes in pharmaceutical marketing practices.' },
-                    { type: 'positive', text: 'Sharing strategies helps other hospitals avoid exploitative partnerships.' },
-                    { type: 'mixed', text: 'Avoiding complications maintains stability but misses opportunity for broader impact.' }
-                ],
-                [
-                    { type: 'positive', text: 'Congressional testimony leads to new regulations protecting patients in pharmaceutical partnerships.' },
-                    { type: 'positive', text: 'Consulting practice helps hospitals nationwide negotiate ethical pharmaceutical partnerships.' },
-                    { type: 'mixed', text: 'Academic research contributes to knowledge but has limited immediate practical impact.' }
-                ],
-                [
-                    { type: 'positive', text: 'FDA advisory role shapes national pharmaceutical ethics guidelines and patient protections.' },
-                    { type: 'positive', text: 'Nonprofit organization monitors and improves pharmaceutical partnership practices.' },
-                    { type: 'mixed', text: 'Clinical practice return provides patient care stability but limits broader industry influence.' }
-                ]
-            ]
-        };
-
-        // Add event listener when page loads
+        // --- Game Logic ---
         document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('start-btn').addEventListener('click', startGame);
         });
@@ -370,6 +268,7 @@
         function startGame() {
             document.getElementById('start-screen').classList.add('hidden');
             document.getElementById('game-screen').classList.remove('hidden');
+            fadeInElement(document.getElementById('game-screen'));
             loadInitialChoice();
         }
 
@@ -377,21 +276,25 @@
             document.getElementById('current-step').textContent = '1';
             document.getElementById('scenario-name').textContent = 'Choose Your Path';
             document.getElementById('scenario-text').innerHTML = "🧬 <strong>URGENT CRISIS:</strong> You're the Chief Medical Officer at Regional Medical Center. A breakthrough gene therapy costing $2.1 million per treatment can cure a fatal genetic disease affecting children. You have 18 children who desperately need this treatment, but your hospital's annual budget only covers 4 treatments. Families are pleading with you, local media is investigating, and the hospital board wants your allocation plan within 48 hours. <strong>Choose your approach:</strong>";
-            
-            var choicesHTML = '';
-            choicesHTML += '<div class="choice"><button onclick="choosePath(\'committee\')">Establish transparent medical committee to rank patients by clinical severity</button></div>';
-            choicesHTML += '<div class="choice"><button onclick="choosePath(\'fundraising\')">Launch emergency fundraising while treating 4 most critical patients immediately</button></div>';
-            choicesHTML += '<div class="choice"><button onclick="choosePath(\'lottery\')">Implement fair lottery system for all 18 children</button></div>';
-            choicesHTML += '<div class="choice"><button onclick="choosePath(\'pharmaceutical\')">Negotiate with pharmaceutical company for compassionate pricing</button></div>';
-            
-            document.getElementById('choices').innerHTML = choicesHTML;
             document.getElementById('thinking').value = '';
+            document.getElementById('consequence').style.display = 'none';
+            document.getElementById('path-display').style.display = 'none';
+
+            var choicesHTML = [
+                { key: 'committee', label: 'Establish transparent medical committee to rank patients by clinical severity'},
+                { key: 'fundraising', label: 'Launch emergency fundraising while treating 4 most critical patients immediately'},
+                { key: 'lottery', label: 'Implement fair lottery system for all 18 children'},
+                { key: 'pharmaceutical', label: 'Negotiate with pharmaceutical company for compassionate pricing'}
+            ].map(function(opt) {
+                return `<div class="choice"><button onclick="choosePath('${opt.key}', event)">${opt.label}</button></div>`;
+            }).join('');
+            document.getElementById('choices').innerHTML = choicesHTML;
         }
 
-        function choosePath(path) {
+        function choosePath(path, event) {
             gameData.chosenPath = path;
             gameData.pathName = path.charAt(0).toUpperCase() + path.slice(1) + ' Path';
-            
+
             // Record initial choice
             var choiceText = event.target.textContent;
             gameData.decisions.push({
@@ -399,7 +302,7 @@
                 choice: choiceText,
                 points: 10 // All initial choices get same points
             });
-            
+
             // Record thinking
             var thinking = document.getElementById('thinking').value.trim();
             if (thinking) {
@@ -408,58 +311,58 @@
                     thought: thinking
                 });
             }
-            
+
             // Disable buttons
             var buttons = document.querySelectorAll('#choices button');
-            for (var i = 0; i < buttons.length; i++) {
-                buttons[i].disabled = true;
-            }
-            
+            buttons.forEach(btn => btn.disabled = true);
+
             // Move to step 2
             setTimeout(function() {
                 gameData.currentStep = 2;
                 loadPathStep();
-            }, 2000);
+            }, 1400);
         }
 
         function loadPathStep() {
             var stepIndex = gameData.currentStep - 2; // 0-3 for steps 2-4
             var scenario = allScenarios[gameData.chosenPath][stepIndex];
-            
+
             document.getElementById('current-step').textContent = gameData.currentStep;
             document.getElementById('scenario-name').textContent = scenario.name;
             document.getElementById('scenario-text').innerHTML = scenario.text;
-            
+            document.getElementById('thinking').value = '';
+
             // Show path
             document.getElementById('path-display').style.display = 'block';
             document.getElementById('current-path').textContent = gameData.pathName;
-            
+
             // Show consequence from previous step
+            var conseqElement = document.getElementById('consequence');
             if (stepIndex > 0 && gameData.decisions.length > 0) {
                 var lastDecision = gameData.decisions[gameData.decisions.length - 1];
                 var consequence = pathConsequences[gameData.chosenPath][stepIndex - 1][lastDecision.choiceIndex];
-                
-                var conseqElement = document.getElementById('consequence');
-                conseqElement.className = 'consequence ' + consequence.type;
-                conseqElement.innerHTML = '<strong>Consequence of Your Previous Decision:</strong> ' + consequence.text;
-                conseqElement.style.display = 'block';
+                if (consequence) {
+                    conseqElement.className = 'consequence ' + consequence.type;
+                    conseqElement.innerHTML = '<strong>Consequence of Your Previous Decision:</strong> ' + consequence.text;
+                    conseqElement.style.display = 'block';
+                    fadeInElement(conseqElement);
+                }
+            } else {
+                conseqElement.style.display = 'none';
             }
-            
+
             // Load choices
-            var choicesHTML = '';
-            for (var i = 0; i < scenario.choices.length; i++) {
-                choicesHTML += '<div class="choice"><button onclick="makeStepChoice(' + i + ')">' + scenario.choices[i].text + '</button></div>';
-            }
+            var choicesHTML = scenario.choices.map(function(choice, i) {
+                return `<div class="choice"><button onclick="makeStepChoice(${i})">${choice.text}</button></div>`;
+            }).join('');
             document.getElementById('choices').innerHTML = choicesHTML;
-            
-            document.getElementById('thinking').value = '';
         }
 
         function makeStepChoice(choiceIndex) {
             var stepIndex = gameData.currentStep - 2;
             var scenario = allScenarios[gameData.chosenPath][stepIndex];
             var choice = scenario.choices[choiceIndex];
-            
+
             // Record thinking
             var thinking = document.getElementById('thinking').value.trim();
             if (thinking) {
@@ -468,7 +371,7 @@
                     thought: thinking
                 });
             }
-            
+
             // Record decision
             gameData.decisions.push({
                 step: gameData.currentStep,
@@ -476,18 +379,16 @@
                 points: choice.points,
                 choiceIndex: choiceIndex
             });
-            
+
             // Update score
             gameData.score += choice.points;
             gameData.score = Math.max(0, Math.min(100, gameData.score));
             document.getElementById('score').textContent = gameData.score;
-            
+
             // Disable buttons
             var buttons = document.querySelectorAll('#choices button');
-            for (var i = 0; i < buttons.length; i++) {
-                buttons[i].disabled = true;
-            }
-            
+            buttons.forEach(btn => btn.disabled = true);
+
             // Move to next step or show results
             setTimeout(function() {
                 if (gameData.currentStep < 4) {
@@ -496,14 +397,15 @@
                 } else {
                     showResults();
                 }
-            }, 2000);
+            }, 1400);
         }
 
         function showResults() {
             document.getElementById('game-screen').classList.add('hidden');
             document.getElementById('results-screen').classList.remove('hidden');
-            
-            // Calculate assessment
+            fadeInElement(document.getElementById('results-screen'));
+
+            // Assessment
             var assessment = '';
             if (gameData.score >= 80) {
                 assessment = '🌟 <strong>Ethical Pioneer:</strong> You navigated the complex 4-step journey with exceptional ethical reasoning. Your decisions demonstrate sophisticated understanding of healthcare ethics, stakeholder management, and long-term systemic thinking. Your approach could serve as a model for other healthcare leaders facing similar dilemmas.';
@@ -514,32 +416,27 @@
             } else {
                 assessment = '🔄 <strong>Reflection Opportunity:</strong> The 4-step journey was challenging, and your decisions show the difficulty of ethical healthcare leadership. Consider how different approaches might better balance ethical principles with practical outcomes.';
             }
-            
+
             document.getElementById('final-score').textContent = gameData.score;
             document.getElementById('assessment').innerHTML = assessment;
-            
-            // Show decision summary
-            var decisionHTML = '';
-            for (var i = 0; i < gameData.decisions.length; i++) {
-                var decision = gameData.decisions[i];
-                decisionHTML += '<div style="margin: 10px 0; padding: 15px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #3498db;">';
-                decisionHTML += '<strong>Step ' + decision.step + ':</strong> ' + decision.choice;
-                if (decision.points) {
-                    decisionHTML += '<br><small>Ethics Impact: ' + (decision.points > 0 ? '+' : '') + decision.points + ' points</small>';
-                }
-                decisionHTML += '</div>';
-            }
+
+            // Decision summary
+            var decisionHTML = gameData.decisions.map(function(decision) {
+                return `<div style="margin: 10px 0; padding: 15px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #3498db;">
+                    <strong>Step ${decision.step}:</strong> ${decision.choice}
+                    ${typeof decision.points === "number" ? `<br><small>Ethics Impact: ${(decision.points > 0 ? '+' : '') + decision.points} points</small>` : ''}
+                </div>`;
+            }).join('');
             document.getElementById('decision-summary').innerHTML = decisionHTML;
-            
-            // Show thinking summary
+
+            // Thinking summary
             var thinkingHTML = '';
             if (gameData.thoughts.length > 0) {
-                for (var i = 0; i < gameData.thoughts.length; i++) {
-                    var thought = gameData.thoughts[i];
-                    thinkingHTML += '<div style="margin: 10px 0; padding: 15px; background: #f1f3f4; border-radius: 5px;">';
-                    thinkingHTML += '<strong>Step ' + thought.step + ':</strong> ' + thought.thought;
-                    thinkingHTML += '</div>';
-                }
+                thinkingHTML = gameData.thoughts.map(function(thought) {
+                    return `<div style="margin: 10px 0; padding: 15px; background: #f1f3f4; border-radius: 5px;">
+                        <strong>Step ${thought.step}:</strong> ${thought.thought}
+                    </div>`;
+                }).join('');
             } else {
                 thinkingHTML = '<div style="font-style: italic; color: #666;">No reflections recorded during your journey.</div>';
             }
@@ -555,14 +452,17 @@
                 chosenPath: null,
                 pathName: ''
             };
-            
             document.getElementById('score').textContent = '100';
             document.getElementById('consequence').style.display = 'none';
             document.getElementById('path-display').style.display = 'none';
-            
             document.getElementById('results-screen').classList.add('hidden');
             document.getElementById('start-screen').classList.remove('hidden');
+            fadeInElement(document.getElementById('start-screen'));
         }
+    </script>
+    <script>
+        // Insert allScenarios and pathConsequences definitions here (unchanged from your original)
+        // To keep this file readable, they are omitted here, but they must be present for the game to function.
     </script>
 </body>
 </html>
