@@ -1,734 +1,521 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>Biotech Dilemmas: Complex Choose-Your-Own-Adventure</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      margin: 0;
-      padding: 20px;
-      min-height: 100vh;
-    }
-    .container {
-      max-width: 1000px;
-      margin: auto;
-      background: white;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-      overflow: hidden;
-    }
-    .header {
-      background: linear-gradient(135deg, #2c3e50, #3498db);
-      color: white;
-      padding: 30px;
-      text-align: center;
-    }
-    .header h1 {
-      margin: 0;
-      font-size: 2.5em;
-      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    }
-    .progress-bar {
-      background: rgba(255,255,255,0.2);
-      height: 8px;
-      border-radius: 4px;
-      margin-top: 15px;
-      overflow: hidden;
-    }
-    .progress-fill {
-      background: #27ae60;
-      height: 100%;
-      width: 0%;
-      transition: width 0.5s ease;
-    }
-    .tabs {
-      display: flex;
-      background: #34495e;
-    }
-    .tab {
-      flex: 1;
-      padding: 15px 20px;
-      background: #34495e;
-      color: white;
-      cursor: pointer;
-      text-align: center;
-      transition: background 0.3s;
-      border-right: 1px solid #2c3e50;
-    }
-    .tab:last-child {
-      border-right: none;
-    }
-    .tab.active {
-      background: #3498db;
-    }
-    .tab.completed {
-      background: #27ae60;
-    }
-    .tab.locked {
-      background: #95a5a6;
-      cursor: not-allowed;
-      opacity: 0.6;
-    }
-    .scenario {
-      display: none;
-      padding: 30px;
-      min-height: 500px;
-    }
-    .scenario.active {
-      display: block;
-    }
-    .step-indicator {
-      text-align: center;
-      margin-bottom: 20px;
-      font-weight: bold;
-      color: #3498db;
-    }
-    .scenario-content {
-      background: #f8f9fa;
-      padding: 25px;
-      border-radius: 10px;
-      margin-bottom: 25px;
-      border-left: 5px solid #3498db;
-    }
-    .stakeholder-status {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-      gap: 15px;
-      margin: 20px 0;
-    }
-    .stakeholder {
-      background: white;
-      padding: 15px;
-      border-radius: 8px;
-      text-align: center;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      transition: transform 0.2s;
-    }
-    .stakeholder:hover {
-      transform: translateY(-2px);
-    }
-    .stakeholder-icon {
-      font-size: 24px;
-      margin-bottom: 8px;
-    }
-    .stakeholder-mood {
-      padding: 5px 10px;
-      border-radius: 15px;
-      font-size: 12px;
-      font-weight: bold;
-      margin-top: 8px;
-    }
-    .mood-positive { background: #d4edda; color: #155724; }
-    .mood-neutral { background: #fff3cd; color: #856404; }
-    .mood-negative { background: #f8d7da; color: #721c24; }
-    .consequence-box {
-      margin: 20px 0;
-      padding: 20px;
-      border-radius: 10px;
-      display: none;
-    }
-    .consequence-positive {
-      background: linear-gradient(135deg, #d4edda, #c3e6cb);
-      border-left: 5px solid #28a745;
-    }
-    .consequence-negative {
-      background: linear-gradient(135deg, #f8d7da, #f5c6cb);
-      border-left: 5px solid #dc3545;
-    }
-    .consequence-mixed {
-      background: linear-gradient(135deg, #fff3cd, #ffeaa7);
-      border-left: 5px solid #ffc107;
-    }
-    .choices {
-      margin-top: 25px;
-    }
-    .choice {
-      margin: 15px 0;
-      display: block;
-      width: 100%;
-    }
-    .choice button {
-      width: 100%;
-      padding: 15px 20px;
-      background: linear-gradient(135deg, #3498db, #2980b9);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: all 0.3s;
-      text-align: left;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-    .choice button:hover {
-      background: linear-gradient(135deg, #2980b9, #1f4e79);
-      transform: translateY(-2px);
-      box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-    .choice button:disabled {
-      background: #95a5a6;
-      cursor: not-allowed;
-      transform: none;
-    }
-    .choice-arrow {
-      font-size: 20px;
-    }
-    .player-input {
-      margin: 20px 0;
-      padding: 20px;
-      background: #f1f3f4;
-      border-radius: 10px;
-    }
-    .player-input textarea {
-      width: 100%;
-      height: 80px;
-      padding: 10px;
-      border: 2px solid #ddd;
-      border-radius: 5px;
-      font-family: inherit;
-      resize: vertical;
-    }
-    .player-input textarea:focus {
-      border-color: #3498db;
-      outline: none;
-    }
-    .ethics-score {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      background: rgba(52, 73, 94, 0.9);
-      color: white;
-      padding: 15px;
-      border-radius: 10px;
-      font-weight: bold;
-      z-index: 1000;
-    }
-    .final-results {
-      display: none;
-      text-align: center;
-      padding: 40px;
-    }
-    .final-results.show {
-      display: block;
-    }
-    .final-score {
-      font-size: 3em;
-      color: #3498db;
-      margin: 20px 0;
-    }
-    .results-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 30px;
-      margin-top: 30px;
-      text-align: left;
-    }
-    .decision-history {
-      background: #f8f9fa;
-      padding: 20px;
-      border-radius: 10px;
-      max-height: 400px;
-      overflow-y: auto;
-    }
-    .decision-item {
-      margin-bottom: 15px;
-      padding: 15px;
-      border-radius: 8px;
-      border-left: 4px solid #3498db;
-    }
-    .restart-btn {
-      margin-top: 30px;
-      padding: 15px 30px;
-      background: linear-gradient(135deg, #27ae60, #219a52);
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 16px;
-      transition: all 0.3s;
-    }
-    .restart-btn:hover {
-      background: linear-gradient(135deg, #219a52, #1e8449);
-      transform: translateY(-2px);
-    }
-  </style>
+    <title>BioEthics Multi-Step Adventure</title>
+    <style>
+        body { 
+            font-family: Arial, sans-serif; 
+            background: #f0f8ff; 
+            padding: 20px; 
+            max-width: 900px; 
+            margin: 0 auto;
+        }
+        .container { 
+            background: white; 
+            padding: 30px; 
+            border-radius: 10px; 
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        h1 { 
+            color: #2c3e50; 
+            text-align: center; 
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 1.2em;
+            margin-bottom: 30px;
+        }
+        .progress {
+            background: #ecf0f1;
+            height: 10px;
+            border-radius: 5px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+        .progress-bar {
+            background: linear-gradient(90deg, #3498db, #2980b9);
+            height: 100%;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        .step-info {
+            text-align: center;
+            margin: 20px 0;
+            padding: 15px;
+            background: #e8f6ff;
+            border-radius: 8px;
+            border-left: 4px solid #3498db;
+        }
+        .scenario {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #27ae60;
+        }
+        .consequence {
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+            display: none;
+            border-left: 4px solid;
+        }
+        .consequence.positive { 
+            background: #d4edda; 
+            border-color: #28a745; 
+            color: #155724;
+        }
+        .consequence.negative { 
+            background: #f8d7da; 
+            border-color: #dc3545; 
+            color: #721c24;
+        }
+        .consequence.mixed { 
+            background: #fff3cd; 
+            border-color: #ffc107; 
+            color: #856404;
+        }
+        .thinking-box {
+            background: #f1f3f4;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .thinking-box textarea {
+            width: 100%;
+            height: 80px;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-family: inherit;
+            box-sizing: border-box;
+        }
+        .choices {
+            margin: 20px 0;
+        }
+        .choice {
+            margin: 10px 0;
+        }
+        .choice button {
+            width: 100%;
+            padding: 15px 20px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.3s ease;
+        }
+        .choice button:hover {
+            background: linear-gradient(135deg, #2980b9, #1f4e79);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        .choice button:disabled {
+            background: #95a5a6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .score-display {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(44, 62, 80, 0.9);
+            color: white;
+            padding: 15px;
+            border-radius: 10px;
+            font-weight: bold;
+            z-index: 1000;
+        }
+        .results {
+            text-align: center;
+            padding: 30px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .final-score {
+            font-size: 3em;
+            color: #3498db;
+            margin: 20px 0;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, #27ae60, #219a52);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+        .hidden { display: none; }
+    </style>
 </head>
 <body>
+    <div class="container">
+        <!-- Start Screen -->
+        <div id="start-screen">
+            <h1>🧬 BioEthics Multi-Step Adventure</h1>
+            <p class="subtitle">Navigate complex bioethical dilemmas with cascading consequences</p>
+            
+            <div style="background: #e8f6ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
+                <h3>🌊 What Makes This Complex:</h3>
+                <ul style="text-align: left; max-width: 600px; margin: 0 auto;">
+                    <li><strong>Multi-Step Scenarios:</strong> Each choice leads to new complications</li>
+                    <li><strong>Cascading Consequences:</strong> Your decisions create ripple effects</li>
+                    <li><strong>Stakeholder Reactions:</strong> Different groups respond to your choices</li>
+                    <li><strong>Ethical Reflection:</strong> Record your reasoning throughout</li>
+                </ul>
+            </div>
+            
+            <button onclick="startGame()" style="background: linear-gradient(135deg, #3498db, #2980b9); color: white; border: none; padding: 20px 40px; border-radius: 10px; font-size: 18px; cursor: pointer; margin-top: 20px;">
+                🚀 Begin Multi-Step Journey
+            </button>
+        </div>
 
-<div class="container">
-  <div class="header">
-    <h1>🧬 Biotech Dilemmas: Complex Ethics Adventure</h1>
-    <p>Navigate multi-layered ethical challenges where each decision creates new complications</p>
-    <div class="progress-bar">
-      <div class="progress-fill" id="progressFill"></div>
+        <!-- Game Screen -->
+        <div id="game-screen" class="hidden">
+            <div class="score-display">
+                Ethics Score: <span id="score">100</span>/100
+            </div>
+
+            <div class="progress">
+                <div class="progress-bar" id="progress"></div>
+            </div>
+
+            <div class="step-info">
+                <strong>Step <span id="current-step">1</span> of <span id="total-steps">8</span></strong> - 
+                <span id="scenario-name">Gene Therapy Crisis</span>
+            </div>
+
+            <div class="scenario" id="scenario-text">
+                <!-- Scenario content will be loaded here -->
+            </div>
+
+            <div class="consequence" id="consequence">
+                <!-- Consequences will appear here -->
+            </div>
+
+            <div class="thinking-box">
+                <label><strong>💭 Your Strategic Thinking:</strong></label>
+                <textarea id="thinking" placeholder="What factors are you considering? What ethical principles are at stake? How do you weigh the competing interests?"></textarea>
+            </div>
+
+            <div class="choices" id="choices">
+                <!-- Choices will be loaded here -->
+            </div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="hidden">
+            <div class="results">
+                <h2>🎯 Your Bioethics Journey Complete</h2>
+                <div class="final-score" id="final-score">100</div>
+                <div id="assessment"></div>
+                
+                <div style="text-align: left; margin-top: 30px;">
+                    <h3>📊 Your Decision Path:</h3>
+                    <div id="decision-summary"></div>
+                    
+                    <h3 style="margin-top: 30px;">🧠 Your Reasoning:</h3>
+                    <div id="thinking-summary"></div>
+                </div>
+
+                <button class="restart-btn" onclick="restartGame()">🔄 Try Different Decisions</button>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <div class="ethics-score">
-    Ethics Score: <span id="ethicsScore">100</span>/100
-  </div>
+    <script>
+        var gameData = {
+            currentStep: 1,
+            totalSteps: 8,
+            score: 100,
+            decisions: [],
+            thoughts: []
+        };
 
-  <div class="tabs">
-    <div class="tab active" onclick="switchTab('scenario1')" id="tab1">Genetic Testing Crisis</div>
-    <div class="tab locked" onclick="switchTab('scenario2')" id="tab2">AI Diagnostic Dilemma</div>
-    <div class="tab locked" onclick="switchTab('scenario3')" id="tab3">Gene Therapy Pricing</div>
-    <div class="tab locked" onclick="switchTab('results')" id="tab4">Final Results</div>
-  </div>
+        var scenarios = [
+            // Step 1: Initial Gene Therapy Crisis
+            {
+                name: "Gene Therapy Crisis - Initial Decision",
+                text: "🧬 <strong>URGENT CRISIS:</strong> You're the Chief Medical Officer at Regional Medical Center. A breakthrough gene therapy costing $2.1 million per treatment can cure a fatal genetic disease affecting children. You have 18 children who desperately need this treatment, but your hospital's annual budget only covers 4 treatments. Families are pleading with you, local media is investigating your decision process, and the hospital board wants your allocation plan within 48 hours. Your choice will set the precedent for all future life-or-death resource allocation decisions.",
+                choices: [
+                    { text: "Establish transparent medical committee to rank patients by clinical severity", points: 10, next: 2 },
+                    { text: "Launch emergency fundraising while treating 4 most critical patients immediately", points: 15, next: 3 },
+                    { text: "Implement fair lottery system for all 18 children", points: 5, next: 4 },
+                    { text: "Negotiate with pharmaceutical company for compassionate pricing", points: 8, next: 5 }
+                ]
+            },
+            // Step 2: Medical Committee Complications
+            {
+                name: "Gene Therapy Crisis - Committee Complications",
+                text: "⚖️ <strong>NEW COMPLICATIONS:</strong> Your medical committee has ranked all patients, but serious issues have emerged. Patient #5 is Marcus, whose grandmother is threatening to withdraw her $8 million hospital donation if Marcus isn't treated. Patient #6 is the daughter of Dr. Sarah Chen, your head of pediatrics, who has remained professionally silent but is clearly devastated. A hospital insider leaked the donor pressure to investigative journalists. How do you handle this ethical minefield?",
+                choices: [
+                    { text: "Maintain strict medical ranking, publicly reject donor influence", points: 20, next: 6 },
+                    { text: "Find $2.1M elsewhere to create 5th slot for Marcus", points: 5, next: 6 },
+                    { text: "Quietly adjust ranking citing 'additional medical factors'", points: -15, next: 6 }
+                ]
+            },
+            // Step 3: Fundraising Success and Challenges
+            {
+                name: "Gene Therapy Crisis - Fundraising Complications",
+                text: "💰 <strong>SUCCESS WITH NEW PROBLEMS:</strong> Your fundraising campaign raised $8.4 million in 2 weeks! You can treat 8 additional children (12 total). However, success brought complications: the pharmaceutical company increased prices 15% citing 'demand,' 25 new families from nationwide want treatment, and the State Department of Health is investigating interstate healthcare access issues. Other hospitals are pressuring you to share your strategy.",
+                choices: [
+                    { text: "Create consortium with other hospitals to share model and reduce costs", points: 25, next: 6 },
+                    { text: "Keep program local, fight price increase through legal action", points: 10, next: 6 },
+                    { text: "Accept higher prices, limit to families who contributed most", points: -10, next: 6 }
+                ]
+            },
+            // Step 4: Lottery Backlash
+            {
+                name: "Gene Therapy Crisis - Lottery Controversy",
+                text: "⚖️ <strong>LEGAL CHALLENGE:</strong> The lottery has exploded into controversy. Emma's family (3-year-old, sickest patient) hired an attorney and filed an injunction. #SaveEmma has 4.2 million social media shares. Three board members want your resignation. However, medical ethicists from Harvard, Johns Hopkins, and Mayo Clinic published joint support for lottery systems. The court hearing is tomorrow.",
+                choices: [
+                    { text: "Stand firm on lottery, launch ethics education campaign", points: 22, next: 6 },
+                    { text: "Abandon lottery, switch to medical triage under pressure", points: -12, next: 6 },
+                    { text: "Create hybrid system: medical + lottery elements", points: 8, next: 6 }
+                ]
+            },
+            // Step 5: Pharmaceutical Negotiations
+            {
+                name: "Gene Therapy Crisis - Corporate Partnership",
+                text: "🤝 <strong>COMPLEX NEGOTIATIONS:</strong> The pharmaceutical company's deal is complicated: 25% discount for exclusive partnership, but they want all patient data for 5 years, first publication rights on research, permission to use patient stories in marketing, and commitment to recommend their therapies for future patients. Your research team is divided - some see it as selling out, others argue the discount saves additional lives.",
+                choices: [
+                    { text: "Accept full partnership including data sharing and marketing", points: -8, next: 6 },
+                    { text: "Negotiate modified deal: discount but no marketing exploitation", points: 12, next: 6 },
+                    { text: "Reject all partnerships, seek public funding through grants", points: 18, next: 6 }
+                ]
+            },
+            // Step 6: AI Diagnostic Dilemma (builds on previous reputation)
+            {
+                name: "AI Diagnostic Technology - Privacy vs. Lives",
+                text: "🤖 <strong>NEW CHALLENGE:</strong> Six months later, your gene therapy decisions have shaped your reputation. Now the hospital wants to implement an AI system that analyzes patients' social media, shopping patterns, and location data to predict heart attacks 6 months early. It's 87% accurate and could save 200+ lives annually, but privacy advocates are suing to block it. Your previous decisions influence how stakeholders view this proposal.",
+                choices: [
+                    { text: "Implement with robust consent process and privacy protections", points: 15, next: 7 },
+                    { text: "Reject system due to privacy concerns and surveillance risks", points: 5, next: 7 },
+                    { text: "Pilot program with high-risk patients only", points: 10, next: 7 }
+                ]
+            },
+            // Step 7: Global Vaccine Distribution
+            {
+                name: "Global Vaccine Distribution - Profit vs. Access",
+                text: "🌍 <strong>GLOBAL IMPACT DECISION:</strong> Your ethical track record has gained international attention. A pharmaceutical company offers you the role of Global Ethics Officer. Your first challenge: they've developed a universal flu vaccine that costs $8 per dose to produce, but want to price it at $180 in wealthy countries and $90 in middle-income countries. Low-income countries would get it free through a foundation, but 500 million people could still lack access.",
+                choices: [
+                    { text: "Implement tiered pricing with wealthy countries subsidizing global access", points: 20, next: 8 },
+                    { text: "Price at cost globally, fund R&D through public-private partnerships", points: 15, next: 8 },
+                    { text: "Maintain market-based pricing to fund future innovation", points: -15, next: 8 }
+                ]
+            },
+            // Step 8: Final Global Health Crisis
+            {
+                name: "Global Health Crisis - Ultimate Test",
+                text: "🚨 <strong>ULTIMATE ETHICAL TEST:</strong> A new pandemic emerges. Your company has developed the only effective treatment, but global demand is 10 times your production capacity. Wealthy nations are offering 5x the normal price for priority access. Your decisions throughout this journey have led to this moment: How do you allocate a life-saving treatment when there isn't enough for everyone?",
+                choices: [
+                    { text: "Allocate based on global disease burden and equity principles", points: 25, next: 9 },
+                    { text: "Accept highest bidders to fund rapid production expansion", points: -20, next: 9 },
+                    { text: "Create lottery system for all countries regardless of wealth", points: 15, next: 9 },
+                    { text: "Partner with WHO for coordinated global distribution", points: 22, next: 9 }
+                ]
+            }
+        ];
 
-  <!-- Scenario 1: Multi-step Genetic Testing -->
-  <div id="scenario1" class="scenario active">
-    <div class="step-indicator">
-      Step <span id="step1Current">1</span> of 4: Genetic Testing & Healthcare Access
-    </div>
-    
-    <div id="scenario1content">
-      <div class="scenario-content">
-        <h2>🧬 The Genetic Testing Startup Dilemma</h2>
-        <p id="scenario1text">You've founded a biotech startup that developed a revolutionary genetic test capable of detecting 15 types of cancer with 94% accuracy from a simple blood draw. The test costs $50 to produce but could save millions of lives through early detection. However, you're facing a critical funding crisis - you have 3 months of runway left. MegaHealth Corporation has offered $50 million in exchange for exclusive distribution rights and the ability to price the test at $2,500 per person. They plan to market primarily to wealthy patients and premium insurance plans.</p>
-      </div>
+        var consequences = [
+            [],
+            [
+                { type: "mixed", text: "The medical committee creates transparent, objective criteria based on disease severity and treatment likelihood. While medically sound, some families feel the process is cold and impersonal. Medical staff support the systematic approach, but patient families are divided." },
+                { type: "positive", text: "Your fundraising campaign 'Hope for 18' launches successfully. Local media embraces your proactive approach, and donations begin flowing within hours. You treat the 4 sickest children immediately while building momentum for the others." },
+                { type: "negative", text: "The lottery announcement triggers immediate backlash. Emma's family is outraged: 'You're gambling with our daughter's life!' The story goes viral with #SaveEmma trending nationally. Medical ethicists debate your approach while public emotion runs high." },
+                { type: "mixed", text: "You contact the pharmaceutical company directly. They're interested but their terms are complex: discounts in exchange for exclusive research partnerships and patient data rights. This could help more children but raises questions about independence." }
+            ],
+            [
+                { type: "positive", text: "You hold a televised press conference explaining your medical criteria and firmly rejecting donor pressure. Mrs. Patterson withdraws her $8M gift angrily, but 15 other families publicly praise your integrity. Medical ethicists call it 'principled leadership under pressure.'" },
+                { type: "mixed", text: "You reallocate $2.1M from the cardiac wing renovation, delaying it by 18 months. Marcus gets treated and the donation is secured, but cardiac patients will face delayed facility improvements. Some staff question whether this sets a dangerous precedent." },
+                { type: "negative", text: "You subtly adjust Marcus to #4 by emphasizing certain medical factors. The $8M donation is secured, but Dr. Chen resigns in protest when she realizes the manipulation. Two committee members threaten to go public with the ethical breach." }
+            ],
+            [
+                { type: "positive", text: "You organize 6 regional children's hospitals into a purchasing consortium. Your combined negotiating power forces the pharmaceutical company back to original pricing and creates a sustainable model that could help 60+ children annually across the region." },
+                { type: "mixed", text: "You file an antitrust lawsuit against the pharmaceutical company for price manipulation while limiting your program to the original 18 children. The legal battle delays treatments by 4 months but could set national precedent for fair pricing." },
+                { type: "negative", text: "You accept the inflated prices but can only afford 10 of your original 18 children, selecting those whose families contributed most to fundraising. This creates a troubling precedent where treatment depends on fundraising ability rather than medical need." }
+            ],
+            [
+                { type: "positive", text: "You partner with major medical schools to launch a national education campaign on healthcare ethics. The judge rules in your favor, Emma receives treatment as lottery winner #2, and medical schools begin teaching your case as an example of principled decision-making." },
+                { type: "negative", text: "Under intense pressure, you reverse course and implement medical triage with Emma receiving immediate treatment. The other lottery winners feel betrayed, and medical ethicists condemn the decision as 'mob rule over medicine.'" },
+                { type: "mixed", text: "You develop a complex algorithm that uses medical triage for clearly different cases but lottery for medically similar patients. The system is more fair but complicated to explain and implement. It takes 3 weeks while families wait anxiously." }
+            ],
+            [
+                { type: "negative", text: "You sign the comprehensive partnership. Six children receive treatment, but families later feel exploited when they see their children's stories in company advertisements. The medical community questions your independence, and future research collaborations become complicated." },
+                { type: "positive", text: "You successfully negotiate a modified deal: 20% discount with limited data sharing but no marketing exploitation and non-exclusive research arrangements. Five children receive treatment while maintaining most institutional independence." },
+                { type: "positive", text: "You decline all corporate partnerships and instead secure funding through NIH emergency grants and private foundations. This takes longer (3 months delay) but preserves complete independence and creates a replicable model for public funding." }
+            ],
+            [
+                { type: "positive", text: "You design an opt-in system with full transparency and robust data protection. 40% of patients participate, and in year one, you prevent 74 heart attacks and detect 23 early cancers. This becomes a model for ethical AI implementation in healthcare." },
+                { type: "mixed", text: "You block the AI system citing privacy rights and surveillance concerns. However, 35 preventable heart attacks occur in the first year. Families of victims question whether privacy protection was worth the cost in lives." },
+                { type: "mixed", text: "You implement the system for high-risk patients only with special consent protocols. This prevents 28 heart attacks but creates questions about equal access to AI-powered healthcare and two-tier medical systems." }
+            ],
+            [
+                { type: "positive", text: "You create a system where wealthy countries pay premium prices that fund free global distribution. 2.1 billion people get vaccinated in year one, preventing an estimated 890,000 deaths. This becomes the new standard for global health equity." },
+                { type: "mixed", text: "You price the vaccine at $12 worldwide, funded by government partnerships. Universal access is achieved, but future R&D depends on uncertain public funding, potentially delaying breakthrough treatments for other diseases." },
+                { type: "negative", text: "You maintain high prices to fund research. Wealthy populations are protected, but 500 million people remain vulnerable. Public health advocates condemn the decision as prioritizing profits over lives, especially in developing countries." }
+            ],
+            [
+                { type: "positive", text: "You allocate treatment based on disease burden and equity principles, prioritizing the most affected populations regardless of wealth. This saves the most lives globally and establishes your legacy as a champion of global health equity." },
+                { type: "negative", text: "You accept the highest bidders to fund rapid expansion. Wealthy nations get priority access while poor countries wait. Public health advocates condemn this as 'pandemic profiteering,' though production does eventually increase." },
+                { type: "mixed", text: "You implement a global lottery system for all countries. While fair, this means some heavily affected poor countries get less than needed while some wealthy, less-affected countries get more than necessary." },
+                { type: "positive", text: "You partner with WHO for coordinated distribution based on need, vulnerability, and capacity. This creates the most equitable and effective global response, though it requires complex international coordination." }
+            ]
+        ];
 
-      <div class="stakeholder-status" id="stakeholders1">
-        <div class="stakeholder">
-          <div class="stakeholder-icon">👥</div>
-          <div>Patients</div>
-          <div class="stakeholder-mood mood-neutral">Hopeful</div>
-        </div>
-        <div class="stakeholder">
-          <div class="stakeholder-icon">💼</div>
-          <div>Investors</div>
-          <div class="stakeholder-mood mood-neutral">Watching</div>
-        </div>
-        <div class="stakeholder">
-          <div class="stakeholder-icon">🏥</div>
-          <div>MegaHealth</div>
-          <div class="stakeholder-mood mood-positive">Eager</div>
-        </div>
-        <div class="stakeholder">
-          <div class="stakeholder-icon">📰</div>
-          <div>Media</div>
-          <div class="stakeholder-mood mood-neutral">Monitoring</div>
-        </div>
-      </div>
-
-      <div id="consequence1" class="consequence-box"></div>
-
-      <div class="player-input">
-        <label><strong>💭 Your Strategic Thinking:</strong></label>
-        <textarea id="thinking1" placeholder="What factors are you considering? What are the ethical implications? How do you weigh saving your company vs. ensuring broad access?"></textarea>
-      </div>
-
-      <div class="choices" id="choices1">
-        <div class="choice">
-          <button onclick="makeChoice(1, 1, 15)">
-            Accept MegaHealth's offer for immediate funding and survival
-            <span class="choice-arrow">→</span>
-          </button>
-        </div>
-        <div class="choice">
-          <button onclick="makeChoice(1, 2, -5)">
-            Reject the offer and seek alternative funding sources
-            <span class="choice-arrow">→</span>
-          </button>
-        </div>
-        <div class="choice">
-          <button onclick="makeChoice(1, 3, 5)">
-            Negotiate with MegaHealth for tiered pricing model
-            <span class="choice-arrow">→</span>
-          </button>
-        </div>
-        <div class="choice">
-          <button onclick="makeChoice(1, 4, 10)">
-            Launch crowdfunding campaign with public health partnership
-            <span class="choice-arrow">→</span>
-          </button>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Scenario 2: AI Diagnostics -->
-  <div id="scenario2" class="scenario">
-    <div class="step-indicator">
-      Step <span id="step2Current">1</span> of 4: AI Diagnostics & Insurance Discrimination
-    </div>
-    
-    <div id="scenario2content">
-      <div class="scenario-content">
-        <h2>🤖 AI Stroke Prediction Algorithm</h2>
-        <p id="scenario2text">Your previous decisions have shaped your reputation. Now, your company has developed an AI algorithm that predicts stroke risk 6 months in advance with 89% accuracy by analyzing medical records, lifestyle data, and genetic markers. EliteInsure, the nation's largest health insurer, wants to license your technology for $100 million. However, they plan to use it primarily for their premium clients and may deny coverage to high-risk individuals. You've also received interest from the CDC for a public health implementation, but they can only offer $15 million over 3 years.</p>
-      </div>
-
-      <div class="stakeholder-status" id="stakeholders2"></div>
-      <div id="consequence2" class="consequence-box"></div>
-
-      <div class="player-input">
-        <label><strong>💭 Your Strategic Analysis:</strong></label>
-        <textarea id="thinking2" placeholder="How does your previous decision influence this choice? What are the long-term implications for healthcare equity?"></textarea>
-      </div>
-
-      <div class="choices" id="choices2"></div>
-    </div>
-  </div>
-
-  <!-- Scenario 3: Gene Therapy -->
-  <div id="scenario3" class="scenario">
-    <div class="step-indicator">
-      Step <span id="step3Current">1</span> of 4: Gene Therapy Global Access
-    </div>
-    
-    <div id="scenario3content">
-      <div class="scenario-content">
-        <h2>🧬 Revolutionary Gene Therapy Pricing</h2>
-        <p id="scenario3text">Your company has successfully developed a one-time gene therapy that cures a rare genetic disease affecting 50,000 children globally. The treatment costs $100,000 to manufacture but represents 10 years of R&D investment. Your pharmaceutical partner, GlobalPharma, wants to price it at $2.8 million per treatment to recoup investments quickly. This would make it accessible only in wealthy countries. However, 70% of affected children live in low and middle-income countries where the average annual income is $3,000.</p>
-      </div>
-
-      <div class="stakeholder-status" id="stakeholders3"></div>
-      <div id="consequence3" class="consequence-box"></div>
-
-      <div class="player-input">
-        <label><strong>💭 Your Global Strategy:</strong></label>
-        <textarea id="thinking3" placeholder="How do you balance commercial viability with global health equity? What precedent does this set?"></textarea>
-      </div>
-
-      <div class="choices" id="choices3"></div>
-    </div>
-  </div>
-
-  <!-- Final Results -->
-  <div id="results" class="scenario">
-    <div class="final-results show">
-      <h2>🎯 Your Biotech Ethics Journey Complete</h2>
-      <div class="final-score" id="finalScore">85</div>
-      <div id="finalAssessment"></div>
-      
-      <div class="results-grid">
-        <div>
-          <h3>📊 Your Decision Path</h3>
-          <div class="decision-history" id="decisionHistory"></div>
-        </div>
-        <div>
-          <h3>🧠 Your Reasoning Process</h3>
-          <div class="decision-history" id="thinkingHistory"></div>
-        </div>
-      </div>
-
-      <button class="restart-btn" onclick="restartGame()">🔄 Explore Different Paths</button>
-    </div>
-  </div>
-</div>
-
-<script>
-// Game state
-let gameState = {
-  currentScenario: 1,
-  currentStep: 1,
-  ethicsScore: 100,
-  decisions: [],
-  thinking: [],
-  stakeholderMoods: {
-    patients: 50,
-    investors: 50,
-    megahealth: 50,
-    media: 50,
-    government: 50,
-    competitors: 50
-  }
-};
-
-// Scenario data structure
-const scenarios = {
-  1: {
-    steps: {
-      1: {
-        choices: {
-          1: { text: "Accept MegaHealth's offer", consequence: "negative", next: 2 },
-          2: { text: "Reject and seek alternatives", consequence: "mixed", next: 2 },
-          3: { text: "Negotiate tiered pricing", consequence: "positive", next: 2 },
-          4: { text: "Launch crowdfunding", consequence: "positive", next: 2 }
+        function startGame() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            loadScenario();
         }
-      },
-      2: {
-        1: { text: "Your company survives but faces backlash for creating a 'genetic testing divide' between rich and poor. Patient advocacy groups protest outside your offices." },
-        2: { text: "You maintain ethical principles but struggle to find funding. Two competitors secure major investments while you're still seeking alternatives." },
-        3: { text: "MegaHealth agrees to a sliding scale model. Progress is slower but you maintain broader access and public trust." },
-        4: { text: "Your crowdfunding campaign goes viral, raising $30M from 500,000 people. You partner with public health organizations for equitable distribution." }
-      }
-    }
-  }
-};
 
-function switchTab(scenarioId) {
-  const tabs = document.querySelectorAll('.tab');
-  const scenarios = document.querySelectorAll('.scenario');
+        function loadScenario() {
+            var scenario = scenarios[gameData.currentStep - 1];
+            
+            document.getElementById('current-step').textContent = gameData.currentStep;
+            document.getElementById('total-steps').textContent = gameData.totalSteps;
+            document.getElementById('scenario-name').textContent = scenario.name;
+            document.getElementById('scenario-text').innerHTML = scenario.text;
+            
+            // Update progress
+            var progress = (gameData.currentStep / gameData.totalSteps) * 100;
+            document.getElementById('progress').style.width = progress + '%';
+            
+            // Show previous consequence if exists
+            if (gameData.currentStep > 1 && consequences[gameData.currentStep - 1]) {
+                var consequence = consequences[gameData.currentStep - 1][gameData.decisions[gameData.decisions.length - 1].choiceIndex];
+                if (consequence) {
+                    var conseqElement = document.getElementById('consequence');
+                    conseqElement.className = 'consequence ' + consequence.type;
+                    conseqElement.innerHTML = '<strong>Consequence of Your Previous Decision:</strong> ' + consequence.text;
+                    conseqElement.style.display = 'block';
+                }
+            }
+            
+            // Load choices
+            var choicesHTML = '';
+            for (var i = 0; i < scenario.choices.length; i++) {
+                choicesHTML += '<div class="choice"><button onclick="makeChoice(' + i + ')">' + scenario.choices[i].text + '</button></div>';
+            }
+            document.getElementById('choices').innerHTML = choicesHTML;
+            
+            // Clear thinking box
+            document.getElementById('thinking').value = '';
+        }
 
-  // Check if tab is locked
-  const targetTab = document.getElementById(scenarioId === 'scenario1' ? 'tab1' : 
-                                          scenarioId === 'scenario2' ? 'tab2' : 
-                                          scenarioId === 'scenario3' ? 'tab3' : 'tab4');
-  
-  if (targetTab.classList.contains('locked')) {
-    return;
-  }
+        function makeChoice(choiceIndex) {
+            var scenario = scenarios[gameData.currentStep - 1];
+            var choice = scenario.choices[choiceIndex];
+            
+            // Record thinking
+            var thinking = document.getElementById('thinking').value.trim();
+            if (thinking) {
+                gameData.thoughts.push({
+                    step: gameData.currentStep,
+                    thought: thinking
+                });
+            }
+            
+            // Record decision
+            gameData.decisions.push({
+                step: gameData.currentStep,
+                choice: choice.text,
+                points: choice.points,
+                choiceIndex: choiceIndex
+            });
+            
+            // Update score
+            gameData.score += choice.points;
+            gameData.score = Math.max(0, Math.min(100, gameData.score));
+            document.getElementById('score').textContent = gameData.score;
+            
+            // Disable buttons
+            var buttons = document.querySelectorAll('#choices button');
+            for (var i = 0; i < buttons.length; i++) {
+                buttons[i].disabled = true;
+            }
+            
+            // Move to next step or show results
+            setTimeout(function() {
+                if (gameData.currentStep < gameData.totalSteps) {
+                    gameData.currentStep++;
+                    loadScenario();
+                } else {
+                    showResults();
+                }
+            }, 2000);
+        }
 
-  tabs.forEach(tab => tab.classList.remove('active'));
-  scenarios.forEach(s => s.classList.remove('active'));
+        function showResults() {
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.remove('hidden');
+            
+            // Calculate assessment
+            var assessment = '';
+            if (gameData.score >= 85) {
+                assessment = '🌟 <strong>Ethical Pioneer:</strong> You consistently balanced profit with purpose, creating innovative models that prioritize both business success and social impact. Your decisions set new industry standards for ethical biotech leadership and saved countless lives through equitable healthcare distribution.';
+            } else if (gameData.score >= 65) {
+                assessment = '⚖️ <strong>Thoughtful Navigator:</strong> You navigated complex ethical challenges with generally positive results. While not every decision was perfect, you demonstrated the ability to learn and adapt your approach based on stakeholder feedback and ethical principles.';
+            } else if (gameData.score >= 45) {
+                assessment = '💼 <strong>Pragmatic Leader:</strong> Your decisions showed a mix of ethical considerations and practical concerns. You achieved some positive outcomes but missed opportunities to create more equitable and sustainable healthcare solutions.';
+            } else {
+                assessment = '⚠️ <strong>Learning Opportunity:</strong> Your journey illustrates the challenges of ethical decision-making in healthcare. Consider how different approaches might better balance stakeholder interests and ethical principles in future scenarios.';
+            }
+            
+            document.getElementById('final-score').textContent = gameData.score;
+            document.getElementById('assessment').innerHTML = assessment;
+            
+            // Show decision summary
+            var decisionHTML = '';
+            for (var i = 0; i < gameData.decisions.length; i++) {
+                var decision = gameData.decisions[i];
+                decisionHTML += '<div style="margin: 10px 0; padding: 15px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #3498db;">';
+                decisionHTML += '<strong>Step ' + decision.step + ':</strong> ' + decision.choice;
+                decisionHTML += '<br><small>Ethics Impact: ' + (decision.points > 0 ? '+' : '') + decision.points + ' points</small>';
+                decisionHTML += '</div>';
+            }
+            document.getElementById('decision-summary').innerHTML = decisionHTML;
+            
+            // Show thinking summary
+            var thinkingHTML = '';
+            if (gameData.thoughts.length > 0) {
+                for (var i = 0; i < gameData.thoughts.length; i++) {
+                    var thought = gameData.thoughts[i];
+                    thinkingHTML += '<div style="margin: 10px 0; padding: 15px; background: #f1f3f4; border-radius: 5px;">';
+                    thinkingHTML += '<strong>Step ' + thought.step + ':</strong> ' + thought.thought;
+                    thinkingHTML += '</div>';
+                }
+            } else {
+                thinkingHTML = '<div style="font-style: italic; color: #666;">No reflections recorded during your journey.</div>';
+            }
+            document.getElementById('thinking-summary').innerHTML = thinkingHTML;
+        }
 
-  targetTab.classList.add('active');
-  document.getElementById(scenarioId).classList.add('active');
-}
-
-function makeChoice(scenario, choice, ethicsChange) {
-  // Record thinking
-  const thinkingElement = document.getElementById(`thinking${scenario}`);
-  if (thinkingElement.value.trim()) {
-    gameState.thinking.push({
-      scenario: scenario,
-      step: gameState.currentStep,
-      thought: thinkingElement.value.trim()
-    });
-  }
-
-  // Update ethics score
-  gameState.ethicsScore += ethicsChange;
-  gameState.ethicsScore = Math.max(0, Math.min(100, gameState.ethicsScore));
-  document.getElementById('ethicsScore').textContent = gameState.ethicsScore;
-
-  // Record decision
-  const choiceText = event.target.textContent.replace('→', '').trim();
-  gameState.decisions.push({
-    scenario: scenario,
-    step: gameState.currentStep,
-    choice: choiceText,
-    ethicsChange: ethicsChange
-  });
-
-  // Show consequence
-  showConsequence(scenario, choice);
-
-  // Disable choices
-  const choices = document.querySelectorAll(`#choices${scenario} button`);
-  choices.forEach(btn => btn.disabled = true);
-
-  // Progress to next step or scenario
-  setTimeout(() => {
-    if (scenario < 3) {
-      unlockNextScenario(scenario + 1);
-    } else {
-      showFinalResults();
-    }
-  }, 3000);
-}
-
-function showConsequence(scenario, choice) {
-  const consequenceBox = document.getElementById(`consequence${scenario}`);
-  const consequences = {
-    1: {
-      1: { type: 'negative', text: 'You accept MegaHealth\'s offer. Your company survives and grows rapidly, but the $2,500 price point creates a "genetic testing divide." Patient advocacy groups organize protests, and competitors launch campaigns about "healthcare for the wealthy only." Your test saves lives among affluent patients, but thousands of low-income individuals who could benefit remain undiagnosed.' },
-      2: { type: 'mixed', text: 'You reject MegaHealth\'s offer on ethical grounds. While maintaining your principles, your company struggles financially. Two competitors secure major investments and beat you to market with similar tests. You eventually find alternative funding through impact investors, but it takes 8 months longer to launch, during which preventable cancers go undetected.' },
-      3: { type: 'positive', text: 'You successfully negotiate a tiered pricing model: $2,500 for premium markets, $500 for standard insurance, and $50 for low-income patients (subsidized by higher-paying customers). MegaHealth initially resists but agrees when you demonstrate the long-term market expansion benefits. You achieve both financial success and broad access.' },
-      4: { type: 'positive', text: 'Your crowdfunding campaign "Cancer Detection for All" goes viral, raising $30 million from 500,000 individual contributors. You partner with community health centers and international NGOs for global distribution. The grassroots approach builds enormous public goodwill and attracts additional impact investors.' }
-    },
-    2: {
-      1: { type: 'negative', text: 'You license to EliteInsure for maximum profit. They use your AI to cherry-pick low-risk customers while denying coverage to those most likely to have strokes. Congressional hearings follow, and you\'re accused of enabling "algorithmic discrimination." The technology saves some lives but exacerbates healthcare inequality.' },
-      2: { type: 'positive', text: 'You partner with the CDC for public health implementation. The lower payment stretches over three years, but your algorithm becomes part of national preventive care guidelines. You prevent 50,000 strokes annually across all demographics and establish your company as a leader in ethical AI development.' },
-      3: { type: 'mixed', text: 'You create a dual licensing model: EliteInsure gets commercial rights while CDC gets public health rights. This generates good revenue while ensuring broad access, but creates complexity in data management and potential conflicts between commercial and public health objectives.' },
-      4: { type: 'positive', text: 'You reject both offers and instead create a nonprofit subsidiary that provides the AI technology as a public service, funded by licensing fees from multiple smaller insurers. This innovative model balances accessibility with sustainability.' }
-    },
-    3: {
-      1: { type: 'negative', text: 'You approve the $2.8M pricing strategy. The therapy becomes profitable quickly in wealthy markets, but 35,000 children in developing countries remain untreated. International health organizations condemn the pricing as "putting profits over children\'s lives." Your company faces boycotts and regulatory challenges.' },
-      2: { type: 'positive', text: 'You implement a global access program with differential pricing: $2.8M in high-income countries, $200K in middle-income countries, and free treatment in low-income countries through a patient assistance fund. This creates a sustainable model that treats 45,000 children globally.' },
-      3: { type: 'mixed', text: 'You license the manufacturing rights to generic producers in developing countries while maintaining premium pricing in wealthy markets. This increases access but reduces your direct revenue and creates quality control challenges across different manufacturers.' },
-      4: { type: 'positive', text: 'You establish a "Treatment for All" foundation funded by a portion of profits from wealthy markets. Every treatment sold in a high-income country funds two treatments in low-income countries. This innovative cross-subsidization model becomes an industry standard.' }
-    }
-  };
-
-  const consequence = consequences[scenario][choice];
-  consequenceBox.className = `consequence-box consequence-${consequence.type}`;
-  consequenceBox.innerHTML = `<strong>Consequence:</strong> ${consequence.text}`;
-  consequenceBox.style.display = 'block';
-
-  // Update progress
-  updateProgress();
-}
-
-function unlockNextScenario(scenarioNum) {
-  const tab = document.getElementById(`tab${scenarioNum}`);
-  tab.classList.remove('locked');
-  tab.classList.add('active');
-  
-  // Mark previous tab as completed
-  const prevTab = document.getElementById(`tab${scenarioNum - 1}`);
-  prevTab.classList.remove('active');
-  prevTab.classList.add('completed');
-
-  // Switch to next scenario
-  switchTab(`scenario${scenarioNum}`);
-  
-  // Load scenario content based on previous decisions
-  loadScenarioContent(scenarioNum);
-}
-
-function loadScenarioContent(scenarioNum) {
-  if (scenarioNum === 2) {
-    document.getElementById('scenario2text').textContent = 
-      "Building on your previous decisions, your reputation in the biotech industry has been shaped. Now you face a new challenge with AI stroke prediction technology...";
-    
-    // Update choices based on previous decisions
-    const choices2 = document.getElementById('choices2');
-    choices2.innerHTML = `
-      <div class="choice">
-        <button onclick="makeChoice(2, 1, -10)">
-          License exclusively to EliteInsure for maximum profit
-          <span class="choice-arrow">→</span>
-        </button>
-      </div>
-      <div class="choice">
-        <button onclick="makeChoice(2, 2, 15)">
-          Partner with CDC for public health implementation
-          <span class="choice-arrow">→</span>
-        </button>
-      </div>
-      <div class="choice">
-        <button onclick="makeChoice(2, 3, 8)">
-          Create dual licensing: commercial + public health
-          <span class="choice-arrow">→</span>
-        </button>
-      </div>
-      <div class="choice">
-        <button onclick="makeChoice(2, 4, 12)">
-          Establish nonprofit model with multiple partners
-          <span class="choice-arrow">→</span>
-        </button>
-      </div>
-    `;
-  } else if (scenarioNum === 3) {
-    document.getElementById('scenario3text').textContent = 
-      "Your track record of decisions has established your company's ethical stance. Now you face the ultimate test: pricing a life-saving gene therapy for children worldwide...";
-    
-    const choices3 = document.getElementById('choices3');
-    choices3.innerHTML = `
-      <div class="choice">
-        <button onclick="makeChoice(3, 1, -15)">
-          Approve high pricing for rapid profit maximization
-          <span class="choice-arrow">→</span>
-        </button>
-      </div>
-      <div class="choice">
-        <button onclick="makeChoice(3, 2, 20)">
-          Implement global tiered pricing program
-          <span class="choice-arrow">→</span>
-        </button>
-      </div>
-      <div class="choice">
-        <button onclick="makeChoice(3, 3, 10)">
-          License to generic manufacturers in developing countries
-          <span class="choice-arrow">→</span>
-        </button>
-      </div>
-      <div class="choice">
-        <button onclick="makeChoice(3, 4, 18)">
-          Create cross-subsidization foundation model
-          <span class="choice-arrow">→</span>
-        </button>
-      </div>
-    `;
-  }
-}
-
-function updateProgress() {
-  const progress = (gameState.decisions.length / 3) * 100;
-  document.getElementById('progressFill').style.width = `${progress}%`;
-}
-
-function showFinalResults() {
-  // Unlock results tab
-  const resultsTab = document.getElementById('tab4');
-  resultsTab.classList.remove('locked');
-  
-  setTimeout(() => {
-    switchTab('results');
-    
-    // Calculate final assessment
-    let assessment = '';
-    if (gameState.ethicsScore >= 85) {
-      assessment = '🌟 Ethical Pioneer: You consistently balanced profit with purpose, creating innovative models that prioritize both business success and social impact. Your decisions set new industry standards for ethical biotech leadership.';
-    } else if (gameState.ethicsScore >= 65) {
-      assessment = '⚖️ Balanced Leader: You navigated complex ethical challenges with mixed results, showing the difficulty of balancing commercial and social objectives in biotechnology.';
-    } else if (gameState.ethicsScore >= 45) {
-      assessment = '💼 Profit-Focused: Your decisions prioritized financial returns, sometimes at the expense of broader access and ethical considerations.';
-    } else {
-      assessment = '⚠️ Cautionary Tale: Your journey illustrates how prioritizing short-term profits over ethical considerations can damage both business reputation and public health outcomes.';
-    }
-    
-    document.getElementById('finalScore').textContent = gameState.ethicsScore;
-    document.getElementById('finalAssessment').textContent = assessment;
-    
-    // Show decision history
-    const decisionHistory = document.getElementById('decisionHistory');
-    decisionHistory.innerHTML = gameState.decisions.map((decision, index) => 
-      `<div class="decision-item">
-        <strong>Scenario ${decision.scenario}:</strong> ${decision.choice}
-        <br><small>Ethics Impact: ${decision.ethicsChange > 0 ? '+' : ''}${decision.ethicsChange}</small>
-      </div>`
-    ).join('');
-    
-    // Show thinking history
-    const thinkingHistory = document.getElementById('thinkingHistory');
-    thinkingHistory.innerHTML = gameState.thinking.map(thought => 
-      `<div class="decision-item">
-        <strong>Scenario ${thought.scenario}:</strong> ${thought.thought}
-      </div>`
-    ).join('');
-    
-  }, 2000);
-}
-
-function restartGame() {
-  gameState = {
-    currentScenario: 1,
-    currentStep: 1,
-    ethicsScore: 100,
-    decisions: [],
-    thinking: [],
-    stakeholderMoods: {
-      patients: 50,
-      investors: 50,
-      megahealth: 50,
-      media: 50,
-      government: 50,
-      competitors: 50
-    }
-  };
-  
-  document.getElementById('ethicsScore').textContent = '100';
-  document.getElementById('progressFill').style.width = '0%';
-  
-  // Reset tabs
-  document.querySelectorAll('.tab').forEach(tab => {
-    tab.classList.remove('active', 'completed');
-    tab.classList.add('locked');
-  });
-  document.getElementById('tab1').classList.remove('locked');
-  document.getElementById('tab1').classList.add('active');
-  
-  // Reset consequences
-  document.querySelectorAll('.consequence-box').forEach(box => {
-    box.style.display = 'none';
-  });
-  
-  // Reset choices
-  document.querySelectorAll('button').forEach(btn => {
-    btn.disabled = false;
-  });
-  
-  // Clear input fields
-  document.querySelectorAll('textarea').forEach(textarea => {
-    textarea.value = '';
-  });
-  
-  switchTab('scenario1');
-}
+        function restartGame() {
+            gameData = {
+                currentStep: 1,
+                totalSteps: 8,
+                score: 100,
+                decisions: [],
+                thoughts: []
+            };
+            
+            document.getElementById('score').textContent = '100';
+            document.getElementById('progress').style.width = '0%';
+            document.getElementById('consequence').style.display = 'none';
+            
+            document.getElementById('results-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
