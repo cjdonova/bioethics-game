@@ -391,14 +391,22 @@
             document.getElementById('progress').style.width = progress + '%';
             
             // Show previous consequence if exists
-            if (gameData.currentStep > 1 && consequences[gameData.currentStep - 1]) {
-                var consequence = consequences[gameData.currentStep - 1][gameData.decisions[gameData.decisions.length - 1].choiceIndex];
-                if (consequence) {
+            if (gameData.currentStep > 1 && gameData.decisions.length > 0) {
+                var lastDecision = gameData.decisions[gameData.decisions.length - 1];
+                var consequenceIndex = gameData.currentStep - 1;
+                
+                if (consequences[consequenceIndex] && consequences[consequenceIndex][lastDecision.choiceIndex]) {
+                    var consequence = consequences[consequenceIndex][lastDecision.choiceIndex];
                     var conseqElement = document.getElementById('consequence');
                     conseqElement.className = 'consequence ' + consequence.type;
                     conseqElement.innerHTML = '<strong>Consequence of Your Previous Decision:</strong> ' + consequence.text;
                     conseqElement.style.display = 'block';
+                } else {
+                    // Hide consequence box if no consequence available
+                    document.getElementById('consequence').style.display = 'none';
                 }
+            } else {
+                document.getElementById('consequence').style.display = 'none';
             }
             
             // Load choices
@@ -425,12 +433,13 @@
                 });
             }
             
-            // Record decision
+            // Record decision with the actual choice index
             gameData.decisions.push({
                 step: gameData.currentStep,
                 choice: choice.text,
                 points: choice.points,
-                choiceIndex: choiceIndex
+                choiceIndex: choiceIndex,
+                nextStep: choice.next || gameData.currentStep + 1
             });
             
             // Update score
@@ -444,10 +453,11 @@
                 buttons[i].disabled = true;
             }
             
-            // Move to next step or show results
+            // Move to next step based on choice
             setTimeout(function() {
-                if (gameData.currentStep < gameData.totalSteps) {
-                    gameData.currentStep++;
+                var nextStep = choice.next || gameData.currentStep + 1;
+                if (nextStep <= gameData.totalSteps) {
+                    gameData.currentStep = nextStep;
                     loadScenario();
                 } else {
                     showResults();
