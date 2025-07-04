@@ -1,476 +1,292 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>BioEthics 4-Step Adventure</title>
+    <title>BioEthics Game - Simple Version</title>
     <style>
-        body { font-family: Arial, sans-serif; background: #f0f8ff; padding: 20px; max-width: 900px; margin: 0 auto; }
-        .container { background: white; padding: 30px; border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
-        h1 { color: #2c3e50; text-align: center; font-size: 2.5em; margin-bottom: 10px; }
-        .subtitle { text-align: center; color: #7f8c8d; font-size: 1.2em; margin-bottom: 30px; }
-        .step-info { text-align: center; margin: 20px 0; padding: 15px; background: #e8f6ff; border-radius: 8px; border-left: 4px solid #3498db; }
-        .scenario { background: #f8f9fa; padding: 25px; border-radius: 10px; margin: 20px 0; border-left: 5px solid #27ae60; }
-        .consequence { padding: 20px; margin: 20px 0; border-radius: 8px; display: none; border-left: 4px solid; }
-        .consequence.positive { background: #d4edda; border-color: #28a745; color: #155724; }
-        .consequence.negative { background: #f8d7da; border-color: #dc3545; color: #721c24; }
-        .consequence.mixed { background: #fff3cd; border-color: #ffc107; color: #856404; }
-        .thinking-box { background: #f1f3f4; padding: 20px; border-radius: 8px; margin: 20px 0; }
-        .thinking-box textarea { width: 100%; height: 80px; padding: 10px; border: 2px solid #ddd; border-radius: 5px; font-family: inherit; box-sizing: border-box; }
-        .choices { margin: 20px 0; }
-        .choice { margin: 10px 0; }
-        .choice button { width: 100%; padding: 15px 20px; background: linear-gradient(135deg, #3498db, #2980b9); color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; text-align: left; transition: all 0.3s ease; }
-        .choice button:hover { background: linear-gradient(135deg, #2980b9, #1f4e79); transform: translateY(-2px); box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
-        .choice button:disabled { background: #95a5a6; cursor: not-allowed; transform: none; }
-        .score-display { position: fixed; top: 20px; right: 20px; background: rgba(44, 62, 80, 0.9); color: white; padding: 15px; border-radius: 10px; font-weight: bold; z-index: 1000; }
-        .path-display { background: #e8f4fd; padding: 15px; border-radius: 8px; margin: 20px 0; border-left: 4px solid #3498db; }
-        .results { text-align: center; padding: 30px; background: #f8f9fa; border-radius: 10px; margin: 20px 0; }
-        .final-score { font-size: 3em; color: #3498db; margin: 20px 0; }
-        .restart-btn { background: linear-gradient(135deg, #27ae60, #219a52); color: white; border: none; padding: 15px 30px; border-radius: 8px; font-size: 16px; cursor: pointer; margin-top: 20px; }
-        .hidden { display: none; }
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+        }
+        .screen {
+            display: none;
+        }
+        .screen.active {
+            display: block;
+        }
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 15px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 10px 5px;
+            font-size: 16px;
+            width: 100%;
+        }
+        button:hover {
+            background: #2980b9;
+        }
+        .scenario-box {
+            background: #ecf0f1;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            border-left: 4px solid #3498db;
+        }
+        .consequence {
+            background: #e8f5e8;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 15px 0;
+            border-left: 4px solid #27ae60;
+        }
+        .score {
+            text-align: center;
+            font-size: 18px;
+            font-weight: bold;
+            color: #2c3e50;
+            margin: 20px 0;
+        }
+        textarea {
+            width: 100%;
+            height: 60px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin: 10px 0;
+            box-sizing: border-box;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <!-- Start Screen -->
-        <div id="start-screen">
-            <h1>🧬 BioEthics 4-Step Adventure</h1>
-            <p class="subtitle">Navigate 4 detailed steps for each ethical path you choose</p>
+        <div id="start" class="screen active">
+            <h1>🧬 BioEthics Decision Game</h1>
+            <p>Navigate ethical challenges in biotechnology with real consequences.</p>
             
-            <div style="background: #e8f6ff; padding: 20px; border-radius: 10px; margin: 20px 0;">
-                <h3>🌊 How It Works:</h3>
-                <ul style="text-align: left; max-width: 600px; margin: 0 auto;">
-                    <li><strong>Choose Your Scenario:</strong> Genetic Test, AI Diagnostics, or Gene Therapy</li>
-                    <li><strong>4 Steps Deep:</strong> Each scenario has 4 detailed dilemmas with consequences</li>
-                    <li><strong>Real Complications:</strong> Funding, equity, legal, and media challenges</li>
-                    <li><strong>Track Your Reasoning:</strong> Record your thinking at each step</li>
+            <div class="scenario-box">
+                <h3>What You'll Experience:</h3>
+                <ul>
+                    <li>Make tough ethical decisions</li>
+                    <li>See real consequences of your choices</li>
+                    <li>Navigate complex stakeholder reactions</li>
+                    <li>Build your ethics expertise</li>
                 </ul>
             </div>
             
-            <button id="start-btn" style="background: linear-gradient(135deg, #3498db, #2980b9); color: white; border: none; padding: 20px 40px; border-radius: 10px; font-size: 18px; cursor: pointer; margin-top: 20px;">
-                🚀 Begin 4-Step Journey
-            </button>
+            <button onclick="startGame()">🚀 Start Your Journey</button>
         </div>
 
         <!-- Game Screen -->
-        <div id="game-screen" class="hidden">
-            <div class="score-display">
-                Ethics Score: <span id="score">100</span>/100
+        <div id="game" class="screen">
+            <div class="score">Ethics Score: <span id="score">100</span>/100</div>
+            <div class="score">Step <span id="step">1</span> of 3</div>
+            
+            <div class="scenario-box">
+                <h2 id="title">Gene Therapy Crisis</h2>
+                <p id="story">You're loading...</p>
             </div>
 
-            <div class="step-info">
-                <strong>Step <span id="current-step">1</span> of 4</strong> - 
-                <span id="scenario-name">Scenario</span>
+            <div id="consequence" class="consequence" style="display: none;">
+                <strong>Consequence:</strong> <span id="cons-text"></span>
+                <br><small><em>Next scenario loads in 2 seconds...</em></small>
             </div>
 
-            <div class="path-display" id="path-display" style="display: none;">
-                <strong>Your Scenario:</strong> <span id="current-path">Starting Point</span>
+            <div>
+                <label><strong>Your Reasoning:</strong></label>
+                <textarea id="thinking" placeholder="What are you thinking about this decision?"></textarea>
             </div>
 
-            <div class="scenario" id="scenario-text"></div>
-
-            <div class="consequence" id="consequence"></div>
-
-            <div class="thinking-box">
-                <label><strong>💭 Your Strategic Thinking:</strong></label>
-                <textarea id="thinking" placeholder="What factors are you considering? What ethical principles are at stake?"></textarea>
+            <div id="choices">
+                <!-- Choices will go here -->
             </div>
-
-            <div class="choices" id="choices"></div>
         </div>
 
         <!-- Results Screen -->
-        <div id="results-screen" class="hidden">
-            <div class="results">
-                <h2>🎯 Your 4-Step Journey Complete</h2>
-                <div class="final-score" id="final-score">100</div>
-                <div id="assessment"></div>
-                
-                <div style="text-align: left; margin-top: 30px;">
-                    <h3>🛤️ Your Complete Path:</h3>
-                    <div id="decision-summary"></div>
-                    
-                    <h3 style="margin-top: 30px;">🧠 Your Reasoning:</h3>
-                    <div id="thinking-summary"></div>
-                </div>
-
-                <button class="restart-btn" onclick="restartGame()">🔄 Try Different Scenario</button>
-            </div>
+        <div id="results" class="screen">
+            <h1>🎯 Journey Complete!</h1>
+            <div class="score">Final Score: <span id="final-score">100</span>/100</div>
+            <div id="assessment" class="scenario-box"></div>
+            
+            <h3>Your Decisions:</h3>
+            <div id="decisions-list"></div>
+            
+            <h3>Your Thoughts:</h3>
+            <div id="thoughts-list"></div>
+            
+            <button onclick="restart()">🔄 Try Again</button>
         </div>
     </div>
 
     <script>
-        var gameData = {
-            currentStep: 1,
-            score: 100,
-            decisions: [],
-            thoughts: [],
-            chosenPath: null,
-            pathName: ''
-        };
+        // Game data
+        let currentStep = 1;
+        let score = 100;
+        let decisions = [];
+        let thoughts = [];
 
-        // Scenario Data (your updated 3 scenarios!)
-        var allScenarios = {
-            genetic: [
-                {
-                    name: "Genetic Test – Funding Dilemma",
-                    text: "🏁 You’ve developed a low-cost genetic test to detect early-stage cancer. What do you do?",
-                    choices: [
-                        { text: "Seek private funding for immediate rollout", points: 5 },
-                        { text: "Apply for government grants", points: 10 }
-                    ]
-                },
-                {
-                    name: "Genetic Test – Price Pressure",
-                    text: "Private funders demand exclusivity and a high list price. What do you do?",
-                    choices: [
-                        { text: "Accept their terms", points: -5 },
-                        { text: "Push back for affordability", points: 10 }
-                    ]
-                },
-                {
-                    name: "Genetic Test – Pilot Program Offer",
-                    text: "A national hospital chain offers an exclusive pilot. What do you do?",
-                    choices: [
-                        { text: "Accept and test in affluent cities", points: 5 },
-                        { text: "Propose diverse, lower-income test sites", points: 10 }
-                    ]
-                },
-                {
-                    name: "Genetic Test – Pricing the Test",
-                    text: "FDA approval is near. You're asked to price the test. What do you do?",
-                    choices: [
-                        { text: "Price high to satisfy backers", points: -5 },
-                        { text: "Implement tiered pricing", points: 10 }
-                    ]
-                }
-            ],
-            ai: [
-                {
-                    name: "AI Diagnostics – Release Decision",
-                    text: "🏁 You’ve created an AI model that accurately predicts stroke risk. What do you do?",
-                    choices: [
-                        { text: "Publish the algorithm open-source", points: 10 },
-                        { text: "Patent and sell to insurers", points: 5 }
-                    ]
-                },
-                {
-                    name: "AI Diagnostics – Insurance Offer",
-                    text: "A major insurer offers to buy it—but will use it only for premium clients. What do you do?",
-                    choices: [
-                        { text: "Accept deal", points: 5 },
-                        { text: "Propose a universal license clause", points: 10 }
-                    ]
-                },
-                {
-                    name: "AI Diagnostics – Medicaid Partnership",
-                    text: "A local public health agency wants a partnership for Medicaid users. What do you do?",
-                    choices: [
-                        { text: "Offer steep discount", points: 10 },
-                        { text: "Decline due to budget constraints", points: -5 }
-                    ]
-                },
-                {
-                    name: "AI Diagnostics – Insurer Misuse",
-                    text: "Insurers start using your AI to deny stroke treatment claims. What do you do?",
-                    choices: [
-                        { text: "Issue a public statement and audit misuse", points: 10 },
-                        { text: "Stay silent to protect your stock price", points: -5 }
-                    ]
-                }
-            ],
-            gene: [
-                {
-                    name: "Gene Therapy – Distribution Model",
-                    text: "🏁 Your lab develops a gene therapy for a rare disease with 90% success. What do you do?",
-                    choices: [
-                        { text: "Partner with a large pharmaceutical company", points: 5 },
-                        { text: "Create a nonprofit distribution model", points: 10 }
-                    ]
-                },
-                {
-                    name: "Gene Therapy – Pharma Pricing",
-                    text: "The pharma company sets a $2 million price per dose. What do you do?",
-                    choices: [
-                        { text: "Challenge the pricing", points: 10 },
-                        { text: "Support it for sustainability", points: -5 }
-                    ]
-                },
-                {
-                    name: "Gene Therapy – Global Access",
-                    text: "Countries in the Global South request access. What do you do?",
-                    choices: [
-                        { text: "License tech at reduced cost", points: 10 },
-                        { text: "Limit use to paying markets", points: -5 }
-                    ]
-                },
-                {
-                    name: "Gene Therapy – Lawsuit Over Access",
-                    text: "Patients sue over being denied access due to cost. What do you do?",
-                    choices: [
-                        { text: "Set up an access fund", points: 10 },
-                        { text: "Defend pricing strategy legally", points: -5 }
-                    ]
-                }
-            ]
-        };
-
-        var pathConsequences = {
-            genetic: [
-                [
-                    { type: 'mixed', text: 'Fast funding, but pressure for exclusive licensing.' },
-                    { type: 'positive', text: 'Slower approval, but public access protected.' }
-                ],
-                [
-                    { type: 'negative', text: 'Immediate profits, media backlash.' },
-                    { type: 'positive', text: 'Delays, investor withdrawal, public trust boost.' }
-                ],
-                [
-                    { type: 'mixed', text: 'Strong results, equity concerns.' },
-                    { type: 'positive', text: 'Broader data, slower logistics.' }
-                ],
-                [
-                    { type: 'negative', text: 'IPO ready, patients priced out.' },
-                    { type: 'positive', text: 'Equity model praised, investor frustration.' }
+        // Game scenarios
+        const scenarios = [
+            {
+                title: "Gene Therapy Access Crisis",
+                story: "You're a hospital director. A new gene therapy costs $2 million per treatment and can save children's lives. You can only afford 4 treatments, but 18 children need it. How do you decide who gets treatment?",
+                choices: [
+                    { text: "Create medical committee to rank by severity", points: 10, outcome: "The committee creates fair medical criteria, but some families feel the process is cold." },
+                    { text: "Use lottery system for complete fairness", points: 5, outcome: "The lottery is fair but the sickest child might not get treatment, causing public outrage." },
+                    { text: "Launch fundraising campaign", points: 15, outcome: "Fundraising succeeds but creates pressure to treat donors' children first." },
+                    { text: "Negotiate with drug company for better pricing", points: 8, outcome: "Company offers discount but wants exclusive research rights and patient data." }
                 ]
-            ],
-            ai: [
-                [
-                    { type: 'positive', text: 'Scientific praise, no revenue.' },
-                    { type: 'mixed', text: 'Fast profits, concern over access.' }
-                ],
-                [
-                    { type: 'mixed', text: 'Company grows, media criticizes inequity.' },
-                    { type: 'positive', text: 'Deal falls through, academic partnerships offered.' }
-                ],
-                [
-                    { type: 'positive', text: 'Gains goodwill, stresses infrastructure.' },
-                    { type: 'negative', text: 'Lost trust, protest from health advocates.' }
-                ],
-                [
-                    { type: 'positive', text: 'Reputation improves, lawsuits emerge.' },
-                    { type: 'negative', text: 'Short-term gains, whistleblower exposes decisions.' }
+            },
+            {
+                title: "AI Diagnostic Privacy Dilemma",
+                story: "Your hospital wants to use AI that analyzes social media and shopping data to predict heart attacks 6 months early. It's 85% accurate and could save 200+ lives per year, but privacy advocates are concerned about surveillance.",
+                choices: [
+                    { text: "Implement with full patient consent", points: 12, outcome: "40% of patients opt-in, preventing 80 heart attacks but leaving many unprotected." },
+                    { text: "Reject due to privacy concerns", points: 8, outcome: "Privacy is protected but 35 preventable heart attacks occur in the first year." },
+                    { text: "Use only for high-risk patients", points: 10, outcome: "System helps some patients but creates two-tier healthcare access." },
+                    { text: "Implement secretly for 'patient benefit'", points: -10, outcome: "Effective prevention but massive privacy violation scandal when discovered." }
                 ]
-            ],
-            gene: [
-                [
-                    { type: 'mixed', text: 'Fast production, profit pressure.' },
-                    { type: 'positive', text: 'Transparent model, funding difficulty.' }
-                ],
-                [
-                    { type: 'positive', text: 'Legal fights, media applause.' },
-                    { type: 'negative', text: 'Stock price soars, ethical concerns grow.' }
-                ],
-                [
-                    { type: 'positive', text: 'Equity accolades, profit tension.' },
-                    { type: 'negative', text: 'Investor satisfaction, NGO criticism.' }
-                ],
-                [
-                    { type: 'positive', text: 'Trust rebuilds, cost burdens rise.' },
-                    { type: 'negative', text: 'Court loss damages reputation.' }
+            },
+            {
+                title: "Global Vaccine Pricing",
+                story: "Your company developed a life-saving vaccine that costs $8 to make. Your board wants to price it at $180 in wealthy countries. This leaves 500 million people in poor countries without access. How do you balance profit with global health?",
+                choices: [
+                    { text: "Use tiered pricing - rich countries subsidize poor ones", points: 18, outcome: "2 billion people vaccinated globally, preventing 800,000 deaths and creating sustainable model." },
+                    { text: "Price at cost globally through public funding", points: 12, outcome: "Universal access achieved but future R&D depends on uncertain government funding." },
+                    { text: "Maintain high pricing to fund future research", points: -8, outcome: "Strong profits enable new drug development but 500 million remain vulnerable." },
+                    { text: "Create nonprofit foundation model", points: 15, outcome: "Cross-subsidization works but creates complex international negotiations." }
                 ]
-            ]
-        };
+            }
+        ];
 
-        // Event listener to start game
-        document.addEventListener('DOMContentLoaded', function() {
-            document.getElementById('start-btn').addEventListener('click', loadInitialChoice);
-        });
-
-        function loadInitialChoice() {
-            document.getElementById('start-screen').classList.add('hidden');
-            document.getElementById('game-screen').classList.remove('hidden');
-            document.getElementById('current-step').textContent = '1';
-            document.getElementById('scenario-name').textContent = 'Choose Your Scenario';
-            document.getElementById('scenario-text').innerHTML = "🌟 <strong>Choose your scenario to begin your 4-step bioethics journey:</strong>";
-            
-            var choicesHTML = '';
-            choicesHTML += '<div class="choice"><button onclick="choosePath(\'genetic\')">🔬 Genetic Test & Hospital Funding</button></div>';
-            choicesHTML += '<div class="choice"><button onclick="choosePath(\'ai\')">🧠 AI Diagnostics and Insurance</button></div>';
-            choicesHTML += '<div class="choice"><button onclick="choosePath(\'gene\')">🧬 Gene Therapy Pricing</button></div>';
-            
-            document.getElementById('choices').innerHTML = choicesHTML;
-            document.getElementById('thinking').value = '';
-            document.getElementById('consequence').style.display = 'none';
-            document.getElementById('path-display').style.display = 'none';
-            gameData = {
-                currentStep: 1,
-                score: 100,
-                decisions: [],
-                thoughts: [],
-                chosenPath: null,
-                pathName: ''
-            };
-            document.getElementById('score').textContent = '100';
+        function startGame() {
+            document.getElementById('start').classList.remove('active');
+            document.getElementById('game').classList.add('active');
+            loadScenario();
         }
 
-        function choosePath(path) {
-            gameData.chosenPath = path;
-            var scenarioLabels = {
-                genetic: "Genetic Test & Hospital Funding",
-                ai: "AI Diagnostics and Insurance",
-                gene: "Gene Therapy Pricing"
-            };
-            gameData.pathName = scenarioLabels[path];
-
-            // Record initial choice
-            var choiceText = event.target.textContent;
-            gameData.decisions.push({
-                step: 1,
-                choice: choiceText,
-                points: 0,
-                choiceIndex: -1
-            });
-
-            // Record thinking
-            var thinking = document.getElementById('thinking').value.trim();
-            if (thinking) {
-                gameData.thoughts.push({
-                    step: 1,
-                    thought: thinking
-                });
+        function loadScenario() {
+            if (currentStep > scenarios.length) {
+                showResults();
+                return;
             }
 
-            // Disable buttons
-            var buttons = document.querySelectorAll('#choices button');
-            for (var i = 0; i < buttons.length; i++) {
-                buttons[i].disabled = true;
-            }
-
-            // Move to step 2
-            setTimeout(function() {
-                gameData.currentStep = 2;
-                loadPathStep();
-            }, 1200);
-        }
-
-        function loadPathStep() {
-            var stepIndex = gameData.currentStep - 2; // 0-3 for steps 2-5
-            var scenario = allScenarios[gameData.chosenPath][stepIndex];
-
-            document.getElementById('current-step').textContent = gameData.currentStep;
-            document.getElementById('scenario-name').textContent = scenario.name;
-            document.getElementById('scenario-text').innerHTML = scenario.text;
-
-            // Show path
-            document.getElementById('path-display').style.display = 'block';
-            document.getElementById('current-path').textContent = gameData.pathName;
-
-            // Show consequence from previous step
-            if (stepIndex > 0 && gameData.decisions.length > 0) {
-                var lastDecision = gameData.decisions[gameData.decisions.length - 1];
-                var consequence = pathConsequences[gameData.chosenPath][stepIndex - 1][lastDecision.choiceIndex];
-
-                var conseqElement = document.getElementById('consequence');
-                conseqElement.className = 'consequence ' + consequence.type;
-                conseqElement.innerHTML = '<strong>Consequence of Your Previous Decision:</strong> ' + consequence.text;
-                conseqElement.style.display = 'block';
-            } else {
+            const scenario = scenarios[currentStep - 1];
+            
+            document.getElementById('step').textContent = currentStep;
+            document.getElementById('title').textContent = scenario.title;
+            document.getElementById('story').textContent = scenario.story;
+            
+            // Hide previous consequence initially
+            if (currentStep === 1) {
                 document.getElementById('consequence').style.display = 'none';
             }
-
+            
             // Load choices
-            var choicesHTML = '';
-            for (var i = 0; i < scenario.choices.length; i++) {
-                choicesHTML += '<div class="choice"><button onclick="makeStepChoice(' + i + ')">' + scenario.choices[i].text + '</button></div>';
-            }
-            document.getElementById('choices').innerHTML = choicesHTML;
+            const choicesDiv = document.getElementById('choices');
+            choicesDiv.innerHTML = '';
+            
+            scenario.choices.forEach((choice, index) => {
+                const button = document.createElement('button');
+                button.textContent = choice.text;
+                button.onclick = () => makeChoice(index);
+                choicesDiv.appendChild(button);
+            });
 
+            // Clear thinking box
             document.getElementById('thinking').value = '';
         }
 
-        function makeStepChoice(choiceIndex) {
-            var stepIndex = gameData.currentStep - 2;
-            var scenario = allScenarios[gameData.chosenPath][stepIndex];
-            var choice = scenario.choices[choiceIndex];
-
+        function makeChoice(choiceIndex) {
+            const scenario = scenarios[currentStep - 1];
+            const choice = scenario.choices[choiceIndex];
+            
             // Record thinking
-            var thinking = document.getElementById('thinking').value.trim();
+            const thinking = document.getElementById('thinking').value.trim();
             if (thinking) {
-                gameData.thoughts.push({
-                    step: gameData.currentStep,
-                    thought: thinking
-                });
+                thoughts.push(`Step ${currentStep}: ${thinking}`);
             }
-
+            
             // Record decision
-            gameData.decisions.push({
-                step: gameData.currentStep,
-                choice: choice.text,
-                points: choice.points,
-                choiceIndex: choiceIndex
-            });
-
+            decisions.push(`Step ${currentStep}: ${choice.text} (${choice.points > 0 ? '+' : ''}${choice.points} points)`);
+            
             // Update score
-            gameData.score += choice.points;
-            gameData.score = Math.max(0, Math.min(100, gameData.score));
-            document.getElementById('score').textContent = gameData.score;
-
-            // Disable buttons
-            var buttons = document.querySelectorAll('#choices button');
-            for (var i = 0; i < buttons.length; i++) {
-                buttons[i].disabled = true;
-            }
-
-            // Move to next step or show results
-            setTimeout(function() {
-                if (gameData.currentStep < 5) {
-                    gameData.currentStep++;
-                    loadPathStep();
-                } else {
-                    showResults();
-                }
-            }, 1200);
+            score += choice.points;
+            score = Math.max(0, Math.min(100, score));
+            document.getElementById('score').textContent = score;
+            
+            // Show consequence
+            document.getElementById('consequence').style.display = 'block';
+            document.getElementById('cons-text').textContent = choice.outcome;
+            
+            // Disable all buttons
+            const buttons = document.querySelectorAll('#choices button');
+            buttons.forEach(btn => btn.disabled = true);
+            
+            // Move to next step after delay
+            setTimeout(() => {
+                currentStep++;
+                loadScenario();
+            }, 2000); // Reduced from 3000 to 2000 (2 seconds)
         }
 
         function showResults() {
-            document.getElementById('game-screen').classList.add('hidden');
-            document.getElementById('results-screen').classList.remove('hidden');
-
-            // Calculate assessment
-            var assessment = '';
-            if (gameData.score >= 36) {
-                assessment = '🌟 <strong>Ethical Pioneer:</strong> You navigated the complex 4-step journey with exceptional ethical reasoning. Your decisions demonstrate sophisticated understanding of bioethics, stakeholder management, and long-term systemic thinking. Your approach could serve as a model for other healthcare leaders.';
-            } else if (gameData.score >= 24) {
-                assessment = '⚖️ <strong>Thoughtful Navigator:</strong> You successfully handled most challenges, showing good ethical reasoning while balancing practical concerns. Some decisions could have been stronger, but overall you demonstrated solid bioethics leadership.';
-            } else if (gameData.score >= 10) {
-                assessment = '📚 <strong>Learning Experience:</strong> Your journey revealed both strengths and areas for growth. Bioethics requires constant learning, and your experience highlights the importance of considering all stakeholders.';
+            document.getElementById('game').classList.remove('active');
+            document.getElementById('results').classList.add('active');
+            
+            document.getElementById('final-score').textContent = score;
+            
+            // Assessment
+            let assessment = '';
+            if (score >= 80) {
+                assessment = '🌟 Excellent! You demonstrated strong ethical leadership, balancing competing interests while prioritizing patient welfare and social justice.';
+            } else if (score >= 60) {
+                assessment = '👍 Good work! You handled most ethical challenges well, though some decisions could have better balanced stakeholder interests.';
+            } else if (score >= 40) {
+                assessment = '📚 Learning experience! Your journey shows the complexity of healthcare ethics. Consider how different approaches might better serve all stakeholders.';
             } else {
-                assessment = '🔄 <strong>Reflection Opportunity:</strong> The journey was challenging, and your decisions show the difficulty of ethical leadership. Consider how different approaches might better balance ethical principles with practical outcomes.';
+                assessment = '🤔 Challenging journey! Healthcare ethics requires balancing many competing interests. Reflect on how to better integrate ethical principles into decision-making.';
             }
-
-            document.getElementById('final-score').textContent = gameData.score;
+            
             document.getElementById('assessment').innerHTML = assessment;
-
-            // Show decision summary
-            var decisionHTML = '';
-            for (var i = 1; i < gameData.decisions.length; i++) {
-                var decision = gameData.decisions[i];
-                decisionHTML += '<div style="margin: 10px 0; padding: 15px; background: #f8f9fa; border-radius: 5px; border-left: 4px solid #3498db;">';
-                decisionHTML += '<strong>Step ' + decision.step + ':</strong> ' + decision.choice;
-                if (decision.points !== undefined) {
-                    decisionHTML += '<br><small>Ethics Impact: ' + (decision.points > 0 ? '+' : '') + decision.points + ' points</small>';
-                }
-                decisionHTML += '</div>';
-            }
-            document.getElementById('decision-summary').innerHTML = decisionHTML;
-
-            // Show thinking summary
-            var thinkingHTML = '';
-            if (gameData.thoughts.length > 0) {
-                for (var i = 0; i < gameData.thoughts.length; i++) {
-                    var thought = gameData.thoughts[i];
-                    thinkingHTML += '<div style="margin: 10px 0; padding: 15px; background: #f1f3f4; border-radius: 5px;">';
-                    thinkingHTML += '<strong>Step ' + thought.step + ':</strong> ' + thought.thought;
-                    thinkingHTML += '</div>';
-                }
+            
+            // Show decisions
+            const decisionsList = document.getElementById('decisions-list');
+            decisionsList.innerHTML = decisions.map(d => `<div class="consequence">${d}</div>`).join('');
+            
+            // Show thoughts
+            const thoughtsList = document.getElementById('thoughts-list');
+            if (thoughts.length > 0) {
+                thoughtsList.innerHTML = thoughts.map(t => `<div class="consequence">${t}</div>`).join('');
             } else {
-                thinkingHTML = '<div style="font-style: italic; color: #666;">No reflections recorded during your journey.</div>';
+                thoughtsList.innerHTML = '<div class="consequence"><em>No thoughts recorded during your journey.</em></div>';
             }
-            document.getElementById('thinking-summary').innerHTML = thinkingHTML;
         }
 
-        function restartGame() {
-            document.getElementById('results-screen').classList.add('hidden');
-            document.getElementById('start-screen').classList.remove('hidden');
+        function restart() {
+            currentStep = 1;
+            score = 100;
+            decisions = [];
+            thoughts = [];
+            
+            document.getElementById('results').classList.remove('active');
+            document.getElementById('start').classList.add('active');
+            document.getElementById('score').textContent = '100';
         }
     </script>
 </body>
