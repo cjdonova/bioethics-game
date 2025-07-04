@@ -1,47 +1,592 @@
-<script>
-const allScenarios = {
-  committee: [
-    { name: "Step 2", text: "Committee Step 2 scenario.", choices: [ { text: "Option 1", points: 5 }, { text: "Option 2", points: 0 } ] },
-    { name: "Step 3", text: "Committee Step 3 scenario.", choices: [ { text: "Option 1", points: 5 }, { text: "Option 2", points: 0 } ] },
-    { name: "Step 4", text: "Committee Step 4 scenario.", choices: [ { text: "Option 1", points: 5 }, { text: "Option 2", points: 0 } ] }
-  ],
-  fundraising: [
-    { name: "Step 2", text: "Fundraising Step 2 scenario.", choices: [ { text: "Option 1", points: 5 }, { text: "Option 2", points: 0 } ] },
-    { name: "Step 3", text: "Fundraising Step 3 scenario.", choices: [ { text: "Option 1", points: 5 }, { text: "Option 2", points: 0 } ] },
-    { name: "Step 4", text: "Fundraising Step 4 scenario.", choices: [ { text: "Option 1", points: 5 }, { text: "Option 2", points: 0 } ] }
-  ],
-  lottery: [
-    { name: "Step 2", text: "Lottery Step 2 scenario.", choices: [ { text: "Option 1", points: 5 }, { text: "Option 2", points: 0 } ] },
-    { name: "Step 3", text: "Lottery Step 3 scenario.", choices: [ { text: "Option 1", points: 5 }, { text: "Option 2", points: 0 } ] },
-    { name: "Step 4", text: "Lottery Step 4 scenario.", choices: [ { text: "Option 1", points: 5 }, { text: "Option 2", points: 0 } ] }
-  ],
-  pharmaceutical: [
-    { name: "Step 2", text: "Negotiation Step 2 scenario.", choices: [ { text: "Option 1", points: 5 }, { text: "Option 2", points: 0 } ] },
-    { name: "Step 3", text: "Negotiation Step 3 scenario.", choices: [ { text: "Option 1", points: 5 }, { text: "Option 2", points: 0 } ] },
-    { name: "Step 4", text: "Negotiation Step 4 scenario.", choices: [ { text: "Option 1", points: 5 }, { text: "Option 2", points: 0 } ] }
-  ]
-};
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>BioEthics 4-Step Adventure</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+        body { 
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(135deg, #f0f8ff 70%, #e0ecef 100%);
+            padding: 20px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .container {
+            background: #fff;
+            padding: 32px;
+            border-radius: 12px;
+            box-shadow: 0 6px 32px rgba(44,62,80,0.10);
+            animation: fadeIn 1s;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.98);}
+            to { opacity: 1; transform: scale(1);}
+        }
+        h1 {
+            color: #2c3e50;
+            text-align: center;
+            margin-top: 0;
+        }
+        .subtitle {
+            color: #2980b9;
+            text-align: center;
+            margin-bottom: 18px;
+            font-size: 1.16em;
+            font-weight: 500;
+        }
+        .score-display {
+            position: fixed;
+            top: 20px;
+            right: 24px;
+            background: rgba(44, 62, 80, 0.93);
+            color: white;
+            padding: 13px 22px;
+            border-radius: 10px;
+            font-weight: 600;
+            z-index: 1000;
+        }
+        .step-info {
+            font-size: 1.12em;
+            margin: 16px 0 8px 0;
+        }
+        .path-display {
+            background: #e8f4fd;
+            padding: 12px 18px;
+            border-radius: 8px;
+            margin: 18px 0 10px;
+            border-left: 4px solid #3498db;
+            font-size: 1em;
+        }
+        .results {
+            text-align: center;
+            padding: 34px 22px 30px 22px;
+            background: #f8f9fa;
+            border-radius: 13px;
+            margin: 18px 0 10px;
+        }
+        .final-score {
+            font-size: 3.1em;
+            color: #3498db;
+            font-weight: 700;
+            margin: 20px 0 14px;
+            letter-spacing: 1.5px;
+        }
+        .restart-btn {
+            background: linear-gradient(135deg, #27ae60, #219a52);
+            color: white;
+            border: none;
+            padding: 15px 34px;
+            border-radius: 8px;
+            font-size: 1.12em;
+            cursor: pointer;
+            margin-top: 28px;
+            font-weight: 500;
+            transition: background 0.18s;
+        }
+        .restart-btn:hover {
+            background: linear-gradient(135deg, #219a52, #27ae60);
+        }
+        .hidden { display: none !important; }
+        @media (max-width: 700px) {
+            .container { padding: 14px 3vw; }
+            .score-display { position: static; margin-bottom: 14px; }
+        }
+        .thinking-box textarea {
+            width: 100%;
+            min-height: 70px;
+            padding: 10px;
+            border: 2px solid #d6e1e9;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 1em;
+            box-sizing: border-box;
+            resize: vertical;
+            background: #fafbfc;
+        }
+        .choices {
+            margin: 18px 0 0 0;
+        }
+        .choice {
+            margin: 10px 0;
+        }
+        .choice button {
+            width: 100%;
+            min-height: 48px;
+            padding: 13px 22px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.08em;
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+            box-shadow: 0 1px 5px rgba(52,152,219,0.06);
+        }
+        .choice button:hover:not(:disabled) {
+            background: linear-gradient(135deg, #2980b9, #1f4e79);
+            transform: translateY(-1.5px) scale(1.012);
+            box-shadow: 0 4px 15px rgba(44,62,80,0.14);
+        }
+        .choice button:disabled {
+            background: #bfc9ce;
+            cursor: not-allowed;
+            transform: none;
+        }
+        .consequence {
+            margin: 20px 0;
+            padding: 14px;
+            border-radius: 8px;
+            font-size: 1.01em;
+        }
+        .consequence.info { background: #eaf7fa; color: #217a8a; }
+        .consequence.warning { background: #fff7e6; color: #a67c00; }
+        .consequence.error { background: #fdecea; color: #a94442; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Start Screen -->
+        <div id="start-screen">
+            <h1>🧬 BioEthics 4-Step Adventure</h1>
+            <p class="subtitle">Navigate 4 detailed steps for each ethical path you choose</p>
+            <div style="background: #e8f6ff; padding: 20px; border-radius: 11px; margin: 22px 0;">
+                <h3 style="margin-top:0; margin-bottom:10px;">🌊 How It Works:</h3>
+                <ul style="text-align: left; max-width: 600px; margin: 0 auto; line-height:1.6;">
+                    <li><strong>Choose Your Path:</strong> Medical Committee, Fundraising, Lottery, or Negotiation</li>
+                    <li><strong>4 Steps Deep:</strong> Each path has 4 detailed scenarios with consequences</li>
+                    <li><strong>Real Complications:</strong> Donor pressure, legal challenges, media scrutiny</li>
+                    <li><strong>Track Your Reasoning:</strong> Record your thinking at each step</li>
+                </ul>
+            </div>
+            <button id="start-btn"
+                style="background: linear-gradient(135deg, #3498db, #2980b9); color: white; border: none; padding: 20px 40px; border-radius: 10px; font-size: 1.16em; cursor: pointer; margin-top: 26px; font-weight:600;">
+                🚀 Begin 4-Step Journey
+            </button>
+        </div>
 
-const pathConsequences = {
-  committee: [
-    [ { text: "Committee Step 2 consequence for Option 1", type: "info" }, { text: "Committee Step 2 consequence for Option 2", type: "info" } ],
-    [ { text: "Committee Step 3 consequence for Option 1", type: "info" }, { text: "Committee Step 3 consequence for Option 2", type: "info" } ],
-    [ { text: "Committee Step 4 consequence for Option 1", type: "info" }, { text: "Committee Step 4 consequence for Option 2", type: "info" } ]
-  ],
-  fundraising: [
-    [ { text: "Fundraising Step 2 consequence for Option 1", type: "info" }, { text: "Fundraising Step 2 consequence for Option 2", type: "info" } ],
-    [ { text: "Fundraising Step 3 consequence for Option 1", type: "info" }, { text: "Fundraising Step 3 consequence for Option 2", type: "info" } ],
-    [ { text: "Fundraising Step 4 consequence for Option 1", type: "info" }, { text: "Fundraising Step 4 consequence for Option 2", type: "info" } ]
-  ],
-  lottery: [
-    [ { text: "Lottery Step 2 consequence for Option 1", type: "info" }, { text: "Lottery Step 2 consequence for Option 2", type: "info" } ],
-    [ { text: "Lottery Step 3 consequence for Option 1", type: "info" }, { text: "Lottery Step 3 consequence for Option 2", type: "info" } ],
-    [ { text: "Lottery Step 4 consequence for Option 1", type: "info" }, { text: "Lottery Step 4 consequence for Option 2", type: "info" } ]
-  ],
-  pharmaceutical: [
-    [ { text: "Negotiation Step 2 consequence for Option 1", type: "info" }, { text: "Negotiation Step 2 consequence for Option 2", type: "info" } ],
-    [ { text: "Negotiation Step 3 consequence for Option 1", type: "info" }, { text: "Negotiation Step 3 consequence for Option 2", type: "info" } ],
-    [ { text: "Negotiation Step 4 consequence for Option 1", type: "info" }, { text: "Negotiation Step 4 consequence for Option 2", type: "info" } ]
-  ]
-};
-</script>
+        <!-- Game Screen -->
+        <div id="game-screen" class="hidden">
+            <div class="score-display" id="score-bar">
+                Ethics Score: <span id="score">100</span> / 100
+            </div>
+            <div class="step-info">
+                <strong>Step <span id="current-step">1</span> of 4</strong> –
+                <span id="scenario-name">Gene Therapy Crisis</span>
+            </div>
+            <div class="path-display" id="path-display" style="display: none;">
+                <strong>Your Path:</strong> <span id="current-path">Starting Point</span>
+            </div>
+            <div class="scenario" id="scenario-text"></div>
+            <div class="consequence" id="consequence"></div>
+            <div class="thinking-box">
+                <label for="thinking"><strong>💭 Your Strategic Thinking:</strong></label>
+                <textarea id="thinking" placeholder="What factors are you considering? What ethical principles are at stake?"></textarea>
+            </div>
+            <div class="choices" id="choices"></div>
+        </div>
+
+        <!-- Results Screen -->
+        <div id="results-screen" class="hidden">
+            <div class="results">
+                <h2 style="margin-top:0;">🎯 Your 4-Step Journey Complete</h2>
+                <div class="final-score" id="final-score">100</div>
+                <div id="assessment" style="margin-bottom:28px;"></div>
+                <div style="text-align: left; margin-top: 28px;">
+                    <h3>🛤️ Your Complete Path:</h3>
+                    <div id="decision-summary"></div>
+                    <h3 style="margin-top: 28px;">🧠 Your Reasoning:</h3>
+                    <div id="thinking-summary"></div>
+                </div>
+                <button class="restart-btn" onclick="restartGame()">🔄 Try Different Path</button>
+            </div>
+        </div>
+    </div>
+    <script>
+        // --- Game Data ---
+        var gameData = {
+            currentStep: 1,
+            score: 100,
+            decisions: [],
+            thoughts: [],
+            chosenPath: null,
+            pathName: ''
+        };
+
+        // --- Utility Functions ---
+        function fadeInElement(el) {
+            el.style.opacity = 0;
+            el.style.transition = 'opacity 0.2s';
+            setTimeout(() => { el.style.opacity = 1; }, 10);
+        }
+
+        // --- Game Logic ---
+        document.addEventListener('DOMContentLoaded', function() {
+            document.getElementById('start-btn').addEventListener('click', startGame);
+        });
+
+        function startGame() {
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            fadeInElement(document.getElementById('game-screen'));
+            loadInitialChoice();
+        }
+
+        function loadInitialChoice() {
+            document.getElementById('current-step').textContent = '1';
+            document.getElementById('scenario-name').textContent = 'Choose Your Path';
+            document.getElementById('scenario-text').innerHTML = "🧬 <strong>URGENT CRISIS:</strong> You're the Chief Medical Officer at Regional Medical Center. A breakthrough gene therapy costing $2.1 million per treatment can cure a fatal genetic disease affecting children. You have 18 children who desperately need this treatment, but your hospital's annual budget only covers 4 treatments. Families are pleading with you, local media is investigating, and the hospital board wants your allocation plan within 48 hours. <strong>Choose your approach:</strong>";
+            document.getElementById('thinking').value = '';
+            document.getElementById('consequence').style.display = 'none';
+            document.getElementById('path-display').style.display = 'none';
+
+            var choicesHTML = [
+                { key: 'committee', label: 'Establish transparent medical committee to rank patients by clinical severity'},
+                { key: 'fundraising', label: 'Launch emergency fundraising while treating 4 most critical patients immediately'},
+                { key: 'lottery', label: 'Implement fair lottery system for all 18 children'},
+                { key: 'pharmaceutical', label: 'Negotiate with pharmaceutical company for compassionate pricing'}
+            ].map(function(opt) {
+                return `<div class="choice"><button onclick="choosePath('${opt.key}', event)">${opt.label}</button></div>`;
+            }).join('');
+            document.getElementById('choices').innerHTML = choicesHTML;
+        }
+
+        function choosePath(path, event) {
+            gameData.chosenPath = path;
+            gameData.pathName = path.charAt(0).toUpperCase() + path.slice(1) + ' Path';
+
+            // Record initial choice
+            var choiceText = event.target.textContent;
+            gameData.decisions.push({
+                step: 1,
+                choice: choiceText,
+                points: 10 // All initial choices get same points
+            });
+
+            // Record thinking
+            var thinking = document.getElementById('thinking').value.trim();
+            if (thinking) {
+                gameData.thoughts.push({
+                    step: 1,
+                    thought: thinking
+                });
+            }
+
+            // Disable buttons
+            var buttons = document.querySelectorAll('#choices button');
+            buttons.forEach(btn => btn.disabled = true);
+
+            // Move to step 2
+            setTimeout(function() {
+                gameData.currentStep = 2;
+                loadPathStep();
+            }, 1400);
+        }
+
+        function loadPathStep() {
+            var stepIndex = gameData.currentStep - 2; // 0-3 for steps 2-4
+            var scenario = allScenarios[gameData.chosenPath][stepIndex];
+
+            document.getElementById('current-step').textContent = gameData.currentStep;
+            document.getElementById('scenario-name').textContent = scenario.name;
+            document.getElementById('scenario-text').innerHTML = scenario.text;
+            document.getElementById('thinking').value = '';
+
+            // Show path
+            document.getElementById('path-display').style.display = 'block';
+            document.getElementById('current-path').textContent = gameData.pathName;
+
+            // Show consequence from previous step
+            var conseqElement = document.getElementById('consequence');
+            if (stepIndex > 0 && gameData.decisions.length > 0) {
+                var lastDecision = gameData.decisions[gameData.decisions.length - 1];
+                var consequence = pathConsequences[gameData.chosenPath][stepIndex - 1][lastDecision.choiceIndex];
+                if (consequence) {
+                    conseqElement.className = 'consequence ' + consequence.type;
+                    conseqElement.innerHTML = '<strong>Consequence of Your Previous Decision:</strong> ' + consequence.text;
+                    conseqElement.style.display = 'block';
+                    fadeInElement(conseqElement);
+                }
+            } else {
+                conseqElement.style.display = 'none';
+            }
+
+            // Load choices
+            var choicesHTML = scenario.choices.map(function(choice, i) {
+                return `<div class="choice"><button onclick="makeStepChoice(${i})">${choice.text}</button></div>`;
+            }).join('');
+            document.getElementById('choices').innerHTML = choicesHTML;
+        }
+
+        function makeStepChoice(choiceIndex) {
+            var stepIndex = gameData.currentStep - 2;
+            var scenario = allScenarios[gameData.chosenPath][stepIndex];
+            var choice = scenario.choices[choiceIndex];
+
+            // Record thinking
+            var thinking = document.getElementById('thinking').value.trim();
+            if (thinking) {
+                gameData.thoughts.push({
+                    step: gameData.currentStep,
+                    thought: thinking
+                });
+            }
+
+            // Record decision
+            gameData.decisions.push({
+                step: gameData.currentStep,
+                choice: choice.text,
+                points: choice.points,
+                choiceIndex: choiceIndex
+            });
+
+            // Update score
+            gameData.score += choice.points;
+            gameData.score = Math.max(0, Math.min(100, gameData.score));
+            document.getElementById('score').textContent = gameData.score;
+
+            // Disable buttons
+            var buttons = document.querySelectorAll('#choices button');
+            buttons.forEach(btn => btn.disabled = true);
+
+            // Move to next step or show results
+            setTimeout(function() {
+                if (gameData.currentStep < 4) {
+                    gameData.currentStep++;
+                    loadPathStep();
+                } else {
+                    showResults();
+                }
+            }, 1400);
+        }
+
+        function showResults() {
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('results-screen').classList.remove('hidden');
+            fadeInElement(document.getElementById('results-screen'));
+
+            // Assessment
+            var assessment = '';
+            if (gameData.score >= 80) {
+                assessment = '🌟 <strong>Ethical Pioneer:</strong> You navigated the complex 4-step journey with exceptional ethical reasoning. Your decisions demonstrate sophisticated understanding of healthcare ethics, stakeholder management, and long-term systemic thinking. Your approach could serve as a model for other healthcare leaders facing similar dilemmas.';
+            } else if (gameData.score >= 60) {
+                assessment = '⚖️ <strong>Thoughtful Navigator:</strong> You successfully handled most challenges in your 4-step journey, showing good ethical reasoning while balancing practical concerns. Some decisions could have been stronger, but overall you demonstrated solid healthcare leadership.';
+            } else if (gameData.score >= 40) {
+                assessment = '🧭 <strong>Ethics Explorer:</strong> You made it through all 4 steps. Some choices may have had tough consequences, but you showed a willingness to engage with complexity. Consider how you might approach certain steps differently next time for an even stronger outcome.';
+            } else {
+                assessment = '🚩 <strong>Ethical Crossroads:</strong> The journey was challenging, and some decisions led to significant issues. Reflect on the ethical considerations and pressures at each stage—what would you do differently if faced with this scenario again?';
+            }
+            document.getElementById('final-score').textContent = gameData.score;
+            document.getElementById('assessment').innerHTML = assessment;
+
+            // Decision summary
+            var decisionHTML = gameData.decisions.map(function(decision, idx) {
+                return `<div style="margin-bottom:10px;">
+                    <strong>Step ${decision.step}:</strong> ${decision.choice}
+                    ${typeof decision.points === "number" ? `<br><small>Ethics Impact: ${(decision.points > 0 ? '+' : '') + decision.points} points</small>` : ''}
+                </div>`;
+            }).join('');
+            document.getElementById('decision-summary').innerHTML = decisionHTML;
+
+            // Thinking summary
+            var thinkingHTML = '';
+            if (gameData.thoughts.length > 0) {
+                thinkingHTML = gameData.thoughts.map(function(thought) {
+                    return `<div style="margin: 10px 0; padding: 15px; background: #f1f3f4; border-radius: 5px;">
+                        <strong>Step ${thought.step}:</strong> ${thought.thought}
+                    </div>`;
+                }).join('');
+            } else {
+                thinkingHTML = '<div style="font-style: italic; color: #666;">No reflections recorded during your journey.</div>';
+            }
+            document.getElementById('thinking-summary').innerHTML = thinkingHTML;
+        }
+
+        function restartGame() {
+            gameData = {
+                currentStep: 1,
+                score: 100,
+                decisions: [],
+                thoughts: [],
+                chosenPath: null,
+                pathName: ''
+            };
+            document.getElementById('score').textContent = '100';
+            document.getElementById('consequence').style.display = 'none';
+            document.getElementById('path-display').style.display = 'none';
+            document.getElementById('results-screen').classList.add('hidden');
+            document.getElementById('start-screen').classList.remove('hidden');
+            fadeInElement(document.getElementById('start-screen'));
+        }
+    </script>
+    <script>
+    // --- SAMPLE SCENARIO DATA (customize as needed) ---
+    const allScenarios = {
+      committee: [
+        {
+          name: "Committee: Step 2",
+          text: "The committee faces pressure from a major donor whose child is not ranked highest. How do you respond?",
+          choices: [
+            { text: "Stick to transparent ranking, risking donor withdrawal", points: 5 },
+            { text: "Make an exception for the donor's child", points: -5 }
+          ]
+        },
+        {
+          name: "Committee: Step 3",
+          text: "Media accuses your committee of bias. What do you do?",
+          choices: [
+            { text: "Release detailed anonymized data explaining your process", points: 5 },
+            { text: "Refuse to comment", points: -5 }
+          ]
+        },
+        {
+          name: "Committee: Step 4",
+          text: "Legal challenge threatens the process. Next step?",
+          choices: [
+            { text: "Invite an external ethics review", points: 5 },
+            { text: "Push forward without review", points: -5 }
+          ]
+        }
+      ],
+      fundraising: [
+        {
+          name: "Fundraising: Step 2",
+          text: "A celebrity offers to donate if you feature them in your campaign.",
+          choices: [
+            { text: "Accept and feature them", points: 5 },
+            { text: "Decline and stick to original plan", points: 0 }
+          ]
+        },
+        {
+          name: "Fundraising: Step 3",
+          text: "A rumor spreads that funds are being misused.",
+          choices: [
+            { text: "Publish transparent accounting", points: 5 },
+            { text: "Ignore the rumor", points: -5 }
+          ]
+        },
+        {
+          name: "Fundraising: Step 4",
+          text: "You fall short of the goal. Do you delay treatments?",
+          choices: [
+            { text: "Treat only as many as you can", points: 0 },
+            { text: "Take a risky loan to cover all", points: -5 }
+          ]
+        }
+      ],
+      lottery: [
+        {
+          name: "Lottery: Step 2",
+          text: "A family offers a bribe to sway the lottery.",
+          choices: [
+            { text: "Refuse and report the attempt", points: 5 },
+            { text: "Accept to help the child", points: -5 }
+          ]
+        },
+        {
+          name: "Lottery: Step 3",
+          text: "Some families protest the randomness.",
+          choices: [
+            { text: "Hold a public, transparent drawing", points: 5 },
+            { text: "Draw in private", points: -5 }
+          ]
+        },
+        {
+          name: "Lottery: Step 4",
+          text: "A child who lost the lottery becomes critically ill.",
+          choices: [
+            { text: "Lobby for emergency funding for them", points: 5 },
+            { text: "Stick to the lottery results", points: -5 }
+          ]
+        }
+      ],
+      pharmaceutical: [
+        {
+          name: "Negotiation: Step 2",
+          text: "The company offers a group discount for positive press.",
+          choices: [
+            { text: "Accept and highlight the company", points: 5 },
+            { text: "Reject to avoid undue influence", points: 0 }
+          ]
+        },
+        {
+          name: "Negotiation: Step 3",
+          text: "Another hospital outbids you for doses.",
+          choices: [
+            { text: "Form a coalition to negotiate together", points: 5 },
+            { text: "Bid higher using hospital reserves", points: -5 }
+          ]
+        },
+        {
+          name: "Negotiation: Step 4",
+          text: "Company proposes a clinical trial for the remaining children.",
+          choices: [
+            { text: "Agree if safety is ensured", points: 5 },
+            { text: "Decline to avoid experimental risk", points: -5 }
+          ]
+        }
+      ]
+    };
+
+    const pathConsequences = {
+      committee: [
+        [
+          { text: "The donor withdraws funding, but committee credibility is preserved.", type: "info" },
+          { text: "The donor is pleased, but staff and public trust erodes.", type: "warning" }
+        ],
+        [
+          { text: "The public feels reassured by your transparency.", type: "info" },
+          { text: "Distrust grows and tensions rise.", type: "warning" }
+        ],
+        [
+          { text: "The external review upholds your process.", type: "info" },
+          { text: "Legal problems worsen and the process stalls.", type: "error" }
+        ]
+      ],
+      fundraising: [
+        [
+          { text: "Campaign visibility grows rapidly.", type: "info" },
+          { text: "Fundraising is slower, but you maintain independence.", type: "info" }
+        ],
+        [
+          { text: "Rumor dies down and trust is regained.", type: "info" },
+          { text: "Donations drop off and suspicion lingers.", type: "warning" }
+        ],
+        [
+          { text: "You maximize use of available funds, but some are left untreated.", type: "warning" },
+          { text: "The loan creates future budget crises.", type: "error" }
+        ]
+      ],
+      lottery: [
+        [
+          { text: "Trust in fairness is upheld.", type: "info" },
+          { text: "The bribe is discovered and scandal erupts.", type: "error" }
+        ],
+        [
+          { text: "Families feel reassured by the transparent process.", type: "info" },
+          { text: "Rumors of cheating spread.", type: "warning" }
+        ],
+        [
+          { text: "You find new funding and save a life.", type: "info" },
+          { text: "Families protest and bad press ensues.", type: "error" }
+        ]
+      ],
+      pharmaceutical: [
+        [
+          { text: "You secure a better price and good press.", type: "info" },
+          { text: "You avoid PR issues, but pay more.", type: "warning" }
+        ],
+        [
+          { text: "United negotiation yields more access for all.", type: "info" },
+          { text: "You pay too much and budgets are strained.", type: "error" }
+        ],
+        [
+          { text: "Children get access and are closely monitored.", type: "info" },
+          { text: "Some children miss out on any hope for treatment.", type: "warning" }
+        ]
+      ]
+    };
+    </script>
+</body>
+</html>
