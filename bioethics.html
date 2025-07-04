@@ -1,163 +1,117 @@
-// Updated bioethics scenarios and consequences
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Bioethics Scenario Game</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; }
+    .option { display: block; margin: 1em 0; padding: 1em; border: 1px solid #ccc; border-radius: 6px; background: #f9f9f9; cursor: pointer; }
+    .option.disabled { color: #aaa; background: #eee; cursor: not-allowed; }
+    .consequence { margin: 1.5em 0; font-style: italic; }
+    .step { font-weight: bold; margin-top: 1em; }
+    .restart { margin-top: 2em; display: block; }
+  </style>
+</head>
+<body>
+  <h1>Bioethics Scenario</h1>
+  <div id="game"></div>
+  <script>
+    // Scenario Data
+    const scenario = [
+      {
+        question: "You are a doctor faced with a patient who refuses a life-saving blood transfusion for religious reasons. What do you do?",
+        options: [
+          { text: "Respect the patient's wishes and do not administer the transfusion.", consequence: "The patient's autonomy is respected, but their life is at risk." },
+          { text: "Administer the transfusion despite their refusal.", consequence: "You save the patient, but violate their autonomy and potentially their trust." },
+          { text: "Seek a court order to determine the appropriate action.", consequence: "The legal system intervenes, possibly delaying treatment." }
+        ]
+      },
+      {
+        question: "The patient's family arrives and begs you to save their loved one, regardless of their previously stated wishes. What do you do?",
+        options: [
+          { text: "Explain the patient's wishes and refuse the family's request.", consequence: "You uphold the patient's autonomy but create distress for the family." },
+          { text: "Give in to the family's wishes.", consequence: "You override the patient's autonomy in favor of family wishes." },
+          { text: "Seek an ethics consultation.", consequence: "An ethics team is brought in, which may help mediate the situation." }
+        ]
+      },
+      {
+        question: "After the event, the hospital asks you to reflect on your actions for future policy. What do you recommend?",
+        options: [
+          { text: "Always respect patient autonomy above all.", consequence: "Policies may become stricter in favor of autonomy." },
+          { text: "Consider family wishes in extreme cases.", consequence: "Policies may become more flexible but risk undermining autonomy." },
+          { text: "Always seek legal or ethical counsel in such dilemmas.", consequence: "Policies may become more bureaucratic but thorough." }
+        ]
+      }
+    ];
 
-var allScenarios = {
-  genetic: [
-    {
-      name: "Genetic Test—Funding Launch",
-      text: "🏁 You’ve developed a low-cost genetic test to detect early-stage cancer.",
-      choices: [
-        { text: "Seek private funding for immediate rollout", points: 8 },
-        { text: "Apply for government grants", points: 6 }
-      ]
-    },
-    {
-      name: "Private Funders Demand Exclusivity",
-      text: "Private funders demand exclusivity and a high list price.",
-      choices: [
-        { text: "Accept their terms", points: 5 },
-        { text: "Push back for affordability", points: 10 }
-      ]
-    },
-    {
-      name: "Hospital Chain Pilot",
-      text: "A national hospital chain offers an exclusive pilot.",
-      choices: [
-        { text: "Accept and test in affluent cities", points: 7 },
-        { text: "Propose diverse, lower-income test sites", points: 10 }
-      ]
-    },
-    {
-      name: "FDA Approval & Pricing",
-      text: "FDA approval is near. You're asked to price the test.",
-      choices: [
-        { text: "Price high to satisfy backers", points: 6 },
-        { text: "Implement tiered pricing", points: 10 }
-      ]
-    }
-  ],
-  ai: [
-    {
-      name: "AI Stroke Risk Model—Release Decision",
-      text: "🏁 You’ve created an AI model that accurately predicts stroke risk.",
-      choices: [
-        { text: "Publish the algorithm open-source", points: 9 },
-        { text: "Patent and sell to insurers", points: 7 }
-      ]
-    },
-    {
-      name: "Insurer Demand for Exclusivity",
-      text: "A major insurer offers to buy it—but will use it only for premium clients.",
-      choices: [
-        { text: "Accept deal", points: 6 },
-        { text: "Propose a universal license clause", points: 9 }
-      ]
-    },
-    {
-      name: "Public Health Agency Request",
-      text: "A local public health agency wants a partnership for Medicaid users.",
-      choices: [
-        { text: "Offer steep discount", points: 8 },
-        { text: "Decline due to budget constraints", points: 5 }
-      ]
-    },
-    {
-      name: "Insurers Deny Treatment Claims",
-      text: "Insurers start using your AI to deny stroke treatment claims.",
-      choices: [
-        { text: "Issue a public statement and audit misuse", points: 10 },
-        { text: "Stay silent to protect your stock price", points: 5 }
-      ]
-    }
-  ],
-  gene: [
-    {
-      name: "Gene Therapy—Launch Model",
-      text: "🏁 Your lab develops a gene therapy for a rare disease with 90% success.",
-      choices: [
-        { text: "Partner with a large pharmaceutical company", points: 8 },
-        { text: "Create a nonprofit distribution model", points: 10 }
-      ]
-    },
-    {
-      name: "Pharma Sets High Price",
-      text: "The pharma company sets a $2 million price per dose.",
-      choices: [
-        { text: "Challenge the pricing", points: 9 },
-        { text: "Support it for sustainability", points: 6 }
-      ]
-    },
-    {
-      name: "Global South Access Request",
-      text: "Countries in the Global South request access.",
-      choices: [
-        { text: "License tech at reduced cost", points: 10 },
-        { text: "Limit use to paying markets", points: 5 }
-      ]
-    },
-    {
-      name: "Patient Access Lawsuits",
-      text: "Patients sue over being denied access due to cost.",
-      choices: [
-        { text: "Set up an access fund", points: 9 },
-        { text: "Defend pricing strategy legally", points: 5 }
-      ]
-    }
-  ]
-};
+    let step = 0;
+    let locked = false;
 
-var pathConsequences = {
-  genetic: [
-    [
-      { type: 'mixed', text: 'Fast funding, but pressure for exclusive licensing and less public access.' },
-      { type: 'positive', text: 'Slower approval process, but public access is protected.' }
-    ],
-    [
-      { type: 'negative', text: 'Immediate profits, but media backlash over high prices and exclusivity.' },
-      { type: 'positive', text: 'Delays and investor withdrawal, but public trust improves.' }
-    ],
-    [
-      { type: 'mixed', text: 'Strong results in affluent areas, but equity concerns raised widely.' },
-      { type: 'positive', text: 'Broader data set and greater equity, but slower logistics.' }
-    ],
-    [
-      { type: 'mixed', text: 'IPO ready and fast profits, but many patients are priced out.' },
-      { type: 'positive', text: 'Tiered pricing is praised for equity, but backers are frustrated.' }
-    ]
-  ],
-  ai: [
-    [
-      { type: 'positive', text: 'Scientific community praises your openness, but there is no revenue.' },
-      { type: 'mixed', text: 'Fast profits and growth, but concerns about access and fairness.' }
-    ],
-    [
-      { type: 'negative', text: 'Company grows quickly, but media criticizes inequity.' },
-      { type: 'positive', text: 'Deal falls through, but academic partnerships and broader impact offered.' }
-    ],
-    [
-      { type: 'positive', text: 'Gains goodwill and positive press, but infrastructure is stressed.' },
-      { type: 'negative', text: 'Lost trust and protests from health advocates.' }
-    ],
-    [
-      { type: 'mixed', text: 'Reputation improves for transparency, but lawsuits emerge.' },
-      { type: 'negative', text: 'Short-term stock price gains, but a whistleblower exposes decisions.' }
-    ]
-  ],
-  gene: [
-    [
-      { type: 'mixed', text: 'Fast production, but constant pressure for profits from partners.' },
-      { type: 'positive', text: 'Transparent nonprofit model, but funding is difficult.' }
-    ],
-    [
-      { type: 'positive', text: 'Legal fights, but media applauds your ethical stance.' },
-      { type: 'negative', text: 'Stock price soars, but ethical concerns grow.' }
-    ],
-    [
-      { type: 'positive', text: 'Equity accolades, but profits are under tension.' },
-      { type: 'negative', text: 'Investors satisfied, but NGOs criticize exclusion.' }
-    ],
-    [
-      { type: 'positive', text: 'Trust rebuilds with public, but cost burdens rise.' },
-      { type: 'negative', text: 'Court loss damages reputation and public trust.' }
-    ]
-  ]
-};
+    function renderStep() {
+      const gameDiv = document.getElementById('game');
+      gameDiv.innerHTML = '';
+      if (step < scenario.length) {
+        const stepData = scenario[step];
+        const stepElem = document.createElement('div');
+        stepElem.className = "step";
+        stepElem.textContent = `Step ${step + 1}`;
+        gameDiv.appendChild(stepElem);
+
+        const question = document.createElement('div');
+        question.textContent = stepData.question;
+        gameDiv.appendChild(question);
+
+        stepData.options.forEach((option, i) => {
+          const btn = document.createElement('button');
+          btn.className = 'option';
+          btn.textContent = option.text;
+          btn.onclick = () => {
+            if (!locked) handleChoice(i);
+          };
+          if (locked) btn.classList.add('disabled');
+          gameDiv.appendChild(btn);
+        });
+
+        if (locked && stepData.lastConsequence) {
+          const cons = document.createElement('div');
+          cons.className = 'consequence';
+          cons.textContent = stepData.lastConsequence;
+          gameDiv.appendChild(cons);
+
+          const nextBtn = document.createElement('button');
+          nextBtn.textContent = step < scenario.length - 1 ? "Next Step" : "Finish";
+          nextBtn.onclick = () => {
+            step++;
+            locked = false;
+            renderStep();
+          };
+          gameDiv.appendChild(nextBtn);
+        }
+      } else {
+        const end = document.createElement('div');
+        end.innerHTML = "<strong>You have completed the scenario!</strong>";
+        gameDiv.appendChild(end);
+        const restart = document.createElement('button');
+        restart.className = "restart";
+        restart.textContent = "Restart";
+        restart.onclick = () => {
+          step = 0;
+          locked = false;
+          scenario.forEach(s => delete s.lastConsequence);
+          renderStep();
+        };
+        gameDiv.appendChild(restart);
+      }
+    }
+
+    function handleChoice(optionIndex) {
+      locked = true;
+      const stepData = scenario[step];
+      stepData.lastConsequence = stepData.options[optionIndex].consequence;
+      renderStep();
+    }
+
+    renderStep();
+  </script>
+</body>
+</html>
